@@ -1,0 +1,14 @@
+[Unit]
+Description=Lobby Web API
+After=network.target
+
+[Service]
+User=lobby
+Group=lobby
+Type=simple
+WorkingDirectory=/opt/lobby
+ExecStart=/opt/lobby/venv/bin/lobby run-web-api
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
