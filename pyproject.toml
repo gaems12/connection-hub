@@ -3,10 +3,23 @@ requires = ["setuptools>=64.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "template"
-description = "Template"
+name = "lobby"
+description = "Lobby service."
 version = "0.1.0"
 requires-python = ">=3.12"
+
+dependencies = [
+    "uuid7==0.1.*",
+    "redis==5.2.*",
+    "nats-py==2.9.*",
+    "httpx==0.28.*",
+    "dishka==1.4.*",
+    "adaptix==3.0.b9",
+    "cyclopts==3.0.*",
+    "fastapi[standard]==0.115.*",
+    "uvicorn[standard]==0.34.*",
+    "gunicorn==23.0.*",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -16,3 +29,6 @@ dev = [
     "pytest==8.3.*",
     "pytest-asyncio==0.25.*",
 ]
+
+[project.scripts]
+lobby = "lobby.main.cli:main"
