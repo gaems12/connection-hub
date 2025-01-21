@@ -3,8 +3,8 @@ requires = ["setuptools>=64.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "lobby"
-description = "Lobby service."
+name = "connection_hub"
+description = "Manages lobbies and player connections in the games."
 version = "0.1.0"
 requires-python = ">=3.12"
 
@@ -31,4 +31,4 @@ dev = [
 ]
 
 [project.scripts]
-lobby = "lobby.main.cli:main"
+connection-hub = "connection_hub.main.cli:main"
