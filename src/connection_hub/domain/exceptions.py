@@ -8,6 +8,7 @@ __all__ = (
     "IncorrectPasswordError",
 )
 
+
 class DomainError(Exception): ...
 
 

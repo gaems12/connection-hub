@@ -5,7 +5,7 @@ from typing import Final
 
 from connection_hub.domain.identitifiers import UserId
 from connection_hub.domain.constants import UserRole
-from connection_hub.domain.models import Lobby, FourInARowGame
+from connection_hub.domain.models import FourInARowLobby, Lobby
 from connection_hub.domain.exceptions import (
     UserLimitReachedError,
     PasswordRequiredError,
@@ -14,7 +14,7 @@ from connection_hub.domain.exceptions import (
 
 
 _GAME_TO_MAX_PLAYERS_MAP: Final = {
-    FourInARowGame: 2,
+    FourInARowLobby: 2,
 }
 
 
