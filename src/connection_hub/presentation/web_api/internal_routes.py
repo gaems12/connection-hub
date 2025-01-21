@@ -5,7 +5,12 @@ from fastapi import APIRouter
 from dishka.integrations.fastapi import FromDishka, inject
 
 from connection_hub.domain import LobbyId
-from connection_hub.application import CreateLobbyCommand, CreateLobbyProcessor
+from connection_hub.application import (
+    CreateLobbyCommand,
+    CreateLobbyProcessor,
+    JoinLobbyCommand,
+    JoinLobbyProcessor,
+)
 
 
 internal_router = APIRouter(
@@ -22,3 +27,13 @@ async def create_lobby(
     command_processor: FromDishka[CreateLobbyProcessor],
 ) -> LobbyId:
     return await command_processor.process(command)
+
+
+@internal_router.post("/me/current-lobby")
+@inject
+async def join_lobby(
+    *,
+    command: FromDishka[JoinLobbyCommand],
+    command_processor: FromDishka[JoinLobbyProcessor],
+) -> None:
+    await command_processor.process(command)

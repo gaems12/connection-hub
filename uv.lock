@@ -82,6 +82,51 @@ wheels = [
 ]
 
 [[package]]
+name = "connection-hub"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "adaptix" },
+    { name = "cyclopts" },
+    { name = "dishka" },
+    { name = "fastapi", extra = ["standard"] },
+    { name = "gunicorn" },
+    { name = "httpx" },
+    { name = "nats-py" },
+    { name = "redis" },
+    { name = "uuid7" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "adaptix", specifier = "==3.0b9" },
+    { name = "cyclopts", specifier = "==3.0.*" },
+    { name = "dishka", specifier = "==1.4.*" },
+    { name = "fastapi", extras = ["standard"], specifier = "==0.115.*" },
+    { name = "gunicorn", specifier = "==23.0.*" },
+    { name = "httpx", specifier = "==0.28.*" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = "==1.14.*" },
+    { name = "nats-py", specifier = "==2.9.*" },
+    { name = "pre-commit", marker = "extra == 'dev'", specifier = "==4.0.*" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = "==8.3.*" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = "==0.25.*" },
+    { name = "redis", specifier = "==5.2.*" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = "==0.8.*" },
+    { name = "uuid7", specifier = "==0.1.*" },
+    { name = "uvicorn", extras = ["standard"], specifier = "==0.34.*" },
+]
+
+[[package]]
 name = "cyclopts"
 version = "3.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -314,51 +359,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/af/92/b3130cbbf5591acf9ade8708c365f3238046ac7cb8ccba6e81abccb0ccff/jinja2-3.1.5.tar.gz", hash = "sha256:8fefff8dc3034e27bb80d67c671eb8a9bc424c0ef4c0826edbff304cceff43bb", size = 244674 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/0f/2ba5fbcd631e3e88689309dbe978c5769e883e4b84ebfe7da30b43275c5a/jinja2-3.1.5-py3-none-any.whl", hash = "sha256:aba0f4dc9ed8013c424088f68a5c226f7d6097ed89b246d7749c2ec4175c6adb", size = 134596 },
-]
-
-[[package]]
-name = "lobby"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "adaptix" },
-    { name = "cyclopts" },
-    { name = "dishka" },
-    { name = "fastapi", extra = ["standard"] },
-    { name = "gunicorn" },
-    { name = "httpx" },
-    { name = "nats-py" },
-    { name = "redis" },
-    { name = "uuid7" },
-    { name = "uvicorn", extra = ["standard"] },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "adaptix", specifier = "==3.0b9" },
-    { name = "cyclopts", specifier = "==3.0.*" },
-    { name = "dishka", specifier = "==1.4.*" },
-    { name = "fastapi", extras = ["standard"], specifier = "==0.115.*" },
-    { name = "gunicorn", specifier = "==23.0.*" },
-    { name = "httpx", specifier = "==0.28.*" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = "==1.14.*" },
-    { name = "nats-py", specifier = "==2.9.*" },
-    { name = "pre-commit", marker = "extra == 'dev'", specifier = "==4.0.*" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = "==8.3.*" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = "==0.25.*" },
-    { name = "redis", specifier = "==5.2.*" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = "==0.8.*" },
-    { name = "uuid7", specifier = "==0.1.*" },
-    { name = "uvicorn", extras = ["standard"], specifier = "==0.34.*" },
 ]
 
 [[package]]

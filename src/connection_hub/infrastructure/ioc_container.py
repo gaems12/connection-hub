@@ -15,6 +15,8 @@ from connection_hub.application import (
     IdentityProvider,
     CreateLobbyCommand,
     CreateLobbyProcessor,
+    JoinLobbyCommand,
+    JoinLobbyProcessor,
 )
 from .database import (
     RedisConfig,
@@ -44,7 +46,7 @@ from .event_publisher import RealEventPublisher
 from .identity_provider import InternalHTTPAPIIdentityProvider
 
 
-type _Command = CreateLobbyCommand
+type _Command = CreateLobbyCommand | JoinLobbyCommand
 
 type _CommandFactory = Callable[..., Coroutine[Any, Any, _Command]]
 
@@ -102,5 +104,6 @@ def ioc_container_factory(
         provider.provide(command_factory, scope=Scope.REQUEST)
 
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
+    provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
 
     return make_async_container(provider, *extra_providers, context=context)

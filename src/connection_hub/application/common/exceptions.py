@@ -5,6 +5,7 @@ __all__ = (
     "ApplicationError",
     "UserInLobbyError",
     "UserInGameError",
+    "LobbyDoesNotExistError",
 )
 
 
@@ -15,3 +16,6 @@ class UserInLobbyError(ApplicationError): ...
 
 
 class UserInGameError(ApplicationError): ...
+
+
+class LobbyDoesNotExistError(ApplicationError): ...

@@ -3,6 +3,7 @@
 
 __all__ = (
     "LobbyCreatedEvent",
+    "UserJoinedLobbyEvent",
     "Event",
     "EventPublisher",
 )
@@ -13,15 +14,21 @@ from typing import Protocol
 from connection_hub.domain import LobbyId, UserId, RuleSet
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True, kw_only=True)
 class LobbyCreatedEvent:
-    id: LobbyId
+    lobby_id: LobbyId
     name: str
     admin_id: UserId
     rule_set: RuleSet
 
 
-type Event = LobbyCreatedEvent
+@dataclass(frozen=True, slots=True, kw_only=True)
+class UserJoinedLobbyEvent:
+    lobby_id: LobbyId
+    user_id: UserId
+
+
+type Event = LobbyCreatedEvent | UserJoinedLobbyEvent
 
 
 class EventPublisher(Protocol):

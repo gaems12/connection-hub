@@ -6,7 +6,11 @@ from typing import Final
 
 from nats.js.client import JetStreamContext
 
-from connection_hub.application import LobbyCreatedEvent, Event
+from connection_hub.application import (
+    LobbyCreatedEvent,
+    UserJoinedLobbyEvent,
+    Event,
+)
 from connection_hub.infrastructure.common_retort import CommonRetort
 
 
@@ -14,6 +18,7 @@ _STREAM: Final = "connection_hub"
 
 _EVENT_TO_SUBJECT_MAP: Final = {
     LobbyCreatedEvent: "lobby.created",
+    UserJoinedLobbyEvent: "lobby.user_joined",
 }
 
 
