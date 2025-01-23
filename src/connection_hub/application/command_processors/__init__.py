@@ -6,7 +6,9 @@ __all__ = (
     "CreateLobbyProcessor",
     "JoinLobbyCommand",
     "JoinLobbyProcessor",
+    "LeaveLobbyProcessor",
 )
 
 from .create_lobby import CreateLobbyCommand, CreateLobbyProcessor
 from .join_lobby import JoinLobbyCommand, JoinLobbyProcessor
+from .leave_lobby import LeaveLobbyProcessor

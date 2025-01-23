@@ -10,6 +10,7 @@ from connection_hub.application import (
     CreateLobbyProcessor,
     JoinLobbyCommand,
     JoinLobbyProcessor,
+    LeaveLobbyProcessor,
 )
 
 
@@ -37,3 +38,12 @@ async def join_lobby(
     command_processor: FromDishka[JoinLobbyProcessor],
 ) -> None:
     await command_processor.process(command)
+
+
+@internal_router.delete("/me/current-lobby")
+@inject
+async def leave_lobby(
+    *,
+    processor: FromDishka[LeaveLobbyProcessor],
+) -> None:
+    await processor.process()

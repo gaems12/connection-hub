@@ -17,6 +17,7 @@ from connection_hub.application import (
     CreateLobbyProcessor,
     JoinLobbyCommand,
     JoinLobbyProcessor,
+    LeaveLobbyProcessor,
 )
 from .database import (
     RedisConfig,
@@ -105,5 +106,6 @@ def ioc_container_factory(
 
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
+    provider.provide(LeaveLobbyProcessor, scope=Scope.REQUEST)
 
     return make_async_container(provider, *extra_providers, context=context)

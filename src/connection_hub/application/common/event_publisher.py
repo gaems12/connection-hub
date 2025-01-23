@@ -4,6 +4,7 @@
 __all__ = (
     "LobbyCreatedEvent",
     "UserJoinedLobbyEvent",
+    "UserLeftLobbyEvent",
     "Event",
     "EventPublisher",
 )
@@ -28,7 +29,13 @@ class UserJoinedLobbyEvent:
     user_id: UserId
 
 
-type Event = LobbyCreatedEvent | UserJoinedLobbyEvent
+@dataclass(frozen=True, slots=True, kw_only=True)
+class UserLeftLobbyEvent:
+    lobby_id: LobbyId
+    user_id: UserId
+
+
+type Event = LobbyCreatedEvent | UserJoinedLobbyEvent | UserLeftLobbyEvent
 
 
 class EventPublisher(Protocol):
