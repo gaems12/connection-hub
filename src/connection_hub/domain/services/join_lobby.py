@@ -42,3 +42,4 @@ class JoinLobby:
             raise IncorrectPasswordError()
 
         lobby.users[current_user_id] = UserRole.REGULAR_MEMBER
+        lobby.admin_role_transfer_queue.append(current_user_id)

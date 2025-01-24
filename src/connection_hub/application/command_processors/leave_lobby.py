@@ -45,7 +45,7 @@ class LeaveLobbyProcessor:
         if not lobby_to_leave:
             raise UserNotInLobbyError()
 
-        self._leave_lobby(
+        new_admin_id = self._leave_lobby(
             lobby=lobby_to_leave,
             current_user_id=current_user_id,
         )
@@ -54,6 +54,7 @@ class LeaveLobbyProcessor:
         event = UserLeftLobbyEvent(
             lobby_id=lobby_to_leave.id,
             user_id=current_user_id,
+            new_admin_id=new_admin_id,
         )
         await self._event_publisher.publish(event)
 

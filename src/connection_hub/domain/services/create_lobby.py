@@ -27,6 +27,7 @@ class CreateLobby:
                 id=LobbyId(uuid7()),
                 name=name,
                 users={current_user_id: UserRole.ADMIN},
+                admin_role_transfer_queue=[current_user_id],
                 password=password,
                 time_for_each_player=rule_set.time_for_each_player,
             )

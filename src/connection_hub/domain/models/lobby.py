@@ -13,6 +13,7 @@ class BaseLobby:
     id: LobbyId
     name: str
     users: dict[UserId, UserRole]
+    admin_role_transfer_queue: list[UserId]
     password: str | None
 
 

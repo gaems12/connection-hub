@@ -33,6 +33,7 @@ class UserJoinedLobbyEvent:
 class UserLeftLobbyEvent:
     lobby_id: LobbyId
     user_id: UserId
+    new_admin_id: UserId | None
 
 
 type Event = LobbyCreatedEvent | UserJoinedLobbyEvent | UserLeftLobbyEvent
