@@ -9,3 +9,6 @@ from connection_hub.domain import UserId, Game
 class GameGateway(Protocol):
     async def by_player_id(self, player_id: UserId) -> Game | None:
         raise NotImplementedError
+
+    async def save(self, game: Game) -> None:
+        raise NotImplementedError

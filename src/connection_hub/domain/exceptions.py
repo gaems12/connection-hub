@@ -6,6 +6,7 @@ __all__ = (
     "UserLimitReachedError",
     "PasswordRequiredError",
     "IncorrectPasswordError",
+    "UserIsNotAdminError",
 )
 
 
@@ -19,3 +20,6 @@ class PasswordRequiredError(DomainError): ...
 
 
 class IncorrectPasswordError(DomainError): ...
+
+
+class UserIsNotAdminError(DomainError): ...

@@ -5,14 +5,16 @@ __all__ = (
     "LobbyCreatedEvent",
     "UserJoinedLobbyEvent",
     "UserLeftLobbyEvent",
+    "FourInARowGameCreatedEvent",
     "Event",
     "EventPublisher",
 )
 
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from typing import Protocol
 
-from connection_hub.domain import LobbyId, UserId, RuleSet
+from connection_hub.domain import LobbyId, GameId, UserId, RuleSet
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -36,7 +38,21 @@ class UserLeftLobbyEvent:
     new_admin_id: UserId | None
 
 
-type Event = LobbyCreatedEvent | UserJoinedLobbyEvent | UserLeftLobbyEvent
+@dataclass(frozen=True, slots=True, kw_only=True)
+class FourInARowGameCreatedEvent:
+    game_id: GameId
+    first_player_id: UserId
+    second_player_id: UserId
+    time_for_each_player: timedelta
+    created_at: datetime
+
+
+type Event = (
+    LobbyCreatedEvent
+    | UserJoinedLobbyEvent
+    | UserLeftLobbyEvent
+    | FourInARowGameCreatedEvent
+)
 
 
 class EventPublisher(Protocol):

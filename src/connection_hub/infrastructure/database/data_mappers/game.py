@@ -5,10 +5,11 @@ import json
 from enum import StrEnum
 from dataclasses import dataclass
 from datetime import timedelta
+from typing import Iterable
 
-from redis.asyncio.client import Redis
+from redis.asyncio.client import Redis, Pipeline
 
-from connection_hub.domain import UserId, FourInARowGame, Game
+from connection_hub.domain import GameId, UserId, FourInARowGame, Game
 from connection_hub.application import GameGateway
 from connection_hub.infrastructure.common_retort import CommonRetort
 from connection_hub.infrastructure.utils import get_env_var, str_to_timedelta
@@ -35,6 +36,7 @@ class _GameType(StrEnum):
 class GameMapper(GameGateway):
     __slots__ = (
         "_redis",
+        "_redis_pipeline",
         "_common_retort",
         "_config",
     )
@@ -42,10 +44,12 @@ class GameMapper(GameGateway):
     def __init__(
         self,
         redis: Redis,
+        redis_pipeline: Pipeline,
         common_retort: CommonRetort,
         config: GameMapperConfig,
     ):
         self._redis = redis
+        self._redis_pipeline = redis_pipeline
         self._common_retort = common_retort
         self._config = config
 
@@ -62,6 +66,21 @@ class GameMapper(GameGateway):
 
         return None
 
+    async def save(self, game: Game) -> None:
+        game_key = self._game_key_factory(
+            game_id=game.id,
+            player_ids=game.players,
+        )
+
+        game_as_dict = self._game_to_dict(game)
+        game_as_json = json.dumps(game_as_dict)
+
+        self._redis_pipeline.set(
+            name=game_key,
+            value=game_as_json,
+            ex=self._config.game_expires_in,
+        )
+
     def _dict_to_game(self, dict_: dict) -> Game:
         raw_game_type = dict_.get("type")
         if not raw_game_type:
@@ -71,6 +90,26 @@ class GameMapper(GameGateway):
 
         if game_type == _GameType.FOUR_IN_A_ROW:
             return self._common_retort.load(dict_, FourInARowGame)
+
+    def _game_to_dict(self, game: Game) -> dict:
+        game_as_dict = self._common_retort.dump(game)
+
+        if isinstance(game, FourInARowGame):
+            game_as_dict["type"] = _GameType.FOUR_IN_A_ROW
+
+        return game_as_dict
+
+    def _game_key_factory(
+        self,
+        *,
+        game_id: GameId,
+        player_ids: Iterable[UserId],
+    ) -> str:
+        sorted_player_ids = sorted(player_ids)
+        return (
+            f"games:id:{game_id.hex}:player_ids:"
+            f"{":".join(map(lambda player_id: player_id.hex, sorted_player_ids))}"
+        )
 
     def _pattern_to_find_game_by_player_id(self, player_id: UserId) -> str:
         return f"games:id:*:player_ids:*{player_id.hex}*"
