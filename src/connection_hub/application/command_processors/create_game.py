@@ -2,6 +2,7 @@
 # All rights reserved.
 
 from connection_hub.domain import (
+    LobbyId,
     FourInARowGame,
     Game,
     CreateGame,
@@ -59,14 +60,20 @@ class CreateGameProcessor:
         )
         await self._game_gateway.save(new_game)
 
-        await self._publish_game(new_game)
+        await self._publish_game(lobby_id=lobby.id, game=new_game)
 
         await self._transaction_manager.commit()
 
-    async def _publish_game(self, game: Game) -> None:
+    async def _publish_game(
+        self,
+        *,
+        lobby_id: LobbyId,
+        game: Game,
+    ) -> None:
         if isinstance(game, FourInARowGame):
             event = FourInARowGameCreatedEvent(
                 game_id=game.id,
+                lobby_id=lobby_id,
                 first_player_id=game.players[0],
                 second_player_id=game.players[1],
                 time_for_each_player=game.time_for_each_player,

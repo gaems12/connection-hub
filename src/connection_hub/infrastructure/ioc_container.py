@@ -7,6 +7,12 @@ from typing import Any, Callable, Coroutine, Iterable
 
 from dishka import Provider, Scope, AsyncContainer, make_async_container
 
+from connection_hub.domain import (
+    CreateLobby,
+    JoinLobby,
+    LeaveLobby,
+    CreateGame,
+)
 from connection_hub.application import (
     LobbyGateway,
     GameGateway,
@@ -19,6 +25,12 @@ from connection_hub.application import (
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
     CreateGameProcessor,
+)
+from .clients import (
+    httpx_client_factory,
+    CentrifugoConfig,
+    load_centrifugo_config,
+    HTTPXCentrifugoClient,
 )
 from .database import (
     RedisConfig,
@@ -45,7 +57,10 @@ from .message_broker import (
 )
 from .common_retort import common_retort_factory
 from .event_publisher import RealEventPublisher
-from .identity_provider import InternalHTTPAPIIdentityProvider
+from .identity_providers import (
+    CommonWebAPIIdentityProvider,
+    CentrifugoIdentityProvider,
+)
 
 
 type _Command = CreateLobbyCommand | JoinLobbyCommand
@@ -60,6 +75,7 @@ def ioc_container_factory(
     provider = Provider()
 
     context = {
+        CentrifugoConfig: load_centrifugo_config(),
         RedisConfig: redis_config_from_env(),
         LobbyMapperConfig: lobby_mapper_config_from_env(),
         GameMapperConfig: game_mapper_config_from_env(),
@@ -67,12 +83,14 @@ def ioc_container_factory(
         NATSConfig: nats_config_from_env(),
     }
 
+    provider.from_context(CentrifugoConfig, scope=Scope.APP)
     provider.from_context(RedisConfig, scope=Scope.APP)
     provider.from_context(LobbyMapperConfig, scope=Scope.APP)
     provider.from_context(GameMapperConfig, scope=Scope.APP)
     provider.from_context(LockManagerConfig, scope=Scope.APP)
     provider.from_context(NATSConfig, scope=Scope.APP)
 
+    provider.provide(httpx_client_factory, scope=Scope.APP)
     provider.provide(redis_factory, scope=Scope.APP)
     provider.provide(redis_pipeline_factory, scope=Scope.REQUEST)
     provider.provide(nats_client_factory, scope=Scope.APP)
@@ -90,6 +108,7 @@ def ioc_container_factory(
     )
 
     provider.provide(NATSEventPublisher, scope=Scope.REQUEST)
+    provider.provide(HTTPXCentrifugoClient, scope=Scope.REQUEST)
     provider.provide(
         RealEventPublisher,
         provides=EventPublisher,
@@ -97,17 +116,57 @@ def ioc_container_factory(
     )
 
     provider.provide(
-        InternalHTTPAPIIdentityProvider,
+        CommonWebAPIIdentityProvider,
         scope=Scope.REQUEST,
         provides=IdentityProvider,
     )
+    provider.provide(CentrifugoIdentityProvider, scope=Scope.REQUEST)
+
+    provider.provide(CreateLobby, scope=Scope.APP)
+    provider.provide(JoinLobby, scope=Scope.APP)
+    provider.provide(LeaveLobby, scope=Scope.APP)
+    provider.provide(CreateGame, scope=Scope.APP)
 
     for command_factory in command_factories:
         provider.provide(command_factory, scope=Scope.REQUEST)
 
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
-    provider.provide(LeaveLobbyProcessor, scope=Scope.REQUEST)
-    provider.provide(CreateGameProcessor, scope=Scope.REQUEST)
+    provider.provide(_leave_lobby_processor_factory, scope=Scope.REQUEST)
+    provider.provide(_create_game_processor_factory, scope=Scope.REQUEST)
 
     return make_async_container(provider, *extra_providers, context=context)
+
+
+def _leave_lobby_processor_factory(
+    leave_lobby: LeaveLobby,
+    lobby_gateway: LobbyGateway,
+    event_publisher: EventPublisher,
+    transaction_manager: TransactionManager,
+    identity_provider: CentrifugoIdentityProvider,
+) -> LeaveLobbyProcessor:
+    return LeaveLobbyProcessor(
+        leave_lobby=leave_lobby,
+        lobby_gateway=lobby_gateway,
+        event_publisher=event_publisher,
+        transaction_manager=transaction_manager,
+        identity_provider=identity_provider,
+    )
+
+
+def _create_game_processor_factory(
+    create_game: CreateGame,
+    lobby_gateway: LobbyGateway,
+    game_gateway: GameGateway,
+    event_publisher: EventPublisher,
+    transaction_manager: TransactionManager,
+    identity_provider: CentrifugoIdentityProvider,
+) -> CreateGameProcessor:
+    return CreateGameProcessor(
+        create_game=create_game,
+        lobby_gateway=lobby_gateway,
+        game_gateway=game_gateway,
+        event_publisher=event_publisher,
+        transaction_manager=transaction_manager,
+        identity_provider=identity_provider,
+    )

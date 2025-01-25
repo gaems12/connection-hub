@@ -7,7 +7,7 @@ __all__ = (
     "join_lobby_command_factory",
 )
 
-from .router import router
+from .routes import router
 from .commands import (
     create_lobby_command_factory,
     join_lobby_command_factory,

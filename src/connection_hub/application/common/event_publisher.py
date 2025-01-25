@@ -41,6 +41,7 @@ class UserLeftLobbyEvent:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class FourInARowGameCreatedEvent:
     game_id: GameId
+    lobby_id: LobbyId
     first_player_id: UserId
     second_player_id: UserId
     time_for_each_player: timedelta

@@ -11,16 +11,17 @@ from connection_hub.application import (
     JoinLobbyCommand,
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
+    CreateGameProcessor,
 )
 
 
-internal_router = APIRouter(
+router = APIRouter(
     prefix="/api/v1/internal",
     tags=["internal"],
 )
 
 
-@internal_router.post("/lobbies")
+@router.post("/lobbies")
 @inject
 async def create_lobby(
     *,
@@ -30,7 +31,7 @@ async def create_lobby(
     return await command_processor.process(command)
 
 
-@internal_router.post("/me/current-lobby")
+@router.post("/me/current-lobby")
 @inject
 async def join_lobby(
     *,
@@ -40,10 +41,19 @@ async def join_lobby(
     await command_processor.process(command)
 
 
-@internal_router.delete("/me/current-lobby")
+@router.delete("/me/current-lobby", tags=["centrifugo"])
 @inject
 async def leave_lobby(
     *,
     processor: FromDishka[LeaveLobbyProcessor],
+) -> None:
+    await processor.process()
+
+
+@router.post("/me/current-game", tags=["centrifugo"])
+@inject
+async def create_game(
+    *,
+    processor: FromDishka[CreateGameProcessor],
 ) -> None:
     await processor.process()

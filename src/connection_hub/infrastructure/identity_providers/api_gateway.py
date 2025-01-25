@@ -1,8 +1,6 @@
 # Copyright (c) 2024, Egor Romanov.
 # All rights reserved.
 
-__all__ = ("InternalHTTPAPIIdentityProvider",)
-
 from uuid import UUID
 
 from fastapi import Request
@@ -11,7 +9,12 @@ from connection_hub.domain import UserId
 from connection_hub.application import IdentityProvider
 
 
-class InternalHTTPAPIIdentityProvider(IdentityProvider):
+class CommonWebAPIIdentityProvider(IdentityProvider):
+    """
+    Identity provider for processing requests from
+    from any sources except centrifugo.
+    """
+
     __slots__ = ("_request",)
 
     def __init__(self, request: Request):
