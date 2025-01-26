@@ -70,12 +70,14 @@ class CreateGameProcessor:
         lobby_id: LobbyId,
         game: Game,
     ) -> None:
+        player_ids = list(game.players.keys())
+
         if isinstance(game, FourInARowGame):
             event = FourInARowGameCreatedEvent(
                 game_id=game.id,
                 lobby_id=lobby_id,
-                first_player_id=game.players[0],
-                second_player_id=game.players[1],
+                first_player_id=player_ids[0],
+                second_player_id=player_ids[1],
                 time_for_each_player=game.time_for_each_player,
                 created_at=game.created_at,
             )

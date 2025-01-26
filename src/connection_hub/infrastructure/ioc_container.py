@@ -12,11 +12,13 @@ from connection_hub.domain import (
     JoinLobby,
     LeaveLobby,
     CreateGame,
+    DisconnectFromGame,
 )
 from connection_hub.application import (
     LobbyGateway,
     GameGateway,
     EventPublisher,
+    TaskScheduler,
     TransactionManager,
     IdentityProvider,
     CreateLobbyCommand,
@@ -25,6 +27,7 @@ from connection_hub.application import (
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
     CreateGameProcessor,
+    DisconnectFromGameProcessor,
 )
 from .clients import (
     httpx_client_factory,
@@ -33,8 +36,6 @@ from .clients import (
     HTTPXCentrifugoClient,
 )
 from .database import (
-    RedisConfig,
-    redis_config_from_env,
     redis_factory,
     redis_pipeline_factory,
     LobbyMapperConfig,
@@ -55,6 +56,11 @@ from .message_broker import (
     nats_jetstream_factory,
     NATSEventPublisher,
 )
+from .scheduling import (
+    taskiq_redis_schedule_source_factory,
+    TaskiqTaskScheduler,
+)
+from .redis_config import RedisConfig, load_redis_config
 from .common_retort import common_retort_factory
 from .event_publisher import RealEventPublisher
 from .identity_providers import (
@@ -76,7 +82,7 @@ def ioc_container_factory(
 
     context = {
         CentrifugoConfig: load_centrifugo_config(),
-        RedisConfig: redis_config_from_env(),
+        RedisConfig: load_redis_config(),
         LobbyMapperConfig: lobby_mapper_config_from_env(),
         GameMapperConfig: game_mapper_config_from_env(),
         LockManagerConfig: lock_manager_config_from_env(),
@@ -95,6 +101,7 @@ def ioc_container_factory(
     provider.provide(redis_pipeline_factory, scope=Scope.REQUEST)
     provider.provide(nats_client_factory, scope=Scope.APP)
     provider.provide(nats_jetstream_factory, scope=Scope.APP)
+    provider.provide(taskiq_redis_schedule_source_factory, scope=Scope.APP)
 
     provider.provide(common_retort_factory, scope=Scope.APP)
 
@@ -116,6 +123,12 @@ def ioc_container_factory(
     )
 
     provider.provide(
+        TaskiqTaskScheduler,
+        scope=Scope.REQUEST,
+        provides=TaskScheduler,
+    )
+
+    provider.provide(
         CommonWebAPIIdentityProvider,
         scope=Scope.REQUEST,
         provides=IdentityProvider,
@@ -126,6 +139,7 @@ def ioc_container_factory(
     provider.provide(JoinLobby, scope=Scope.APP)
     provider.provide(LeaveLobby, scope=Scope.APP)
     provider.provide(CreateGame, scope=Scope.APP)
+    provider.provide(DisconnectFromGame, scope=Scope.APP)
 
     for command_factory in command_factories:
         provider.provide(command_factory, scope=Scope.REQUEST)
@@ -134,6 +148,10 @@ def ioc_container_factory(
     provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(_leave_lobby_processor_factory, scope=Scope.REQUEST)
     provider.provide(_create_game_processor_factory, scope=Scope.REQUEST)
+    provider.provide(
+        _disconnect_from_game_processor_factory,
+        scope=Scope.REQUEST,
+    )
 
     return make_async_container(provider, *extra_providers, context=context)
 
@@ -167,6 +185,22 @@ def _create_game_processor_factory(
         lobby_gateway=lobby_gateway,
         game_gateway=game_gateway,
         event_publisher=event_publisher,
+        transaction_manager=transaction_manager,
+        identity_provider=identity_provider,
+    )
+
+
+def _disconnect_from_game_processor_factory(
+    disconnect_from_game: DisconnectFromGame,
+    game_gateway: GameGateway,
+    task_scheduler: TaskScheduler,
+    transaction_manager: TransactionManager,
+    identity_provider: CentrifugoIdentityProvider,
+) -> DisconnectFromGameProcessor:
+    return DisconnectFromGameProcessor(
+        disconnect_from_game=disconnect_from_game,
+        game_gateway=game_gateway,
+        task_scheduler=task_scheduler,
         transaction_manager=transaction_manager,
         identity_provider=identity_provider,
     )

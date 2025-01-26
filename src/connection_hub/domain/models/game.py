@@ -5,12 +5,13 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 from connection_hub.domain.identitifiers import GameId, UserId
+from .player_state import PlayerState
 
 
 @dataclass(slots=True, kw_only=True)
 class BaseGame:
     id: GameId
-    players: list[UserId]
+    players: dict[UserId, PlayerState]
     created_at: datetime
 
 

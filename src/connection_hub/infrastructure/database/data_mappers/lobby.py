@@ -63,14 +63,13 @@ class LobbyMapper(LobbyGateway):
         *,
         acquire: bool = False,
     ) -> Lobby | None:
-        if acquire:
-            lock_id = self._lock_id_by_lobby_id_factory(id)
-            await self._lock_manager.acquire(lock_id)
-
         pattern = self._pattern_to_find_lobby_by_id(id)
         keys = await self._redis.keys(pattern)
         if not keys:
             return None
+
+        if acquire:
+            await self._lock_manager.acquire(keys[0])
 
         lobby_as_json = await self._redis.get(keys[0])  # type: ignore
         if lobby_as_json:
@@ -85,14 +84,13 @@ class LobbyMapper(LobbyGateway):
         *,
         acquire: bool = False,
     ) -> Lobby | None:
-        if acquire:
-            lock_id = self._lock_id_by_user_id_factory(user_id)
-            await self._lock_manager.acquire(lock_id)
-
         pattern = self._pattern_to_find_lobby_by_user_id(user_id)
         keys = await self._redis.keys(pattern)
         if not keys:
             return None
+
+        if acquire:
+            await self._lock_manager.acquire(keys[0])
 
         lobby_as_json = await self._redis.get(keys[0])  # type: ignore
         if lobby_as_json:
@@ -177,9 +175,3 @@ class LobbyMapper(LobbyGateway):
 
     def _pattern_to_find_lobby_by_user_id(self, user_id: UserId) -> str:
         return f"lobbies:id:*:user_ids:*{user_id.hex}*"
-
-    def _lock_id_by_lobby_id_factory(self, lobby_id: LobbyId) -> str:
-        return f"lobbies:id:{lobby_id.hex}"
-
-    def _lock_id_by_user_id_factory(self, user_id: UserId) -> str:
-        return f"lobbies:user_id:{user_id.hex}"

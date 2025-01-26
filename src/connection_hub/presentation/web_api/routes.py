@@ -12,6 +12,7 @@ from connection_hub.application import (
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
     CreateGameProcessor,
+    DisconnectFromGameProcessor,
 )
 
 
@@ -55,5 +56,14 @@ async def leave_lobby(
 async def create_game(
     *,
     processor: FromDishka[CreateGameProcessor],
+) -> None:
+    await processor.process()
+
+
+@router.delete("/me/current-game/connection", tags=["centrifugo"])
+@inject
+async def disconnect_from_game(
+    *,
+    processor: FromDishka[DisconnectFromGameProcessor],
 ) -> None:
     await processor.process()

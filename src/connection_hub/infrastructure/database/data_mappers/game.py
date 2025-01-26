@@ -11,6 +11,7 @@ from redis.asyncio.client import Redis, Pipeline
 
 from connection_hub.domain import GameId, UserId, FourInARowGame, Game
 from connection_hub.application import GameGateway
+from connection_hub.infrastructure.database.lock_manager import LockManager
 from connection_hub.infrastructure.common_retort import CommonRetort
 from connection_hub.infrastructure.utils import get_env_var, str_to_timedelta
 
@@ -38,6 +39,7 @@ class GameMapper(GameGateway):
         "_redis",
         "_redis_pipeline",
         "_common_retort",
+        "_lock_manager",
         "_config",
     )
 
@@ -46,18 +48,28 @@ class GameMapper(GameGateway):
         redis: Redis,
         redis_pipeline: Pipeline,
         common_retort: CommonRetort,
+        lock_manager: LockManager,
         config: GameMapperConfig,
     ):
         self._redis = redis
         self._redis_pipeline = redis_pipeline
         self._common_retort = common_retort
+        self._lock_manager = lock_manager
         self._config = config
 
-    async def by_player_id(self, player_id: UserId) -> Game | None:
+    async def by_player_id(
+        self,
+        player_id: UserId,
+        *,
+        acquire: bool = False,
+    ) -> Game | None:
         pattern = self._pattern_to_find_game_by_player_id(player_id)
         keys = await self._redis.keys(pattern)
         if not keys:
             return None
+
+        if acquire:
+            await self._lock_manager.acquire(keys[0])
 
         game_as_json = await self._redis.get(keys[0])  # type: ignore
         if game_as_json:
@@ -80,6 +92,17 @@ class GameMapper(GameGateway):
             value=game_as_json,
             ex=self._config.game_expires_in,
         )
+
+    async def update(self, game: Game) -> None:
+        game_key = self._game_key_factory(
+            game_id=game.id,
+            player_ids=game.players,
+        )
+
+        game_as_dict = self._game_to_dict(game)
+        game_as_json = json.dumps(game_as_dict)
+
+        self._redis_pipeline.set(game_key, game_as_json)
 
     def _dict_to_game(self, dict_: dict) -> Game:
         raw_game_type = dict_.get("type")
