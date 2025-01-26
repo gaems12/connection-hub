@@ -2,12 +2,12 @@
 # All rights reserved.
 
 __all__ = (
-    "router",
+    "setup_routes",
     "create_lobby_command_factory",
     "join_lobby_command_factory",
 )
 
-from .routes import router
+from .setup_routes_ import setup_routes
 from .commands import (
     create_lobby_command_factory,
     join_lobby_command_factory,
