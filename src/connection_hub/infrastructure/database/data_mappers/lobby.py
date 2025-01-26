@@ -143,8 +143,10 @@ class LobbyMapper(LobbyGateway):
     def _dict_to_lobby(self, dict_: dict) -> Lobby:
         raw_lobby_type = dict_.get("type")
         if not raw_lobby_type:
-            raise Exception("Cannot load lobby from None.")
-
+            raise Exception(
+                "LobbyMapper. Cannot convert dict to lobby: "
+                "dict has no 'type' key.",
+            )
         lobby_type = _LobbyType(raw_lobby_type)
 
         if lobby_type == _LobbyType.FOUR_IN_A_ROW:

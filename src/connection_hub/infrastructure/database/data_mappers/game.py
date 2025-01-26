@@ -107,7 +107,10 @@ class GameMapper(GameGateway):
     def _dict_to_game(self, dict_: dict) -> Game:
         raw_game_type = dict_.get("type")
         if not raw_game_type:
-            raise Exception("Cannot load game from None.")
+            raise Exception(
+                "GameMapper. Cannot convert dict to game: "
+                "dict has no 'type' key.",
+            )
 
         game_type = _GameType(raw_game_type)
 
