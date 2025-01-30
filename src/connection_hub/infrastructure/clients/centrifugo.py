@@ -87,7 +87,7 @@ class HTTPXCentrifugoClient:
         )
 
     def _lobby_channel_factory(self, lobby_id: LobbyId) -> str:
-        return f"lobby:{lobby_id.hex}"
+        return f"lobbies:{lobby_id.hex}"
 
     async def _publish(
         self,
