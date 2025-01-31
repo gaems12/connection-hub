@@ -16,7 +16,7 @@ from connection_hub.infrastructure.common_retort import CommonRetort
 from connection_hub.infrastructure.utils import get_env_var, str_to_timedelta
 
 
-def game_mapper_config_from_env() -> "GameMapperConfig":
+def load_game_mapper_config() -> "GameMapperConfig":
     return GameMapperConfig(
         game_expires_in=get_env_var(
             key="GAME_MAPPER_GAME_EXPIRES_IN",

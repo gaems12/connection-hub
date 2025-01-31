@@ -16,7 +16,7 @@ from connection_hub.infrastructure.common_retort import CommonRetort
 from connection_hub.infrastructure.utils import get_env_var, str_to_timedelta
 
 
-def lobby_mapper_config_from_env() -> "LobbyMapperConfig":
+def load_lobby_mapper_config() -> "LobbyMapperConfig":
     return LobbyMapperConfig(
         lobby_expires_in=get_env_var(
             key="LOBBY_MAPPER_LOBBY_EXPIRES_IN",

@@ -3,20 +3,20 @@
 
 __all__ = (
     "LobbyMapperConfig",
-    "lobby_mapper_config_from_env",
+    "load_lobby_mapper_config",
     "LobbyMapper",
     "GameMapperConfig",
-    "game_mapper_config_from_env",
+    "load_game_mapper_config",
     "GameMapper",
 )
 
 from .lobby import (
     LobbyMapperConfig,
-    lobby_mapper_config_from_env,
+    load_lobby_mapper_config,
     LobbyMapper,
 )
 from .game import (
     GameMapperConfig,
-    game_mapper_config_from_env,
+    load_game_mapper_config,
     GameMapper,
 )

@@ -13,6 +13,7 @@ from connection_hub.domain import (
     LeaveLobby,
     CreateGame,
     DisconnectFromGame,
+    TryToDisqualifyPlayer,
 )
 from connection_hub.application import (
     LobbyGateway,
@@ -40,10 +41,10 @@ from .database import (
     redis_factory,
     redis_pipeline_factory,
     LobbyMapperConfig,
-    lobby_mapper_config_from_env,
+    load_lobby_mapper_config,
     LobbyMapper,
     GameMapperConfig,
-    game_mapper_config_from_env,
+    load_game_mapper_config,
     GameMapper,
     LockManagerConfig,
     lock_manager_config_from_env,
@@ -81,8 +82,8 @@ def ioc_container_factory(
     context = {
         CentrifugoConfig: load_centrifugo_config(),
         RedisConfig: load_redis_config(),
-        LobbyMapperConfig: lobby_mapper_config_from_env(),
-        GameMapperConfig: game_mapper_config_from_env(),
+        LobbyMapperConfig: load_lobby_mapper_config(),
+        GameMapperConfig: load_game_mapper_config(),
         LockManagerConfig: lock_manager_config_from_env(),
         NATSConfig: load_nats_config(),
     }
@@ -137,6 +138,7 @@ def ioc_container_factory(
     provider.provide(LeaveLobby, scope=Scope.APP)
     provider.provide(CreateGame, scope=Scope.APP)
     provider.provide(DisconnectFromGame, scope=Scope.APP)
+    provider.provide(TryToDisqualifyPlayer, scope=Scope.APP)
 
     for command_factory in command_factories:
         provider.provide(command_factory, scope=Scope.REQUEST)
