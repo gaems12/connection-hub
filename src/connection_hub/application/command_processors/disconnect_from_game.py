@@ -5,7 +5,10 @@ from datetime import datetime, timezone
 
 from connection_hub.domain import DisconnectFromGame
 from connection_hub.application.common import (
+    GAME_TO_GAME_TYPE_MAP,
     GameGateway,
+    PlayerDisconnectedEvent,
+    EventPublisher,
     DisqualifyPlayerTask,
     TaskScheduler,
     TransactionManager,
@@ -19,6 +22,7 @@ class DisconnectFromGameProcessor:
         "_disconnect_from_game",
         "_game_gateway",
         "_task_scheduler",
+        "_event_publisher",
         "_transaction_manager",
         "_identity_provider",
     )
@@ -28,12 +32,14 @@ class DisconnectFromGameProcessor:
         disconnect_from_game: DisconnectFromGame,
         game_gateway: GameGateway,
         task_scheduler: TaskScheduler,
+        event_publisher: EventPublisher,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
     ):
         self._disconnect_from_game = disconnect_from_game
         self._game_gateway = game_gateway
         self._task_scheduler = task_scheduler
+        self._event_publisher = event_publisher
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
@@ -67,5 +73,12 @@ class DisconnectFromGameProcessor:
             player_state_id=current_player_state.id,
         )
         await self._task_scheduler.schedule(task)
+
+        event = PlayerDisconnectedEvent(
+            game_id=game.id,
+            game_type=GAME_TO_GAME_TYPE_MAP[type(game)],
+            player_id=current_user_id,
+        )
+        await self._event_publisher.publish(event)
 
         await self._transaction_manager.commit()

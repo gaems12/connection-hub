@@ -7,7 +7,8 @@ __all__ = (
     "UserJoinedLobbyEvent",
     "UserLeftLobbyEvent",
     "FourInARowGameCreatedEvent",
-    "PlayerWasDisqualifiedEvent",
+    "PlayerDisconnectedEvent",
+    "PlayerDisqualifiedEvent",
     "Event",
     "EventPublisher",
 )
@@ -56,7 +57,14 @@ class FourInARowGameCreatedEvent:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class PlayerWasDisqualifiedEvent:
+class PlayerDisconnectedEvent:
+    game_id: GameId
+    game_type: GameType
+    player_id: UserId
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class PlayerDisqualifiedEvent:
     game_id: GameId
     game_type: GameType
     player_id: UserId
@@ -67,7 +75,8 @@ type Event = (
     | UserJoinedLobbyEvent
     | UserLeftLobbyEvent
     | FourInARowGameCreatedEvent
-    | PlayerWasDisqualifiedEvent
+    | PlayerDisconnectedEvent
+    | PlayerDisqualifiedEvent
 )
 
 

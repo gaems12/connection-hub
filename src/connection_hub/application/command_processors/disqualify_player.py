@@ -2,29 +2,22 @@
 # All rights reserved.
 
 from dataclasses import dataclass
-from typing import Final
 
 from connection_hub.domain import (
     GameId,
     UserId,
     PlayerStateId,
     TryToDisqualifyPlayer,
-    FourInARowGame,
 )
 from connection_hub.application.common import (
+    GAME_TO_GAME_TYPE_MAP,
     GameGateway,
-    GameType,
-    PlayerWasDisqualifiedEvent,
+    PlayerDisqualifiedEvent,
     EventPublisher,
     TransactionManager,
     GameDoesNotExistError,
     UserNotInGameError,
 )
-
-
-_GAME_TO_GAME_TYPE_MAP: Final = {
-    FourInARowGame: GameType.FOUR_IN_A_ROW,
-}
 
 
 @dataclass(frozen=True, slots=True)
@@ -78,9 +71,9 @@ class DisqualifyPlayerProcessor:
         else:
             await self._game_gateway.update(game)
 
-        event = PlayerWasDisqualifiedEvent(
+        event = PlayerDisqualifiedEvent(
             game_id=command.game_id,
-            game_type=_GAME_TO_GAME_TYPE_MAP[type(game)],
+            game_type=GAME_TO_GAME_TYPE_MAP[type(game)],
             player_id=command.player_id,
         )
         await self._event_publisher.publish(event)
