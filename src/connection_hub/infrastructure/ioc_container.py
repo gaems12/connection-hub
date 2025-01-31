@@ -64,10 +64,7 @@ from .scheduling import (
 from .redis_config import RedisConfig, load_redis_config
 from .common_retort import common_retort_factory
 from .event_publisher import RealEventPublisher
-from .identity_providers import (
-    CommonWebAPIIdentityProvider,
-    CentrifugoIdentityProvider,
-)
+from .identity_provider import HTTPIdentityProvider
 
 
 type _Command = CreateLobbyCommand | JoinLobbyCommand
@@ -130,11 +127,10 @@ def ioc_container_factory(
     )
 
     provider.provide(
-        CommonWebAPIIdentityProvider,
+        HTTPIdentityProvider,
         scope=Scope.REQUEST,
         provides=IdentityProvider,
     )
-    provider.provide(CentrifugoIdentityProvider, scope=Scope.REQUEST)
 
     provider.provide(CreateLobby, scope=Scope.APP)
     provider.provide(JoinLobby, scope=Scope.APP)
@@ -147,62 +143,9 @@ def ioc_container_factory(
 
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
+    provider.provide(LeaveLobbyProcessor, scope=Scope.REQUEST)
+    provider.provide(CreateGameProcessor, scope=Scope.REQUEST)
+    provider.provide(DisconnectFromGameProcessor, scope=Scope.REQUEST)
     provider.provide(DisqualifyPlayerProcessor, scope=Scope.REQUEST)
-    provider.provide(_leave_lobby_processor_factory, scope=Scope.REQUEST)
-    provider.provide(_create_game_processor_factory, scope=Scope.REQUEST)
-    provider.provide(
-        _disconnect_from_game_processor_factory,
-        scope=Scope.REQUEST,
-    )
 
     return make_async_container(provider, *extra_providers, context=context)
-
-
-def _leave_lobby_processor_factory(
-    leave_lobby: LeaveLobby,
-    lobby_gateway: LobbyGateway,
-    event_publisher: EventPublisher,
-    transaction_manager: TransactionManager,
-    identity_provider: CentrifugoIdentityProvider,
-) -> LeaveLobbyProcessor:
-    return LeaveLobbyProcessor(
-        leave_lobby=leave_lobby,
-        lobby_gateway=lobby_gateway,
-        event_publisher=event_publisher,
-        transaction_manager=transaction_manager,
-        identity_provider=identity_provider,
-    )
-
-
-def _create_game_processor_factory(
-    create_game: CreateGame,
-    lobby_gateway: LobbyGateway,
-    game_gateway: GameGateway,
-    event_publisher: EventPublisher,
-    transaction_manager: TransactionManager,
-    identity_provider: CentrifugoIdentityProvider,
-) -> CreateGameProcessor:
-    return CreateGameProcessor(
-        create_game=create_game,
-        lobby_gateway=lobby_gateway,
-        game_gateway=game_gateway,
-        event_publisher=event_publisher,
-        transaction_manager=transaction_manager,
-        identity_provider=identity_provider,
-    )
-
-
-def _disconnect_from_game_processor_factory(
-    disconnect_from_game: DisconnectFromGame,
-    game_gateway: GameGateway,
-    task_scheduler: TaskScheduler,
-    transaction_manager: TransactionManager,
-    identity_provider: CentrifugoIdentityProvider,
-) -> DisconnectFromGameProcessor:
-    return DisconnectFromGameProcessor(
-        disconnect_from_game=disconnect_from_game,
-        game_gateway=game_gateway,
-        task_scheduler=task_scheduler,
-        transaction_manager=transaction_manager,
-        identity_provider=identity_provider,
-    )
