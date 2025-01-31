@@ -13,7 +13,7 @@ from connection_hub.domain.exceptions import (
 )
 
 
-_GAME_TO_MAX_PLAYERS_MAP: Final = {
+_LOBBY_TO_MAX_PLAYERS_MAP: Final = {
     FourInARowLobby: 2,
 }
 
@@ -31,7 +31,7 @@ class JoinLobby:
                 "JoinLobby. Cannot join lobby: user already in the lobby.",
             )
 
-        max_players = _GAME_TO_MAX_PLAYERS_MAP[type(lobby)]
+        max_players = _LOBBY_TO_MAX_PLAYERS_MAP[type(lobby)]
         if len(lobby.users) == max_players:
             raise UserLimitReachedError()
 

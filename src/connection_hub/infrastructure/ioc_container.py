@@ -28,6 +28,7 @@ from connection_hub.application import (
     LeaveLobbyProcessor,
     CreateGameProcessor,
     DisconnectFromGameProcessor,
+    DisqualifyPlayerProcessor,
 )
 from .clients import (
     httpx_client_factory,
@@ -146,6 +147,7 @@ def ioc_container_factory(
 
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
+    provider.provide(DisqualifyPlayerProcessor, scope=Scope.REQUEST)
     provider.provide(_leave_lobby_processor_factory, scope=Scope.REQUEST)
     provider.provide(_create_game_processor_factory, scope=Scope.REQUEST)
     provider.provide(

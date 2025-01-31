@@ -11,6 +11,7 @@ from connection_hub.application import (
     UserJoinedLobbyEvent,
     UserLeftLobbyEvent,
     FourInARowGameCreatedEvent,
+    PlayerWasDisqualifiedEvent,
     Event,
 )
 from connection_hub.infrastructure.common_retort import CommonRetort
@@ -23,6 +24,7 @@ _EVENT_TO_SUBJECT_MAP: Final = {
     UserJoinedLobbyEvent: "lobby.user_joined",
     UserLeftLobbyEvent: "lobby.user_left",
     FourInARowGameCreatedEvent: "game.created",
+    PlayerWasDisqualifiedEvent: "game.player_disqualified",
 }
 
 

@@ -8,6 +8,7 @@ __all__ = (
     "UserInGameError",
     "UserNotInGameError",
     "LobbyDoesNotExistError",
+    "GameDoesNotExistError",
 )
 
 
@@ -27,3 +28,6 @@ class UserNotInGameError(ApplicationError): ...
 
 
 class LobbyDoesNotExistError(ApplicationError): ...
+
+
+class GameDoesNotExistError(ApplicationError): ...

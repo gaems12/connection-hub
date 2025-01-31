@@ -2,10 +2,12 @@
 # All rights reserved.
 
 __all__ = (
+    "GameType",
     "LobbyCreatedEvent",
     "UserJoinedLobbyEvent",
     "UserLeftLobbyEvent",
     "FourInARowGameCreatedEvent",
+    "PlayerWasDisqualifiedEvent",
     "Event",
     "EventPublisher",
 )
@@ -13,8 +15,13 @@ __all__ = (
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Protocol
+from enum import StrEnum
 
 from connection_hub.domain import LobbyId, GameId, UserId, RuleSet
+
+
+class GameType(StrEnum):
+    FOUR_IN_A_ROW = "four_in_a_row"
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -48,11 +55,19 @@ class FourInARowGameCreatedEvent:
     created_at: datetime
 
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class PlayerWasDisqualifiedEvent:
+    game_id: GameId
+    game_type: GameType
+    player_id: UserId
+
+
 type Event = (
     LobbyCreatedEvent
     | UserJoinedLobbyEvent
     | UserLeftLobbyEvent
     | FourInARowGameCreatedEvent
+    | PlayerWasDisqualifiedEvent
 )
 
 

@@ -32,6 +32,7 @@ class TaskiqTaskScheduler(TaskScheduler):
             labels={},
             args=[],
             kwargs={
+                "game_id": task,
                 "player_id": task.player_id,
                 "player_state_id": task.player_state_id,
             },

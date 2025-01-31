@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Protocol
 from uuid import UUID
 
-from connection_hub.domain import PlayerStateId
+from connection_hub.domain import GameId, PlayerStateId
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -23,6 +23,7 @@ class BaseTask:
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class DisqualifyPlayerTask(BaseTask):
+    game_id: GameId
     player_id: UUID
     player_state_id: PlayerStateId
 

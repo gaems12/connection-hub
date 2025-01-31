@@ -57,6 +57,27 @@ class GameMapper(GameGateway):
         self._lock_manager = lock_manager
         self._config = config
 
+    async def by_id(
+        self,
+        game_id: GameId,
+        *,
+        acquire: bool = False,
+    ) -> Game | None:
+        pattern = self._pattern_to_find_game_by_id(game_id)
+        keys = await self._redis.keys(pattern)
+        if not keys:
+            return None
+
+        if acquire:
+            await self._lock_manager.acquire(keys[0])
+
+        game_as_json = await self._redis.get(keys[0])  # type: ignore
+        if game_as_json:
+            game_as_dict = json.loads(game_as_json)
+            return self._dict_to_game(game_as_dict)
+
+        return None
+
     async def by_player_id(
         self,
         player_id: UserId,
@@ -104,6 +125,13 @@ class GameMapper(GameGateway):
 
         self._redis_pipeline.set(game_key, game_as_json)
 
+    async def delete(self, game: Game) -> None:
+        game_key = self._game_key_factory(
+            game_id=game.id,
+            player_ids=game.players,
+        )
+        self._redis_pipeline.delete(game_key)
+
     def _dict_to_game(self, dict_: dict) -> Game:
         raw_game_type = dict_.get("type")
         if not raw_game_type:
@@ -136,6 +164,9 @@ class GameMapper(GameGateway):
             f"games:id:{game_id.hex}:player_ids:"
             f"{":".join(map(lambda player_id: player_id.hex, sorted_player_ids))}"
         )
+
+    def _pattern_to_find_game_by_id(self, game_id: GameId) -> str:
+        return f"games:id:{game_id.hex}:players_ids:*"
 
     def _pattern_to_find_game_by_player_id(self, player_id: UserId) -> str:
         return f"games:id:*:player_ids:*{player_id.hex}*"

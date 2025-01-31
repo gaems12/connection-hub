@@ -62,6 +62,7 @@ class DisconnectFromGameProcessor:
         task = DisqualifyPlayerTask(
             id=current_player_state.id,
             execute_at=execute_task_at,
+            game_id=game.id,
             player_id=current_user_id,
             player_state_id=current_player_state.id,
         )
