@@ -7,6 +7,9 @@ from typing import Annotated
 
 from cyclopts import App, Parameter
 from gunicorn.app.wsgiapp import run as run_gunicorn
+from taskiq.cli.scheduler.run import run_scheduler_loop
+
+from .task_executor import create_task_executor_app
 
 
 def main() -> None:
@@ -47,3 +50,9 @@ def run_web_api(
         "connection_hub.main.web_api:create_web_api_app()",
     ]
     run_gunicorn()
+
+
+async def run_task_executor():
+    """Run task executor."""
+    task_executor = create_task_executor_app()
+    await run_scheduler_loop(task_executor)

@@ -52,7 +52,7 @@ from .database import (
 )
 from .message_broker import (
     NATSConfig,
-    nats_config_from_env,
+    load_nats_config,
     nats_client_factory,
     nats_jetstream_factory,
     NATSEventPublisher,
@@ -84,7 +84,7 @@ def ioc_container_factory(
         LobbyMapperConfig: lobby_mapper_config_from_env(),
         GameMapperConfig: game_mapper_config_from_env(),
         LockManagerConfig: lock_manager_config_from_env(),
-        NATSConfig: nats_config_from_env(),
+        NATSConfig: load_nats_config(),
     }
 
     provider.from_context(CentrifugoConfig, scope=Scope.APP)
