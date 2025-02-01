@@ -30,6 +30,8 @@ from connection_hub.application import (
     CreateGameProcessor,
     DisconnectFromGameProcessor,
     DisqualifyPlayerProcessor,
+    EndGameCommand,
+    EndGameProcessor,
 )
 from .clients import (
     httpx_client_factory,
@@ -68,7 +70,7 @@ from .event_publisher import RealEventPublisher
 from .identity_provider import HTTPIdentityProvider
 
 
-type _Command = CreateLobbyCommand | JoinLobbyCommand
+type _Command = CreateLobbyCommand | JoinLobbyCommand | EndGameCommand
 
 type _CommandFactory = Callable[..., Coroutine[Any, Any, _Command]]
 
@@ -149,5 +151,6 @@ def ioc_container_factory(
     provider.provide(CreateGameProcessor, scope=Scope.REQUEST)
     provider.provide(DisconnectFromGameProcessor, scope=Scope.REQUEST)
     provider.provide(DisqualifyPlayerProcessor, scope=Scope.REQUEST)
+    provider.provide(EndGameProcessor, scope=Scope.REQUEST)
 
     return make_async_container(provider, *extra_providers, context=context)

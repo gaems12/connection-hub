@@ -9,7 +9,7 @@ __all__ = (
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Protocol
+from typing import Iterable, Protocol
 from uuid import UUID
 
 from connection_hub.domain import GameId, PlayerStateId
@@ -33,4 +33,7 @@ type Task = DisqualifyPlayerTask
 
 class TaskScheduler(Protocol):
     async def schedule(self, task: Task) -> None:
+        raise NotImplementedError
+
+    async def unschedule_many(self, task_ids: Iterable[UUID]) -> None:
         raise NotImplementedError

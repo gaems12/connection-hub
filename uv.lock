@@ -90,6 +90,7 @@ dependencies = [
     { name = "cyclopts" },
     { name = "dishka" },
     { name = "fastapi", extra = ["standard"] },
+    { name = "faststream", extra = ["nats"] },
     { name = "gunicorn" },
     { name = "httpx" },
     { name = "nats-py" },
@@ -116,6 +117,7 @@ requires-dist = [
     { name = "cyclopts", specifier = "==3.0.*" },
     { name = "dishka", specifier = "==1.4.*" },
     { name = "fastapi", extras = ["standard"], specifier = "==0.115.*" },
+    { name = "faststream", extras = ["nats"], specifier = "==0.5.*" },
     { name = "gunicorn", specifier = "==23.0.*" },
     { name = "httpx", specifier = "==0.28.*" },
     { name = "mypy", marker = "extra == 'dev'", specifier = "==1.14.*" },
@@ -206,6 +208,19 @@ wheels = [
 ]
 
 [[package]]
+name = "fast-depends"
+version = "2.4.12"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/85/f5/8b42b7588a67ad78991e5e7ca0e0c6a1ded535a69a725e4e48d3346a20c1/fast_depends-2.4.12.tar.gz", hash = "sha256:9393e6de827f7afa0141e54fa9553b737396aaf06bd0040e159d1f790487b16d", size = 16682 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1d/08/4adb160d8394053289fdf3b276e93b53271fd463e54fff8911b23c1db4ed/fast_depends-2.4.12-py3-none-any.whl", hash = "sha256:9e5d110ddc962329e46c9b35e5fe65655984247a13ee3ca5a33186db7d2d75c2", size = 17651 },
+]
+
+[[package]]
 name = "fastapi"
 version = "0.115.6"
 source = { registry = "https://pypi.org/simple" }
@@ -246,6 +261,25 @@ wheels = [
 [package.optional-dependencies]
 standard = [
     { name = "uvicorn", extra = ["standard"] },
+]
+
+[[package]]
+name = "faststream"
+version = "0.5.34"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "fast-depends" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8a/e8/cbfb97a85245c849e77ef628b5fd279b55ad6d94cdab4b2f5cb1d5934123/faststream-0.5.34.tar.gz", hash = "sha256:84615968c5768ebaa89b72ae66b53e5302c08e7d18b341ef5193e54cb6ba8623", size = 287921 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b5/36/d20d3e45e95f9cf8d2684cf1cc201e1738e8d4f4ad61a1debeec7ecc646d/faststream-0.5.34-py3-none-any.whl", hash = "sha256:aa7f61d6968a68f13ebf755cce9e8bf11b00717c28b2ef66e896b5d652a6c6a2", size = 386689 },
+]
+
+[package.optional-dependencies]
+nats = [
+    { name = "nats-py" },
 ]
 
 [[package]]

@@ -11,6 +11,8 @@ __all__ = (
     "DisconnectFromGameProcessor",
     "DisqualifyPlayerCommand",
     "DisqualifyPlayerProcessor",
+    "EndGameCommand",
+    "EndGameProcessor",
 )
 
 from .create_lobby import CreateLobbyCommand, CreateLobbyProcessor
@@ -22,3 +24,4 @@ from .disqualify_player import (
     DisqualifyPlayerCommand,
     DisqualifyPlayerProcessor,
 )
+from .end_game import EndGameCommand, EndGameProcessor
