@@ -115,6 +115,8 @@ class GameMapper(GameGateway):
         )
 
     async def update(self, game: Game) -> None:
+        await self.delete(game)
+
         game_key = self._game_key_factory(
             game_id=game.id,
             player_ids=game.players,
@@ -126,11 +128,9 @@ class GameMapper(GameGateway):
         self._redis_pipeline.set(game_key, game_as_json)
 
     async def delete(self, game: Game) -> None:
-        game_key = self._game_key_factory(
-            game_id=game.id,
-            player_ids=game.players,
-        )
-        self._redis_pipeline.delete(game_key)
+        pattern = self._pattern_to_find_game_by_id(game.id)
+        keys = await self._redis.keys(pattern)
+        self._redis_pipeline.delete(*keys)
 
     def _dict_to_game(self, dict_: dict) -> Game:
         raw_game_type = dict_.get("type")
@@ -166,7 +166,7 @@ class GameMapper(GameGateway):
         )
 
     def _pattern_to_find_game_by_id(self, game_id: GameId) -> str:
-        return f"games:id:{game_id.hex}:players_ids:*"
+        return f"games:id:{game_id.hex}:player_ids:*"
 
     def _pattern_to_find_game_by_player_id(self, player_id: UserId) -> str:
         return f"games:id:*:player_ids:*{player_id.hex}*"
