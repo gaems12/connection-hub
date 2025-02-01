@@ -24,6 +24,8 @@ from connection_hub.infrastructure import (
 )
 
 
+_LOBBY_ID: Final = LobbyId(uuid7())
+
 _FIRST_USER_ID: Final = UserId(uuid7())
 _SECOND_USER_ID: Final = UserId(uuid7())
 
@@ -53,11 +55,11 @@ async def test_lobby_mapper(
         lock_manager=lock_manager,
     )
 
-    lobby = await lobby_mapper.by_id(LobbyId(uuid7()))
+    lobby = await lobby_mapper.by_id(_LOBBY_ID)
     assert lobby is None
 
     new_lobby = FourInARowLobby(
-        id=LobbyId(uuid7()),
+        id=_LOBBY_ID,
         name="fake_lobby",
         users={
             _FIRST_USER_ID: UserRole.ADMIN,
@@ -98,7 +100,7 @@ async def test_lobby_mapper(
     await transaction_manager.commit()
 
     lobby_from_database = await lobby_mapper.by_id(
-        id=updated_lobby.id,
+        id=_LOBBY_ID,
         acquire=True,
     )
     assert lobby_from_database is None
