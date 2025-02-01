@@ -134,11 +134,9 @@ class LobbyMapper(LobbyGateway):
         self._redis_pipeline.set(lobby_key, lobby_as_json)
 
     async def delete(self, lobby: Lobby) -> None:
-        lobby_key = self._lobby_key_factory(
-            lobby_id=lobby.id,
-            user_ids=lobby.users.keys(),
-        )
-        self._redis_pipeline.delete(lobby_key)
+        pattern = self._pattern_to_find_lobby_by_id(lobby.id)
+        keys = await self._redis.keys(pattern)
+        self._redis_pipeline.delete(*keys)
 
     def _dict_to_lobby(self, dict_: dict) -> Lobby:
         raw_lobby_type = dict_.get("type")
