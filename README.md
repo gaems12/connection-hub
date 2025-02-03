@@ -93,6 +93,9 @@ Ensure the following services are installed and running:
 
 Configure the following environment variables before running the application:
 
+
+<div align="center">
+
 | Variable                         | Required            | Description                              |
 |----------------------------------|---------------------|------------------------------------------|
 | `REDIS_URL`                      | Yes                 | URL for the Redis instance.              |
@@ -103,6 +106,8 @@ Configure the following environment variables before running the application:
 | `GAME_MAPPER_GAME_EXPIRES_IN`    | Yes                 | Game expiration time in seconds.         |
 | `LOCK_EXPIRES_IN`                | Yes                 | Lock expiration time in seconds.         |
 | `TEST_REDIS_URL`                 | Yes(for tests)      | URL for the test Redis instance.         |
+
+</div>
 
 ---
 
