@@ -6,10 +6,19 @@ from dataclasses import dataclass
 
 from httpx import AsyncClient
 
-from connection_hub.domain import LobbyId
+from connection_hub.domain import (
+    LobbyId,
+    GameId,
+    UserId,
+    FourInARowRuleSet,
+)
 from connection_hub.application import (
+    LobbyCreatedEvent,
     UserJoinedLobbyEvent,
     UserLeftLobbyEvent,
+    FourInARowGameCreatedEvent,
+    PlayerDisconnectedEvent,
+    PlayerDisqualifiedEvent,
     Event,
 )
 from connection_hub.infrastructure.utils import get_env_var
@@ -51,11 +60,48 @@ class HTTPXCentrifugoClient:
         self._config = config
 
     async def publish_event(self, event: Event) -> None:
-        if isinstance(event, UserJoinedLobbyEvent):
+        if isinstance(event, LobbyCreatedEvent):
+            await self._publish_lobby_created(event)
+
+        elif isinstance(event, UserJoinedLobbyEvent):
             await self._publish_user_joined_lobby(event)
 
         elif isinstance(event, UserLeftLobbyEvent):
             await self._publish_user_left_lobby(event)
+
+        elif isinstance(event, FourInARowGameCreatedEvent):
+            await self._publish_four_in_a_row_game_created(event)
+
+        elif isinstance(event, PlayerDisconnectedEvent):
+            await self._publish_player_disconnected(event)
+
+        elif isinstance(event, PlayerDisqualifiedEvent):
+            await self._publish_player_disqualified(event)
+
+    async def _publish_lobby_created(
+        self,
+        event: LobbyCreatedEvent,
+    ) -> None:
+        rule_set = event.rule_set
+
+        if isinstance(rule_set, FourInARowRuleSet):
+            rule_set_as_dict = {
+                "type": "four_in_a_row",
+                "time_for_each_player": (
+                    rule_set.time_for_each_player.total_seconds()
+                ),
+            }
+
+        event_as_dict = {
+            "type": "lobby_created",
+            "lobby_id": event.lobby_id.hex,
+            "name": event.name,
+            "rule_set": rule_set_as_dict,
+        }
+        await self._publish(
+            channel=self._user_channel_factory(event.admin_id),
+            data=event_as_dict,  # type: ignore
+        )
 
     async def _publish_user_joined_lobby(
         self,
@@ -86,8 +132,58 @@ class HTTPXCentrifugoClient:
             data=event_as_dict,  # type: ignore
         )
 
+    async def _publish_four_in_a_row_game_created(
+        self,
+        event: FourInARowGameCreatedEvent,
+    ) -> None:
+        event_as_dict = {
+            "type": "four_in_a_row_game_created",
+            "game_id": event.game_id.hex,
+            "lobby_id": event.lobby_id.hex,
+            "first_player_id": event.first_player_id.hex,
+            "second_player_id": event.second_player_id.hex,
+            "time_for_each_player": event.time_for_each_player.total_seconds(),
+            "created_at": event.created_at.isoformat(),
+        }
+        await self._publish(
+            channel=self._lobby_channel_factory(event.lobby_id),
+            data=event_as_dict,  # type: ignore
+        )
+
+    async def _publish_player_disconnected(
+        self,
+        event: PlayerDisconnectedEvent,
+    ) -> None:
+        event_as_dict = {
+            "type": "player_disconnected",
+            "player_id": event.player_id.hex,
+        }
+        await self._publish(
+            channel=self._game_channel_factory(event.game_id),
+            data=event_as_dict,  # type: ignore
+        )
+
+    async def _publish_player_disqualified(
+        self,
+        event: PlayerDisqualifiedEvent,
+    ) -> None:
+        event_as_dict = {
+            "type": "player_disqualified",
+            "player_id": event.player_id.hex,
+        }
+        await self._publish(
+            channel=self._game_channel_factory(event.game_id),
+            data=event_as_dict,  # type: ignore
+        )
+
+    def _user_channel_factory(self, user_id: UserId) -> str:
+        return f"users:{user_id.hex}"
+
     def _lobby_channel_factory(self, lobby_id: LobbyId) -> str:
         return f"lobbies:{lobby_id.hex}"
+
+    def _game_channel_factory(self, game_id: GameId) -> str:
+        return f"games:{game_id.hex}"
 
     async def _publish(
         self,
