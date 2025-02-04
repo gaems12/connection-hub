@@ -1,26 +1,26 @@
 # Copyright (c) 2024, Egor Romanov.
 # All rights reserved.
 
-__all__ = ("HTTPIdentityProvider",)
+__all__ = ("NATSIdentityProvider",)
 
 from uuid import UUID
 
-from fastapi import Request
+from faststream.broker.message import StreamMessage
 
 from connection_hub.domain import UserId
 from connection_hub.application import IdentityProvider
 
 
-class HTTPIdentityProvider(IdentityProvider):
-    __slots__ = ("_request",)
+class NATSIdentityProvider(IdentityProvider):
+    __slots__ = ("_message",)
 
-    def __init__(self, request: Request):
-        self._request = request
+    def __init__(self, message: StreamMessage):
+        self._message = message
 
     async def user_id(self) -> UserId:
-        request_json = await self._request.json()
-        if not request_json or not isinstance(request_json, dict):
-            raise Exception("HTTP request's JSON cannot be converted to dict.")
+        decoded_message = await self._message.decode()
+        if not decoded_message or not isinstance(decoded_message, dict):
+            raise Exception("StreamMessage cannot be converter to dict.")
 
-        user_id = request_json.get("user")
+        user_id = decoded_message.get("user_id")
         return UserId(UUID(user_id))

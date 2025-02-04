@@ -67,7 +67,7 @@ from .scheduling import (
 from .redis_config import RedisConfig, load_redis_config
 from .common_retort import common_retort_factory
 from .event_publisher import RealEventPublisher
-from .identity_provider import HTTPIdentityProvider
+from .identity_provider import NATSIdentityProvider
 
 
 type _Command = CreateLobbyCommand | JoinLobbyCommand | EndGameCommand
@@ -130,7 +130,7 @@ def ioc_container_factory(
     )
 
     provider.provide(
-        HTTPIdentityProvider,
+        NATSIdentityProvider,
         scope=Scope.REQUEST,
         provides=IdentityProvider,
     )

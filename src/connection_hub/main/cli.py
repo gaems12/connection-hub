@@ -7,7 +7,6 @@ from typing import Annotated
 
 from cyclopts import App, Parameter
 from faststream.cli.main import cli as run_faststream
-from gunicorn.app.wsgiapp import run as run_gunicorn
 from taskiq.cli.scheduler.run import run_scheduler_loop
 
 from .task_executor import create_task_executor_app
@@ -24,35 +23,10 @@ def create_cli_app() -> App:
         version=version("connection_hub"),
         help_format="rich",
     )
-    app.command(run_web_api)
     app.command(run_message_consumer)
     app.command(run_task_executor)
 
     return app
-
-
-def run_web_api(
-    address: Annotated[
-        str,
-        Parameter("--address", show_default=True),
-    ] = "0.0.0.0:8000",
-    workers: Annotated[
-        str,
-        Parameter("--workers", show_default=True),
-    ] = "1",
-) -> None:
-    """Run web api."""
-    sys.argv = [
-        "gunicorn",
-        "--bind",
-        address,
-        "--workers",
-        workers,
-        "--worker-class",
-        "uvicorn.workers.UvicornWorker",
-        "connection_hub.main.web_api:create_web_api_app()",
-    ]
-    run_gunicorn()
 
 
 def run_message_consumer(

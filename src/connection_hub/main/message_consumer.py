@@ -12,6 +12,8 @@ from connection_hub.infrastructure import (
 )
 from connection_hub.presentation.message_consumer import (
     create_broker,
+    create_lobby_command_factory,
+    join_lobby_command_factory,
     end_game_command_factory,
 )
 
@@ -26,7 +28,11 @@ def create_message_consumer_app() -> FastStream:
         version=version("four_in_a_row"),
     )
     ioc_container = ioc_container_factory(
-        [end_game_command_factory],
+        [
+            create_lobby_command_factory,
+            join_lobby_command_factory,
+            end_game_command_factory,
+        ],
         FastStreamProvider(),
     )
     setup_dishka(ioc_container, app)
