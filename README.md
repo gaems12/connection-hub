@@ -18,7 +18,6 @@
   - [Using Docker](#using-docker)
 - [⚙️ Environment Variables](#%EF%B8%8F-environment-variables)
 - [🛠️ Commands](#%EF%B8%8F-commands)
-  - [Start Web API](#start-web-api)
   - [Run Message Consumer](#run-message-consumer)
   - [Run Task Executor](#run-task-executor)
 
@@ -112,13 +111,6 @@ Configure the following environment variables before running the application:
 ---
 
 ## 🛠️ Commands
-
-### Start Web API
-
-Run the web API to handle HTTP requests from Centrifugo:
-```bash
-connection-hub run-web-api
-```
 
 ### Run Message Consumer
 

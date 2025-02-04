@@ -1,0 +1,14 @@
+[Unit]
+Description=Connection Hub Message Consumer
+After=network.target
+
+[Service]
+User=connection-hub
+Group=connection-hub
+Type=simple
+WorkingDirectory=/opt/connection-hub
+ExecStart=/opt/lobby/venv/bin/connection-hub run-message-consumer
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
