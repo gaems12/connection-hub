@@ -8,6 +8,7 @@ __all__ = (
     "IncorrectPasswordError",
     "UserIsNotAdminError",
     "PlayerIsDisconnectedError",
+    "PlayerIsConnectedError",
 )
 
 
@@ -27,3 +28,6 @@ class UserIsNotAdminError(DomainError): ...
 
 
 class PlayerIsDisconnectedError(DomainError): ...
+
+
+class PlayerIsConnectedError(DomainError): ...

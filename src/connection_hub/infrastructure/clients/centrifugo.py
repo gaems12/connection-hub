@@ -18,6 +18,7 @@ from connection_hub.application import (
     UserLeftLobbyEvent,
     FourInARowGameCreatedEvent,
     PlayerDisconnectedEvent,
+    PlayerReconnectedEvent,
     PlayerDisqualifiedEvent,
     Event,
 )
@@ -74,6 +75,9 @@ class HTTPXCentrifugoClient:
 
         elif isinstance(event, PlayerDisconnectedEvent):
             await self._publish_player_disconnected(event)
+
+        elif isinstance(event, PlayerReconnectedEvent):
+            await self._publish_player_reconnected(event)
 
         elif isinstance(event, PlayerDisqualifiedEvent):
             await self._publish_player_disqualified(event)
@@ -156,6 +160,19 @@ class HTTPXCentrifugoClient:
     ) -> None:
         event_as_dict = {
             "type": "player_disconnected",
+            "player_id": event.player_id.hex,
+        }
+        await self._publish(
+            channel=self._game_channel_factory(event.game_id),
+            data=event_as_dict,  # type: ignore
+        )
+
+    async def _publish_player_reconnected(
+        self,
+        event: PlayerReconnectedEvent,
+    ) -> None:
+        event_as_dict = {
+            "type": "player_reconnected",
             "player_id": event.player_id.hex,
         }
         await self._publish(

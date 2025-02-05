@@ -2,6 +2,7 @@
 # All rights reserved.
 
 from uuid import UUID
+from typing import Iterable
 
 from taskiq import ScheduledTask
 from taskiq_redis import RedisScheduleSource
@@ -23,6 +24,13 @@ class TaskiqTaskScheduler(TaskScheduler):
         if isinstance(task, DisqualifyPlayerTask):
             await self._schedule_disqualify_player(task)
 
+    async def unschedule(self, task_id: UUID) -> None:
+        await self._schedule_source.delete_schedule(task_id.hex)
+
+    async def unschedule_many(self, task_ids: Iterable[UUID]) -> None:
+        for task_id in task_ids:
+            await self.unschedule(task_id)
+
     async def _schedule_disqualify_player(
         self,
         task: DisqualifyPlayerTask,
@@ -40,6 +48,3 @@ class TaskiqTaskScheduler(TaskScheduler):
             time=task.execute_at,
         )
         await self._schedule_source.add_schedule(schedule)
-
-    async def unschedule(self, task_id: UUID) -> None:
-        await self._schedule_source.delete_schedule(task_id.hex)

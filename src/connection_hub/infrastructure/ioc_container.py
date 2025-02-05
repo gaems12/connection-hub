@@ -29,6 +29,7 @@ from connection_hub.application import (
     LeaveLobbyProcessor,
     CreateGameProcessor,
     DisconnectFromGameProcessor,
+    ReconnectToGameProcessor,
     DisqualifyPlayerProcessor,
     EndGameCommand,
     EndGameProcessor,
@@ -150,6 +151,7 @@ def ioc_container_factory(
     provider.provide(LeaveLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(CreateGameProcessor, scope=Scope.REQUEST)
     provider.provide(DisconnectFromGameProcessor, scope=Scope.REQUEST)
+    provider.provide(ReconnectToGameProcessor, scope=Scope.REQUEST)
     provider.provide(DisqualifyPlayerProcessor, scope=Scope.REQUEST)
     provider.provide(EndGameProcessor, scope=Scope.REQUEST)
 

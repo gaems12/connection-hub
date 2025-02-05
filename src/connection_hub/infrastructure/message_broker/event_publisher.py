@@ -12,6 +12,7 @@ from connection_hub.application import (
     UserLeftLobbyEvent,
     FourInARowGameCreatedEvent,
     PlayerDisconnectedEvent,
+    PlayerReconnectedEvent,
     PlayerDisqualifiedEvent,
     Event,
 )
@@ -26,6 +27,7 @@ _EVENT_TO_SUBJECT_MAP: Final = {
     UserLeftLobbyEvent: "lobby.user_left",
     FourInARowGameCreatedEvent: "game.created",
     PlayerDisconnectedEvent: "game.player_disconnected",
+    PlayerReconnectedEvent: "game.player_reconnected",
     PlayerDisqualifiedEvent: "game.player_disqualified",
 }
 

@@ -16,6 +16,7 @@ from connection_hub.application import (
     EndGameCommand,
     EndGameProcessor,
     DisconnectFromGameProcessor,
+    ReconnectToGameProcessor,
 )
 
 
@@ -101,13 +102,27 @@ async def end_game(
 
 @router.subscriber(
     subject="game.player_disconnected",
-    queue="connection_hub.game.game_disconnected",
-    durable="connection_hub.game.game_disconnected",
+    queue="connection_hub.game.player_disconnected",
+    durable="connection_hub.game.player_disconnected",
     stream=_API_GATEWAY_STREAM,
 )
 @inject
 async def disconnect_from_game(
     *,
     processor: FromDishka[DisconnectFromGameProcessor],
+) -> None:
+    await processor.process()
+
+
+@router.subscriber(
+    subject="game.player_reconnected",
+    queue="connection_hub.game.player_reconnected",
+    durable="connection_hub.game.player_reconnected",
+    stream=_API_GATEWAY_STREAM,
+)
+@inject
+async def reconnect_to_game(
+    *,
+    processor: FromDishka[ReconnectToGameProcessor],
 ) -> None:
     await processor.process()
