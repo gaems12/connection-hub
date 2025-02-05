@@ -1,0 +1,14 @@
+[Unit]
+Description=Connection Hub Task Executor
+After=network.target
+
+[Service]
+User=connection-hub
+Group=connection-hub
+Type=simple
+WorkingDirectory=/opt/connection-hub
+ExecStart=/opt/lobby/venv/bin/connection-hub run-task-executor
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
