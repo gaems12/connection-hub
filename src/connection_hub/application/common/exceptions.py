@@ -3,6 +3,9 @@
 
 __all__ = (
     "ApplicationError",
+    "InvalidLobbyNameError",
+    "InvalidLobbyRuleSetError",
+    "InvalidLobbyPasswordError",
     "UserInLobbyError",
     "UserNotInLobbyError",
     "UserInGameError",
@@ -13,6 +16,15 @@ __all__ = (
 
 
 class ApplicationError(Exception): ...
+
+
+class InvalidLobbyNameError(ApplicationError): ...
+
+
+class InvalidLobbyRuleSetError(ApplicationError): ...
+
+
+class InvalidLobbyPasswordError(ApplicationError): ...
 
 
 class UserInLobbyError(ApplicationError): ...

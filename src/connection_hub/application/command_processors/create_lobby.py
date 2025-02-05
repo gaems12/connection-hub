@@ -2,6 +2,8 @@
 # All rights reserved.
 
 from dataclasses import dataclass
+from datetime import timedelta
+from typing import Final
 
 from connection_hub.domain import LobbyId, RuleSet, CreateLobby
 from connection_hub.application.common import (
@@ -11,9 +13,22 @@ from connection_hub.application.common import (
     EventPublisher,
     TransactionManager,
     IdentityProvider,
+    InvalidLobbyNameError,
+    InvalidLobbyRuleSetError,
+    InvalidLobbyPasswordError,
     UserInLobbyError,
     UserInGameError,
 )
+
+
+_MIN_NAME_LENGTH: Final = 3
+_MAX_NAME_LENGTH: Final = 128
+
+_MIN_FOUR_IN_A_ROW_TIME_FOR_EACH_PLAYER: Final = timedelta(seconds=30)
+_MAX_FOUR_IN_A_ROW_TIME_FOR_EACH_PLAYER: Final = timedelta(minutes=3)
+
+_MIN_PASSWORD_LENGTH: Final = 3
+_MAX_PASSWORD_LENGTH: Final = 64
 
 
 @dataclass(slots=True, kw_only=True)
@@ -64,6 +79,12 @@ class CreateLobbyProcessor:
         if game:
             raise UserInGameError()
 
+        self._validate_name(command.name)
+        self._validate_rule_set(command.rule_set)
+
+        if command.password:
+            self._valudate_password(command.password)
+
         new_lobby = self._create_lobby(
             name=command.name,
             current_user_id=current_user_id,
@@ -83,3 +104,19 @@ class CreateLobbyProcessor:
         await self._transaction_manager.commit()
 
         return new_lobby.id
+
+    def _validate_name(self, name: str) -> None:
+        if not (_MIN_NAME_LENGTH <= len(name) <= _MAX_NAME_LENGTH):
+            raise InvalidLobbyNameError()
+
+    def _validate_rule_set(self, rule_set: RuleSet) -> None:
+        if not (
+            _MIN_FOUR_IN_A_ROW_TIME_FOR_EACH_PLAYER
+            <= rule_set.time_for_each_player
+            <= _MAX_FOUR_IN_A_ROW_TIME_FOR_EACH_PLAYER
+        ):
+            raise InvalidLobbyRuleSetError()
+
+    def _valudate_password(self, password: str) -> None:
+        if not (_MIN_PASSWORD_LENGTH <= len(password) <= _MAX_PASSWORD_LENGTH):
+            raise InvalidLobbyPasswordError()
