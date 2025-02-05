@@ -22,7 +22,7 @@ class TryToDisqualifyPlayer:
     ) -> tuple[bool, bool]:
         """
         Disqualifies a player if their current state matches the
-        expected one. Returns a flag indicating whether the
+        expected one. Returns flags indicating whether the
         disqualification was successful and whether game is ended.
         """
         player_state = game.players[player_id]
