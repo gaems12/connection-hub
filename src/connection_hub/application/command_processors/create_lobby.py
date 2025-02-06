@@ -83,7 +83,7 @@ class CreateLobbyProcessor:
         self._validate_rule_set(command.rule_set)
 
         if command.password:
-            self._valudate_password(command.password)
+            self._validate_password(command.password)
 
         new_lobby = self._create_lobby(
             name=command.name,
@@ -117,6 +117,6 @@ class CreateLobbyProcessor:
         ):
             raise InvalidLobbyRuleSetError()
 
-    def _valudate_password(self, password: str) -> None:
+    def _validate_password(self, password: str) -> None:
         if not (_MIN_PASSWORD_LENGTH <= len(password) <= _MAX_PASSWORD_LENGTH):
             raise InvalidLobbyPasswordError()
