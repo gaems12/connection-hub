@@ -3,7 +3,7 @@
 
 __all__ = (
     "LockManagerConfig",
-    "lock_manager_config_from_env",
+    "load_lock_manager_config",
     "LockManager",
     "lock_manager_factory",
 )
@@ -20,7 +20,7 @@ from connection_hub.infrastructure.utils import (
 )
 
 
-def lock_manager_config_from_env() -> "LockManagerConfig":
+def load_lock_manager_config() -> "LockManagerConfig":
     return LockManagerConfig(
         lock_expires_in=get_env_var(
             key="LOCK_EXPIRES_IN",

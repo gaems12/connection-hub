@@ -50,7 +50,7 @@ from .database import (
     load_game_mapper_config,
     GameMapper,
     LockManagerConfig,
-    lock_manager_config_from_env,
+    load_lock_manager_config,
     lock_manager_factory,
     RedisTransactionManager,
 )
@@ -87,7 +87,7 @@ def ioc_container_factory(
         RedisConfig: load_redis_config(),
         LobbyMapperConfig: load_lobby_mapper_config(),
         GameMapperConfig: load_game_mapper_config(),
-        LockManagerConfig: lock_manager_config_from_env(),
+        LockManagerConfig: load_lock_manager_config(),
         NATSConfig: load_nats_config(),
     }
 
