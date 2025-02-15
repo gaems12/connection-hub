@@ -69,7 +69,7 @@ Ensure the following services are installed and running:
 
    **For development**
    ```bash
-   uv sync --all-extras
+   uv sync --all-extras --frozen
    ```
 
    **For production**
