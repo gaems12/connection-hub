@@ -2,7 +2,7 @@
 # All rights reserved.
 
 from taskiq import TaskiqScheduler
-from taskiq_nats import PushBasedJetStreamBroker
+from taskiq_nats import PullBasedJetStreamBroker
 from dishka.integrations.taskiq import setup_dishka
 
 from connection_hub.infrastructure import (
@@ -20,7 +20,10 @@ def create_task_executor_app() -> TaskiqScheduler:
     nats_config = load_nats_config()
     redis_config = load_redis_config()
 
-    broker = PushBasedJetStreamBroker([nats_config.url])
+    broker = PullBasedJetStreamBroker(
+        [nats_config.url],
+        pull_consume_timeout=0.2,
+    )
     broker.register_task(disqualify_player)
 
     ioc_container = ioc_container_factory()
