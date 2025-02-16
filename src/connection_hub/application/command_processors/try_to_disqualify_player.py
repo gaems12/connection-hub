@@ -22,13 +22,13 @@ from connection_hub.application.common import (
 
 
 @dataclass(frozen=True, slots=True)
-class DisqualifyPlayerCommand:
+class TryToDisqualifyPlayerCommand:
     game_id: GameId
     player_id: UserId
     player_state_id: PlayerStateId
 
 
-class DisqualifyPlayerProcessor:
+class TryToDisqualifyPlayerProcessor:
     __slots__ = (
         "_try_to_disqualify_player",
         "_game_gateway",
@@ -51,7 +51,7 @@ class DisqualifyPlayerProcessor:
         self._task_scheduler = task_scheduler
         self._transaction_manager = transaction_manager
 
-    async def process(self, command: DisqualifyPlayerCommand) -> None:
+    async def process(self, command: TryToDisqualifyPlayerCommand) -> None:
         game = await self._game_gateway.by_id(
             game_id=command.game_id,
             acquire=True,

@@ -11,7 +11,7 @@ from connection_hub.infrastructure import (
     taskiq_redis_schedule_source_factory,
 )
 from connection_hub.presentation.task_executor import (
-    disqualify_player,
+    try_to_disqualify_player,
     ioc_container_factory,
 )
 
@@ -24,7 +24,7 @@ def create_task_executor_app() -> TaskiqScheduler:
         [nats_config.url],
         pull_consume_timeout=0.2,
     )
-    broker.register_task(disqualify_player)
+    broker.register_task(try_to_disqualify_player)
 
     ioc_container = ioc_container_factory()
     setup_dishka(ioc_container, broker)

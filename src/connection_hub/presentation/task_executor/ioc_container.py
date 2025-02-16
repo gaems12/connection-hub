@@ -15,7 +15,7 @@ from connection_hub.application import (
     EventPublisher,
     TaskScheduler,
     TransactionManager,
-    DisqualifyPlayerProcessor,
+    TryToDisqualifyPlayerProcessor,
 )
 from connection_hub.infrastructure import (
     httpx_client_factory,
@@ -98,7 +98,7 @@ def ioc_container_factory() -> AsyncContainer:
     )
 
     provider.provide(TryToDisqualifyPlayer, scope=Scope.APP)
-    provider.provide(DisqualifyPlayerProcessor, scope=Scope.REQUEST)
+    provider.provide(TryToDisqualifyPlayerProcessor, scope=Scope.REQUEST)
 
     return make_async_container(
         provider,
