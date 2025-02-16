@@ -8,7 +8,7 @@ from taskiq import ScheduledTask
 from taskiq_redis import RedisScheduleSource
 
 from connection_hub.application import (
-    DisqualifyPlayerTask,
+    TryToDisqualifyPlayerTask,
     Task,
     TaskScheduler,
 )
@@ -21,8 +21,8 @@ class TaskiqTaskScheduler(TaskScheduler):
         self._schedule_source = schedule_source
 
     async def schedule(self, task: Task) -> None:
-        if isinstance(task, DisqualifyPlayerTask):
-            await self._schedule_disqualify_player(task)
+        if isinstance(task, TryToDisqualifyPlayerTask):
+            await self._schedule_try_to_disqualify_player(task)
 
     async def unschedule(self, task_id: UUID) -> None:
         await self._schedule_source.delete_schedule(task_id.hex)
@@ -31,12 +31,12 @@ class TaskiqTaskScheduler(TaskScheduler):
         for task_id in task_ids:
             await self.unschedule(task_id)
 
-    async def _schedule_disqualify_player(
+    async def _schedule_try_to_disqualify_player(
         self,
-        task: DisqualifyPlayerTask,
+        task: TryToDisqualifyPlayerTask,
     ) -> None:
         schedule = ScheduledTask(
-            task_name="disqualify_player",
+            task_name="try_to_disqualify_player",
             labels={},
             args=[],
             kwargs={

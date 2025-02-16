@@ -2,7 +2,7 @@
 # All rights reserved.
 
 __all__ = (
-    "DisqualifyPlayerTask",
+    "TryToDisqualifyPlayerTask",
     "Task",
     "TaskScheduler",
 )
@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Iterable, Protocol
 from uuid import UUID
 
-from connection_hub.domain import GameId, PlayerStateId
+from connection_hub.domain import GameId, UserId, PlayerStateId
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -22,13 +22,13 @@ class BaseTask:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class DisqualifyPlayerTask(BaseTask):
+class TryToDisqualifyPlayerTask(BaseTask):
     game_id: GameId
-    player_id: UUID
+    player_id: UserId
     player_state_id: PlayerStateId
 
 
-type Task = DisqualifyPlayerTask
+type Task = TryToDisqualifyPlayerTask
 
 
 class TaskScheduler(Protocol):

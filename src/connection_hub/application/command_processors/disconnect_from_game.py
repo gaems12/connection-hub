@@ -9,7 +9,7 @@ from connection_hub.application.common import (
     GameGateway,
     PlayerDisconnectedEvent,
     EventPublisher,
-    DisqualifyPlayerTask,
+    TryToDisqualifyPlayerTask,
     TaskScheduler,
     TransactionManager,
     IdentityProvider,
@@ -65,7 +65,7 @@ class DisconnectFromGameProcessor:
         execute_task_at = (
             datetime.now(timezone.utc) + time_left_for_current_player
         )
-        task = DisqualifyPlayerTask(
+        task = TryToDisqualifyPlayerTask(
             id=current_player_state.id,
             execute_at=execute_task_at,
             game_id=game.id,
