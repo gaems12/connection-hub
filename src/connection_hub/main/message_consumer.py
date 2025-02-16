@@ -4,17 +4,12 @@
 from importlib.metadata import version
 
 from faststream import FastStream
-from dishka.integrations.faststream import FastStreamProvider, setup_dishka
+from dishka.integrations.faststream import setup_dishka
 
-from connection_hub.infrastructure import (
-    load_nats_config,
-    ioc_container_factory,
-)
+from connection_hub.infrastructure import load_nats_config
 from connection_hub.presentation.message_consumer import (
     create_broker,
-    create_lobby_command_factory,
-    join_lobby_command_factory,
-    end_game_command_factory,
+    ioc_container_factory,
 )
 
 
@@ -24,17 +19,10 @@ def create_message_consumer_app() -> FastStream:
 
     app = FastStream(
         broker=broker,
-        title="Four In A Row Game",
-        version=version("four_in_a_row"),
+        title="Connection Hub",
+        version=version("connection_hub"),
     )
-    ioc_container = ioc_container_factory(
-        [
-            create_lobby_command_factory,
-            join_lobby_command_factory,
-            end_game_command_factory,
-        ],
-        FastStreamProvider(),
-    )
+    ioc_container = ioc_container_factory()
     setup_dishka(ioc_container, app)
 
     return app

@@ -1,11 +1,13 @@
 # Copyright (c) 2024, Egor Romanov.
 # All rights reserved.
 
-__all__ = ("ioc_container_factory",)
-
-from typing import Any, Callable, Coroutine, Iterable
-
-from dishka import Provider, Scope, AsyncContainer, make_async_container
+from dishka import (
+    Provider,
+    Scope,
+    AsyncContainer,
+    make_async_container,
+)
+from dishka.integrations.faststream import FastStreamProvider
 
 from connection_hub.domain import (
     CreateLobby,
@@ -13,7 +15,6 @@ from connection_hub.domain import (
     LeaveLobby,
     CreateGame,
     DisconnectFromGame,
-    TryToDisqualifyPlayer,
 )
 from connection_hub.application import (
     LobbyGateway,
@@ -22,25 +23,19 @@ from connection_hub.application import (
     TaskScheduler,
     TransactionManager,
     IdentityProvider,
-    CreateLobbyCommand,
     CreateLobbyProcessor,
-    JoinLobbyCommand,
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
     CreateGameProcessor,
     DisconnectFromGameProcessor,
     ReconnectToGameProcessor,
-    DisqualifyPlayerProcessor,
-    EndGameCommand,
     EndGameProcessor,
 )
-from .clients import (
+from connection_hub.infrastructure import (
     httpx_client_factory,
     CentrifugoConfig,
     load_centrifugo_config,
     HTTPXCentrifugoClient,
-)
-from .database import (
     redis_factory,
     redis_pipeline_factory,
     LobbyMapperConfig,
@@ -53,33 +48,27 @@ from .database import (
     load_lock_manager_config,
     lock_manager_factory,
     RedisTransactionManager,
-)
-from .message_broker import (
     NATSConfig,
     load_nats_config,
     nats_client_factory,
     nats_jetstream_factory,
     NATSEventPublisher,
-)
-from .scheduling import (
     taskiq_redis_schedule_source_factory,
     TaskiqTaskScheduler,
+    RedisConfig,
+    load_redis_config,
+    common_retort_factory,
+    RealEventPublisher,
 )
-from .redis_config import RedisConfig, load_redis_config
-from .common_retort import common_retort_factory
-from .event_publisher import RealEventPublisher
-from .identity_provider import NATSIdentityProvider
+from .commands import (
+    create_lobby_command_factory,
+    join_lobby_command_factory,
+    end_game_command_factory,
+)
+from .identity_provider import MessageBrokerIdentityProvider
 
 
-type _Command = CreateLobbyCommand | JoinLobbyCommand | EndGameCommand
-
-type _CommandFactory = Callable[..., Coroutine[Any, Any, _Command]]
-
-
-def ioc_container_factory(
-    command_factories: Iterable[_CommandFactory],
-    *extra_providers: Provider,
-) -> AsyncContainer:
+def ioc_container_factory() -> AsyncContainer:
     provider = Provider()
 
     context = {
@@ -131,7 +120,7 @@ def ioc_container_factory(
     )
 
     provider.provide(
-        NATSIdentityProvider,
+        MessageBrokerIdentityProvider,
         scope=Scope.REQUEST,
         provides=IdentityProvider,
     )
@@ -141,10 +130,10 @@ def ioc_container_factory(
     provider.provide(LeaveLobby, scope=Scope.APP)
     provider.provide(CreateGame, scope=Scope.APP)
     provider.provide(DisconnectFromGame, scope=Scope.APP)
-    provider.provide(TryToDisqualifyPlayer, scope=Scope.APP)
 
-    for command_factory in command_factories:
-        provider.provide(command_factory, scope=Scope.REQUEST)
+    provider.provide(create_lobby_command_factory, scope=Scope.REQUEST)
+    provider.provide(join_lobby_command_factory, scope=Scope.REQUEST)
+    provider.provide(end_game_command_factory, scope=Scope.REQUEST)
 
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
@@ -152,7 +141,10 @@ def ioc_container_factory(
     provider.provide(CreateGameProcessor, scope=Scope.REQUEST)
     provider.provide(DisconnectFromGameProcessor, scope=Scope.REQUEST)
     provider.provide(ReconnectToGameProcessor, scope=Scope.REQUEST)
-    provider.provide(DisqualifyPlayerProcessor, scope=Scope.REQUEST)
     provider.provide(EndGameProcessor, scope=Scope.REQUEST)
 
-    return make_async_container(provider, *extra_providers, context=context)
+    return make_async_container(
+        provider,
+        FastStreamProvider(),
+        context=context,
+    )
