@@ -14,6 +14,7 @@ from connection_hub.application.common import (
     GameGateway,
     PlayerDisqualifiedEvent,
     EventPublisher,
+    TaskScheduler,
     TransactionManager,
     GameDoesNotExistError,
     UserNotInGameError,
@@ -32,6 +33,7 @@ class DisqualifyPlayerProcessor:
         "_try_to_disqualify_player",
         "_game_gateway",
         "_event_publisher",
+        "_task_scheduler",
         "_transaction_manager",
     )
 
@@ -40,11 +42,13 @@ class DisqualifyPlayerProcessor:
         try_to_disqualify_player: TryToDisqualifyPlayer,
         game_gateway: GameGateway,
         event_publisher: EventPublisher,
+        task_scheduler: TaskScheduler,
         transaction_manager: TransactionManager,
     ):
         self._try_to_disqualify_player = try_to_disqualify_player
         self._game_gateway = game_gateway
         self._event_publisher = event_publisher
+        self._task_scheduler = task_scheduler
         self._transaction_manager = transaction_manager
 
     async def process(self, command: DisqualifyPlayerCommand) -> None:
@@ -67,6 +71,12 @@ class DisqualifyPlayerProcessor:
             return
 
         if game_is_ended:
+            player_state_ids = map(
+                lambda player_state: player_state.id,
+                game.players.values(),
+            )
+            await self._task_scheduler.unschedule_many(player_state_ids)
+
             await self._game_gateway.delete(game)
         else:
             await self._game_gateway.update(game)
