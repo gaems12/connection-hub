@@ -18,8 +18,8 @@ class BaseLobby:
 
 
 @dataclass(slots=True, kw_only=True)
-class FourInARowLobby(BaseLobby):
+class ConnectFourLobby(BaseLobby):
     time_for_each_player: timedelta
 
 
-type Lobby = FourInARowLobby
+type Lobby = ConnectFourLobby

@@ -6,9 +6,9 @@ from uuid_extensions import uuid7
 from connection_hub.domain.identitifiers import LobbyId, UserId
 from connection_hub.domain.constants import UserRole
 from connection_hub.domain.models import (
-    FourInARowRuleSet,
+    ConnectFourRuleSet,
     RuleSet,
-    FourInARowLobby,
+    ConnectFourLobby,
     Lobby,
 )
 
@@ -22,8 +22,8 @@ class CreateLobby:
         rule_set: RuleSet,
         password: str | None = None,
     ) -> Lobby:
-        if isinstance(rule_set, FourInARowRuleSet):
-            return FourInARowLobby(
+        if isinstance(rule_set, ConnectFourRuleSet):
+            return ConnectFourLobby(
                 id=LobbyId(uuid7()),
                 name=name,
                 users={current_user_id: UserRole.ADMIN},

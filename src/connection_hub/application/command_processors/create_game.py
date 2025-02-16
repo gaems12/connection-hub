@@ -3,14 +3,14 @@
 
 from connection_hub.domain import (
     LobbyId,
-    FourInARowGame,
+    ConnectFourGame,
     Game,
     CreateGame,
 )
 from connection_hub.application.common import (
     LobbyGateway,
     GameGateway,
-    FourInARowGameCreatedEvent,
+    ConnectFourGameCreatedEvent,
     EventPublisher,
     TransactionManager,
     IdentityProvider,
@@ -72,8 +72,8 @@ class CreateGameProcessor:
     ) -> None:
         player_ids = list(game.players.keys())
 
-        if isinstance(game, FourInARowGame):
-            event = FourInARowGameCreatedEvent(
+        if isinstance(game, ConnectFourGame):
+            event = ConnectFourGameCreatedEvent(
                 game_id=game.id,
                 lobby_id=lobby_id,
                 first_player_id=player_ids[0],

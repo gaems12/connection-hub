@@ -4,11 +4,11 @@
 from typing import Final
 
 from connection_hub.domain.identitifiers import UserId, PlayerStateId
-from connection_hub.domain.models import Game, FourInARowGame
+from connection_hub.domain.models import Game, ConnectFourGame
 
 
 _GAME_TO_MIN_PLAYERS_MAP: Final = {
-    FourInARowGame: 2,
+    ConnectFourGame: 2,
 }
 
 

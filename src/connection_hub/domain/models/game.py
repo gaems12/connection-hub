@@ -16,8 +16,8 @@ class BaseGame:
 
 
 @dataclass(slots=True, kw_only=True)
-class FourInARowGame(BaseGame):
+class ConnectFourGame(BaseGame):
     time_for_each_player: timedelta
 
 
-type Game = FourInARowGame
+type Game = ConnectFourGame

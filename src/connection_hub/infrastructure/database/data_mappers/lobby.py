@@ -9,7 +9,7 @@ from datetime import timedelta
 
 from redis.asyncio.client import Redis, Pipeline
 
-from connection_hub.domain import LobbyId, UserId, FourInARowLobby, Lobby
+from connection_hub.domain import LobbyId, UserId, ConnectFourLobby, Lobby
 from connection_hub.application import LobbyGateway
 from connection_hub.infrastructure.database.lock_manager import LockManager
 from connection_hub.infrastructure.common_retort import CommonRetort
@@ -31,7 +31,7 @@ class LobbyMapperConfig:
 
 
 class _LobbyType(StrEnum):
-    FOUR_IN_A_ROW = "four_in_a_row"
+    CONNECT_FOUR = "connect_four"
 
 
 class LobbyMapper(LobbyGateway):
@@ -147,14 +147,14 @@ class LobbyMapper(LobbyGateway):
             )
         lobby_type = _LobbyType(raw_lobby_type)
 
-        if lobby_type == _LobbyType.FOUR_IN_A_ROW:
-            return self._common_retort.load(dict_, FourInARowLobby)
+        if lobby_type == _LobbyType.CONNECT_FOUR:
+            return self._common_retort.load(dict_, ConnectFourLobby)
 
     def _lobby_to_dict(self, lobby: Lobby) -> dict:
         lobby_as_dict = self._common_retort.dump(lobby)
 
-        if isinstance(lobby, FourInARowLobby):
-            lobby_as_dict["type"] = _LobbyType.FOUR_IN_A_ROW
+        if isinstance(lobby, ConnectFourLobby):
+            lobby_as_dict["type"] = _LobbyType.CONNECT_FOUR
 
         return lobby_as_dict
 

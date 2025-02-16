@@ -2,11 +2,10 @@
 # All rights reserved.
 
 __all__ = (
-    "GameType",
     "LobbyCreatedEvent",
     "UserJoinedLobbyEvent",
     "UserLeftLobbyEvent",
-    "FourInARowGameCreatedEvent",
+    "ConnectFourGameCreatedEvent",
     "PlayerDisconnectedEvent",
     "PlayerReconnectedEvent",
     "PlayerDisqualifiedEvent",
@@ -17,13 +16,9 @@ __all__ = (
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Protocol
-from enum import StrEnum
 
 from connection_hub.domain import LobbyId, GameId, UserId, RuleSet
-
-
-class GameType(StrEnum):
-    FOUR_IN_A_ROW = "four_in_a_row"
+from .constants import GameType
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -48,7 +43,7 @@ class UserLeftLobbyEvent:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class FourInARowGameCreatedEvent:
+class ConnectFourGameCreatedEvent:
     game_id: GameId
     lobby_id: LobbyId
     first_player_id: UserId
@@ -82,7 +77,7 @@ type Event = (
     LobbyCreatedEvent
     | UserJoinedLobbyEvent
     | UserLeftLobbyEvent
-    | FourInARowGameCreatedEvent
+    | ConnectFourGameCreatedEvent
     | PlayerDisconnectedEvent
     | PlayerReconnectedEvent
     | PlayerDisqualifiedEvent

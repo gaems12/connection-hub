@@ -14,7 +14,7 @@ from connection_hub.domain import (
     PlayerStateId,
     PlayerStatus,
     PlayerState,
-    FourInARowGame,
+    ConnectFourGame,
 )
 from connection_hub.infrastructure import (
     common_retort_factory,
@@ -72,7 +72,7 @@ async def test_game_mapper(
             time_left=timedelta(minutes=3),
         ),
     }
-    new_game = FourInARowGame(
+    new_game = ConnectFourGame(
         id=_GAME_ID,
         players=players,
         created_at=datetime.now(timezone.utc),

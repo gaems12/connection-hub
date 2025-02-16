@@ -12,7 +12,7 @@ from connection_hub.domain import (
     LobbyId,
     UserId,
     UserRole,
-    FourInARowLobby,
+    ConnectFourLobby,
 )
 from connection_hub.infrastructure import (
     common_retort_factory,
@@ -58,7 +58,7 @@ async def test_lobby_mapper(
     lobby = await lobby_mapper.by_id(_LOBBY_ID)
     assert lobby is None
 
-    new_lobby = FourInARowLobby(
+    new_lobby = ConnectFourLobby(
         id=_LOBBY_ID,
         name="fake_lobby",
         users={

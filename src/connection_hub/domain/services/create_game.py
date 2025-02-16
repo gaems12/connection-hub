@@ -13,10 +13,10 @@ from connection_hub.domain.identitifiers import (
 )
 from connection_hub.domain.constants import UserRole, PlayerStatus
 from connection_hub.domain.models import (
-    FourInARowLobby,
+    ConnectFourLobby,
     Lobby,
     PlayerState,
-    FourInARowGame,
+    ConnectFourGame,
     Game,
 )
 from connection_hub.domain.exceptions import UserIsNotAdminError
@@ -44,8 +44,8 @@ class CreateGame:
             for player_id in lobby.users
         }
 
-        if isinstance(lobby, FourInARowLobby):
-            return FourInARowGame(
+        if isinstance(lobby, ConnectFourLobby):
+            return ConnectFourGame(
                 id=GameId(uuid7()),
                 players=players,
                 created_at=datetime.now(timezone.utc),

@@ -2,16 +2,16 @@
 # All rights reserved.
 
 __all__ = (
-    "FourInARowRuleSet",
+    "ConnectFourRuleSet",
     "RuleSet",
-    "FourInARowLobby",
+    "ConnectFourLobby",
     "Lobby",
     "PlayerState",
-    "FourInARowGame",
+    "ConnectFourGame",
     "Game",
 )
 
-from .rule_set import FourInARowRuleSet, RuleSet
-from .lobby import FourInARowLobby, Lobby
+from .rule_set import ConnectFourRuleSet, RuleSet
+from .lobby import ConnectFourLobby, Lobby
 from .player_state import PlayerState
-from .game import FourInARowGame, Game
+from .game import ConnectFourGame, Game

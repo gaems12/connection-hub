@@ -10,13 +10,13 @@ from connection_hub.domain import (
     LobbyId,
     GameId,
     UserId,
-    FourInARowRuleSet,
+    ConnectFourRuleSet,
 )
 from connection_hub.application import (
     LobbyCreatedEvent,
     UserJoinedLobbyEvent,
     UserLeftLobbyEvent,
-    FourInARowGameCreatedEvent,
+    ConnectFourGameCreatedEvent,
     PlayerDisconnectedEvent,
     PlayerReconnectedEvent,
     PlayerDisqualifiedEvent,
@@ -70,8 +70,8 @@ class HTTPXCentrifugoClient:
         elif isinstance(event, UserLeftLobbyEvent):
             await self._publish_user_left_lobby(event)
 
-        elif isinstance(event, FourInARowGameCreatedEvent):
-            await self._publish_four_in_a_row_game_created(event)
+        elif isinstance(event, ConnectFourGameCreatedEvent):
+            await self._publish_connect_four_game_created(event)
 
         elif isinstance(event, PlayerDisconnectedEvent):
             await self._publish_player_disconnected(event)
@@ -88,9 +88,9 @@ class HTTPXCentrifugoClient:
     ) -> None:
         rule_set = event.rule_set
 
-        if isinstance(rule_set, FourInARowRuleSet):
+        if isinstance(rule_set, ConnectFourRuleSet):
             rule_set_as_dict = {
-                "type": "four_in_a_row",
+                "type": "connect_four",
                 "time_for_each_player": (
                     rule_set.time_for_each_player.total_seconds()
                 ),
@@ -136,12 +136,12 @@ class HTTPXCentrifugoClient:
             data=event_as_dict,  # type: ignore
         )
 
-    async def _publish_four_in_a_row_game_created(
+    async def _publish_connect_four_game_created(
         self,
-        event: FourInARowGameCreatedEvent,
+        event: ConnectFourGameCreatedEvent,
     ) -> None:
         event_as_dict = {
-            "type": "four_in_a_row_game_created",
+            "type": "connect_four_game_created",
             "game_id": event.game_id.hex,
             "lobby_id": event.lobby_id.hex,
             "first_player_id": event.first_player_id.hex,
