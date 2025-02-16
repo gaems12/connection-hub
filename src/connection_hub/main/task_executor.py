@@ -11,6 +11,7 @@ from connection_hub.infrastructure import (
     taskiq_redis_schedule_source_factory,
 )
 from connection_hub.presentation.task_executor import (
+    disqualify_player,
     ioc_container_factory,
 )
 
@@ -20,6 +21,8 @@ def create_task_executor_app() -> TaskiqScheduler:
     redis_config = load_redis_config()
 
     broker = PushBasedJetStreamBroker([nats_config.url])
+    broker.register_task(disqualify_player)
+
     ioc_container = ioc_container_factory()
     setup_dishka(ioc_container, broker)
 
