@@ -8,6 +8,7 @@ __all__ = (
     "lock_manager_factory",
 )
 
+import asyncio
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import AsyncGenerator
@@ -67,15 +68,14 @@ class LockManager:
         if lock_name in self._acquired_lock_names:
             return
 
-        lock_is_acquired = await self._redis.get(lock_name)
-        while lock_is_acquired:
-            lock_is_acquired = await self._redis.get(lock_name)
-
-        await self._redis.set(
+        while not await self._redis.set(
             name=lock_name,
             value="",
             ex=self._config.lock_expires_in,
-        )
+            nx=True,
+        ):
+            await asyncio.sleep(0.1)
+
         self._acquired_lock_names.append(lock_name)
 
     async def release_all(self) -> None:

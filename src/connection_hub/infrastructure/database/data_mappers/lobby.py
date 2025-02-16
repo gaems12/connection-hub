@@ -64,7 +64,7 @@ class LobbyMapper(LobbyGateway):
         acquire: bool = False,
     ) -> Lobby | None:
         pattern = self._pattern_to_find_lobby_by_id(id)
-        keys = await self._redis.keys(pattern)
+        keys = await self._keys_by_pattern(pattern=pattern, limit=1)
         if not keys:
             return None
 
@@ -85,7 +85,7 @@ class LobbyMapper(LobbyGateway):
         acquire: bool = False,
     ) -> Lobby | None:
         pattern = self._pattern_to_find_lobby_by_user_id(user_id)
-        keys = await self._redis.keys(pattern)
+        keys = await self._keys_by_pattern(pattern=pattern, limit=1)
         if not keys:
             return None
 
@@ -175,3 +175,26 @@ class LobbyMapper(LobbyGateway):
 
     def _pattern_to_find_lobby_by_user_id(self, user_id: UserId) -> str:
         return f"lobbies:id:*:user_ids:*{user_id.hex}*"
+
+    async def _keys_by_pattern(
+        self,
+        *,
+        pattern: str,
+        batch_size: int = 10,
+        limit: int | None = None,
+    ) -> list[str]:
+        keys: list[str] = []
+
+        if limit == 0:
+            return keys
+
+        async for key in self._redis.scan_iter(
+            match=pattern,
+            count=batch_size,
+        ):
+            keys.append(key)
+
+            if limit and len(keys) >= limit:
+                return keys
+
+        return keys

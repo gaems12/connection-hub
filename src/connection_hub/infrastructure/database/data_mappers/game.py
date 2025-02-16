@@ -59,7 +59,7 @@ class GameMapper(GameGateway):
         acquire: bool = False,
     ) -> Game | None:
         pattern = self._pattern_to_find_game_by_id(game_id)
-        keys = await self._redis.keys(pattern)
+        keys = await self._keys_by_pattern(pattern=pattern, limit=1)
         if not keys:
             return None
 
@@ -80,7 +80,7 @@ class GameMapper(GameGateway):
         acquire: bool = False,
     ) -> Game | None:
         pattern = self._pattern_to_find_game_by_player_id(player_id)
-        keys = await self._redis.keys(pattern)
+        keys = await self._keys_by_pattern(pattern=pattern, limit=1)
         if not keys:
             return None
 
@@ -165,3 +165,26 @@ class GameMapper(GameGateway):
 
     def _pattern_to_find_game_by_player_id(self, player_id: UserId) -> str:
         return f"games:id:*:player_ids:*{player_id.hex}*"
+
+    async def _keys_by_pattern(
+        self,
+        *,
+        pattern: str,
+        batch_size: int = 10,
+        limit: int | None = None,
+    ) -> list[str]:
+        keys: list[str] = []
+
+        if limit == 0:
+            return keys
+
+        async for key in self._redis.scan_iter(
+            match=pattern,
+            count=batch_size,
+        ):
+            keys.append(key)
+
+            if limit and len(keys) >= limit:
+                return keys
+
+        return keys
