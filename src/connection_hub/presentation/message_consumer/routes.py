@@ -3,7 +3,7 @@
 
 from typing import Final
 
-from faststream.nats import NatsRouter, JStream
+from faststream.nats import NatsRouter, JStream, PullSub
 from dishka.integrations.faststream import FromDishka, inject
 
 from connection_hub.application import (
@@ -29,9 +29,9 @@ router = NatsRouter()
 
 @router.subscriber(
     subject="lobby.created",
-    queue="connection_hub.lobby.created",
     durable="connection_hub.lobby.created",
     stream=_API_GATEWAY_STREAM,
+    pull_sub=PullSub(timeout=0.2),
 )
 @inject
 async def create_lobby(
@@ -44,9 +44,9 @@ async def create_lobby(
 
 @router.subscriber(
     subject="lobby.user_joined",
-    queue="connection_hub.lobby.user_joined",
     durable="connection_hub.lobby.user_joined",
     stream=_API_GATEWAY_STREAM,
+    pull_sub=PullSub(timeout=0.2),
 )
 @inject
 async def join_lobby(
@@ -59,9 +59,9 @@ async def join_lobby(
 
 @router.subscriber(
     subject="lobby.user_left",
-    queue="connection_hub.lobby.user_left",
     durable="connection_hub.lobby.user_left",
     stream=_API_GATEWAY_STREAM,
+    pull_sub=PullSub(timeout=0.2),
 )
 @inject
 async def leave_lobby(
@@ -73,9 +73,9 @@ async def leave_lobby(
 
 @router.subscriber(
     subject="game.created",
-    queue="connection_hub.game.created",
     durable="connection_hub.game.created",
     stream=_API_GATEWAY_STREAM,
+    pull_sub=PullSub(timeout=0.2),
 )
 @inject
 async def create_game(
@@ -87,9 +87,9 @@ async def create_game(
 
 @router.subscriber(
     subject="game.ended",
-    queue="connection_hub.game_ended",
     durable="connection_hub.game_ended",
     stream=_FOUR_IN_A_ROW_STREAM,
+    pull_sub=PullSub(timeout=0.2),
 )
 @inject
 async def end_game(
@@ -102,9 +102,9 @@ async def end_game(
 
 @router.subscriber(
     subject="game.player_disconnected",
-    queue="connection_hub.game.player_disconnected",
     durable="connection_hub.game.player_disconnected",
     stream=_API_GATEWAY_STREAM,
+    pull_sub=PullSub(timeout=0.2),
 )
 @inject
 async def disconnect_from_game(
@@ -116,9 +116,9 @@ async def disconnect_from_game(
 
 @router.subscriber(
     subject="game.player_reconnected",
-    queue="connection_hub.game.player_reconnected",
     durable="connection_hub.game.player_reconnected",
     stream=_API_GATEWAY_STREAM,
+    pull_sub=PullSub(timeout=0.2),
 )
 @inject
 async def reconnect_to_game(
