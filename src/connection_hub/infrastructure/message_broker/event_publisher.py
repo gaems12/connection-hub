@@ -19,16 +19,16 @@ from connection_hub.application import (
 from connection_hub.infrastructure.common_retort import CommonRetort
 
 
-_STREAM: Final = "connection_hub"
+_STREAM: Final = "games"
 
 _EVENT_TO_SUBJECT_MAP: Final = {
-    LobbyCreatedEvent: "lobby.created",
-    UserJoinedLobbyEvent: "lobby.user_joined",
-    UserLeftLobbyEvent: "lobby.user_left",
-    ConnectFourGameCreatedEvent: "game.created",
-    PlayerDisconnectedEvent: "game.player_disconnected",
-    PlayerReconnectedEvent: "game.player_reconnected",
-    PlayerDisqualifiedEvent: "game.player_disqualified",
+    LobbyCreatedEvent: "connection_hub.lobby.created",
+    UserJoinedLobbyEvent: "connection_hub.lobby.user_joined",
+    UserLeftLobbyEvent: "connection_hub.lobby.user_left",
+    ConnectFourGameCreatedEvent: "connection_hub.game.created",
+    PlayerDisconnectedEvent: "connection_hub.game.player_disconnected",
+    PlayerReconnectedEvent: "connection_hub.game.player_reconnected",
+    PlayerDisqualifiedEvent: "connection_hub.game.player_disqualified",
 }
 
 

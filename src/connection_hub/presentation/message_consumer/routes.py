@@ -20,17 +20,16 @@ from connection_hub.application import (
 )
 
 
-_API_GATEWAY_STREAM: Final = JStream("api_gateway")
-_FOUR_IN_A_ROW_STREAM: Final = JStream("four_in_a_row")
+_STREAM: Final = JStream(name="games", declare=False)
 
 
 router = NatsRouter()
 
 
 @router.subscriber(
-    subject="lobby.created",
-    durable="connection_hub.lobby.created",
-    stream=_API_GATEWAY_STREAM,
+    subject="api_gateway.lobby.created",
+    durable="connection_hub_lobby_created",
+    stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
 @inject
@@ -43,9 +42,9 @@ async def create_lobby(
 
 
 @router.subscriber(
-    subject="lobby.user_joined",
-    durable="connection_hub.lobby.user_joined",
-    stream=_API_GATEWAY_STREAM,
+    subject="api_gateway.lobby.user_joined",
+    durable="connection_hub_lobby_user_joined",
+    stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
 @inject
@@ -58,9 +57,9 @@ async def join_lobby(
 
 
 @router.subscriber(
-    subject="lobby.user_left",
-    durable="connection_hub.lobby.user_left",
-    stream=_API_GATEWAY_STREAM,
+    subject="api_gateway.lobby.user_left",
+    durable="connection_hub_lobby_user_left",
+    stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
 @inject
@@ -72,9 +71,9 @@ async def leave_lobby(
 
 
 @router.subscriber(
-    subject="game.created",
-    durable="connection_hub.game.created",
-    stream=_API_GATEWAY_STREAM,
+    subject="api_gateway.game.created",
+    durable="connection_hub_game_created",
+    stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
 @inject
@@ -86,9 +85,9 @@ async def create_game(
 
 
 @router.subscriber(
-    subject="game.ended",
-    durable="connection_hub.game_ended",
-    stream=_FOUR_IN_A_ROW_STREAM,
+    subject="connect_four.game.ended",
+    durable="connection_hub_connect_four_game_ended",
+    stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
 @inject
@@ -101,9 +100,9 @@ async def end_game(
 
 
 @router.subscriber(
-    subject="game.player_disconnected",
-    durable="connection_hub.game.player_disconnected",
-    stream=_API_GATEWAY_STREAM,
+    subject="api_gateway.game.player_disconnected",
+    durable="connection_hub_game_player_disconnected",
+    stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
 @inject
@@ -115,9 +114,9 @@ async def disconnect_from_game(
 
 
 @router.subscriber(
-    subject="game.player_reconnected",
-    durable="connection_hub.game.player_reconnected",
-    stream=_API_GATEWAY_STREAM,
+    subject="api_gateway.game.player_reconnected",
+    durable="connection_hub_game_player_reconnected",
+    stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
 @inject
