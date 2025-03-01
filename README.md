@@ -18,10 +18,9 @@
   - [Using Docker](#using-docker)
 - [⚙️ Environment Variables](#%EF%B8%8F-environment-variables)
 - [🛠️ Commands](#%EF%B8%8F-commands)
+  - [Create NATS Streams](#create-nats-streams)
   - [Run Message Consumer](#run-message-consumer)
   - [Run Task Executor](#run-task-executor)
-
----
 
 ## 📦 Dependencies
 
@@ -30,8 +29,6 @@ Ensure the following services are installed and running:
 - **Redis**
 - **NATS**
 - **Centrifugo**
-
----
 
 ## 🚀 Installation
 
@@ -86,8 +83,6 @@ Ensure the following services are installed and running:
    docker build -t connection_hub:latest .
    ```
 
----
-
 ## ⚙️ Environment Variables
 
 Configure the following environment variables before running the application:
@@ -97,20 +92,26 @@ Configure the following environment variables before running the application:
 
 | Variable                         | Required            | Description                              |
 |----------------------------------|---------------------|------------------------------------------|
+| `LOGGING_LEVEL`                  | No (default: DEBUG) | Logging level                            |
 | `REDIS_URL`                      | Yes                 | URL for the Redis instance.              |
 | `NATS_URL`                       | Yes                 | URL for the NATS server.                 |
 | `CENTRIFUGO_URL`                 | Yes                 | URL for the Centrifugo server.           |
 | `CENTRIFUGO_API_KEY`             | Yes                 | API key for Centrifugo.                  |
-| `LOBBY_MAPPER_LOBBY_EXPIRES_IN`  | Yes                 | Lobby expiration time in seconds         |
-| `GAME_MAPPER_GAME_EXPIRES_IN`    | Yes                 | Game expiration time in seconds.         |
-| `LOCK_EXPIRES_IN`                | Yes                 | Lock expiration time in seconds.         |
-| `TEST_REDIS_URL`                 | Yes(for tests)      | URL for the test Redis instance.         |
+| `LOBBY_MAPPER_LOBBY_EXPIRES_IN`  | No (default: 86400) | Lobby expiration time in seconds         |
+| `GAME_MAPPER_GAME_EXPIRES_IN`    | No (default: 86400) | Game expiration time in seconds.         |
+| `LOCK_EXPIRES_IN`                | No (default: 5)     | Lock expiration time in seconds.         |
+| `TEST_REDIS_URL`                 | Yes (for tests)     | URL for the test Redis instance.         |
 
 </div>
 
----
-
 ## 🛠️ Commands
+
+### Create NATS Streams
+
+Create NATS streams with all subjects used by application to test it:
+```bash
+connection-hub create-nats-streams <nats_url>
+```
 
 ### Run Message Consumer
 
@@ -125,4 +126,3 @@ Run the executor for scheduled tasks:
 ```bash
 connection-hub run-task-executor
 ```
----

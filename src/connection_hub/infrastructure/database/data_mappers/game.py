@@ -20,6 +20,7 @@ def load_game_mapper_config() -> "GameMapperConfig":
         game_expires_in=get_env_var(
             key="GAME_MAPPER_GAME_EXPIRES_IN",
             value_factory=str_to_timedelta,
+            default=timedelta(days=1),
         ),
     )
 

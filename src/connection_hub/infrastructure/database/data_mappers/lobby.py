@@ -21,6 +21,7 @@ def load_lobby_mapper_config() -> "LobbyMapperConfig":
         lobby_expires_in=get_env_var(
             key="LOBBY_MAPPER_LOBBY_EXPIRES_IN",
             value_factory=str_to_timedelta,
+            default=timedelta(days=1),
         ),
     )
 

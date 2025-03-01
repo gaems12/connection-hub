@@ -26,6 +26,7 @@ def load_lock_manager_config() -> "LockManagerConfig":
         lock_expires_in=get_env_var(
             key="LOCK_EXPIRES_IN",
             value_factory=str_to_timedelta,
+            default=timedelta(seconds=5),
         ),
     )
 
@@ -40,8 +41,10 @@ async def lock_manager_factory(
     config: LockManagerConfig,
 ) -> AsyncGenerator["LockManager", None]:
     lock_manager = LockManager(redis=redis, config=config)
-    yield lock_manager
-    await lock_manager.release_all()
+    try:
+        yield lock_manager
+    finally:
+        await lock_manager.release_all()
 
 
 class LockManager:
