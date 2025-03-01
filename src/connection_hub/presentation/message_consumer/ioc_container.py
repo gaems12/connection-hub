@@ -66,6 +66,8 @@ from .commands import (
     end_game_command_factory,
 )
 from .identity_provider import MessageBrokerIdentityProvider
+from .context_var_setter import ContextVarSetter
+from .operation_id import operation_id_factory
 
 
 def ioc_container_factory() -> AsyncContainer:
@@ -87,14 +89,16 @@ def ioc_container_factory() -> AsyncContainer:
     provider.from_context(LockManagerConfig, scope=Scope.APP)
     provider.from_context(NATSConfig, scope=Scope.APP)
 
+    provider.provide(operation_id_factory, scope=Scope.REQUEST)
+    provider.provide(ContextVarSetter, scope=Scope.REQUEST)
+    provider.provide(common_retort_factory, scope=Scope.APP)
+
     provider.provide(httpx_client_factory, scope=Scope.APP)
     provider.provide(redis_factory, scope=Scope.APP)
     provider.provide(redis_pipeline_factory, scope=Scope.REQUEST)
     provider.provide(nats_client_factory, scope=Scope.APP)
     provider.provide(nats_jetstream_factory, scope=Scope.APP)
     provider.provide(taskiq_redis_schedule_source_factory, scope=Scope.APP)
-
-    provider.provide(common_retort_factory, scope=Scope.APP)
 
     provider.provide(lock_manager_factory, scope=Scope.REQUEST)
     provider.provide(LobbyMapper, provides=LobbyGateway, scope=Scope.REQUEST)

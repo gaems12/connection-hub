@@ -4,6 +4,7 @@
 from .utils import *
 from .common_retort import *
 from .operation_id import *
+from .log import *
 from .redis_config import *
 from .clients import *
 from .database import *
