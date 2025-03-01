@@ -8,6 +8,8 @@ from typing import Annotated
 from cyclopts import App, Parameter
 from faststream.cli.main import cli as run_faststream
 from taskiq.cli.scheduler.run import run_scheduler_loop
+from taskiq.cli.worker.args import WorkerArgs
+from taskiq.cli.worker.run import run_worker
 
 from connection_hub.infrastructure import (
     setup_logging,
@@ -16,7 +18,7 @@ from connection_hub.infrastructure import (
     nats_jetstream_factory,
     NATSStreamCreator,
 )
-from .task_executor import create_task_executor_app
+from .task_scheduler import create_task_scheduler_app
 
 
 def main() -> None:
@@ -35,6 +37,7 @@ def create_cli_app() -> App:
     app.command(create_nats_streams)
 
     app.command(run_message_consumer)
+    app.command(run_task_scheduler)
     app.command(run_task_executor)
 
     return app
@@ -69,7 +72,25 @@ def run_message_consumer(
     run_faststream()
 
 
-async def run_task_executor():
+async def run_task_scheduler() -> None:
+    """Run task scheduler."""
+    task_scheduler = create_task_scheduler_app()
+    await task_scheduler.startup()
+    await run_scheduler_loop(task_scheduler)
+    await task_scheduler.shutdown()
+
+
+def run_task_executor(
+    workers: Annotated[
+        int,
+        Parameter("--workers", show_default=True),
+    ] = 2,
+) -> None:
     """Run task executor."""
-    task_executor = create_task_executor_app()
-    await run_scheduler_loop(task_executor)
+    worker_args = WorkerArgs(
+        broker="connection_hub.main.task_executor:task_executor",
+        modules=["connection_hub.presentation.task_executor"],
+        tasks_pattern=("executors.py",),
+        workers=workers,
+    )
+    run_worker(worker_args)

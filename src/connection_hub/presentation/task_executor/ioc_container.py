@@ -7,7 +7,6 @@ from dishka import (
     AsyncContainer,
     make_async_container,
 )
-from dishka.integrations.faststream import FastStreamProvider
 
 from connection_hub.domain import TryToDisqualifyPlayer
 from connection_hub.application import (
@@ -100,8 +99,4 @@ def ioc_container_factory() -> AsyncContainer:
     provider.provide(TryToDisqualifyPlayer, scope=Scope.APP)
     provider.provide(TryToDisqualifyPlayerProcessor, scope=Scope.REQUEST)
 
-    return make_async_container(
-        provider,
-        FastStreamProvider(),
-        context=context,
-    )
+    return make_async_container(provider, context=context)

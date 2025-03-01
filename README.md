@@ -20,6 +20,7 @@
 - [🛠️ Commands](#%EF%B8%8F-commands)
   - [Create NATS Streams](#create-nats-streams)
   - [Run Message Consumer](#run-message-consumer)
+  - [Run Task Scheduler](#run-task-scheduler)
   - [Run Task Executor](#run-task-executor)
 
 ## 📦 Dependencies
@@ -120,9 +121,16 @@ Run the message consumer to process events from NATS:
 connection-hub run-message-consumer
 ```
 
+### Run Task Scheduler
+
+Run the task scheduler:
+```bash
+connect-four run-task-scheduler
+```
+
 ### Run Task Executor
 
-Run the executor for scheduled tasks:
+Run the task executor for scheduled tasks:
 ```bash
-connection-hub run-task-executor
+connect-four run-task-executor
 ```
