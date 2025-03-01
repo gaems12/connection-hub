@@ -8,6 +8,7 @@ from connection_hub.application import (
     TryToDisqualifyPlayerCommand,
     TryToDisqualifyPlayerProcessor,
 )
+from .context_var_setter import ContextVarSetter
 
 
 @inject
@@ -16,8 +17,11 @@ async def try_to_disqualify_player(
     game_id: GameId,
     player_id: UserId,
     player_state_id: PlayerStateId,
+    context_var_setter: FromDishka[ContextVarSetter],
     command_processor: FromDishka[TryToDisqualifyPlayerProcessor],
 ) -> None:
+    context_var_setter.set()
+
     command = TryToDisqualifyPlayerCommand(
         game_id=game_id,
         player_id=player_id,
