@@ -1,0 +1,77 @@
+name: Lint and Test
+run-name: Linting and Testing by ${{ github.actor }}
+
+on:
+  push:
+    paths: ["src/**", "tests/**", "pyproject.toml", "uv.lock", ".pre-commit-config.yaml"]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: uv sync --all-extras --frozen
+
+      - name: Cache pre-commit environments
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: ${{ runner.os }}-pre-commit-
+
+      - name: Run pre-commit
+        run: uv run pre-commit run --all-files
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+
+    steps:
+      - name: Run nats
+        run: |
+          docker rm -f nats || echo "nats container doesn't exist"
+          docker run -d --name nats -p 4222:4222 nats:2.10-alpine -js
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: uv sync --all-extras --frozen
+
+      - name: Create nats streams
+        run: uv run connect-four create-nats-streams nats://localhost:4222
+
+      - name: Run tests
+        env:
+          TEST_REDIS_URL: redis://localhost:6379/0
+          TEST_NATS_URL: nats://localhost:4222
+        run: uv run pytest --tb=short --disable-warnings --cov=./src --cov-report=xml
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.xml
+
+      - name: Remove nats
+        run: docker rm -f nats || echo "nats container doesn't exist"
