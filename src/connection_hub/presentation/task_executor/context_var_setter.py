@@ -1,5 +1,6 @@
 # Copyright (c) 2024, Egor Romanov.
 # All rights reserved.
+# Licensed under the Personal Use License (see LICENSE).
 
 from connection_hub.infrastructure import OperationId, log_extra_context_var
 
