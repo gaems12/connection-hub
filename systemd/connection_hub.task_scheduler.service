@@ -1,0 +1,14 @@
+[Unit]
+Description=Connection Hub Task Scheduler
+After=network.target
+
+[Service]
+User=connection_hub
+Group=connection_hub
+Type=simple
+WorkingDirectory=/opt/connection_hub
+ExecStart=/opt/connection_hub/venv/bin/connection-hub run-task-scheduler
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
