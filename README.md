@@ -2,7 +2,7 @@
 
 <p align="left">
    <a>
-      <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python version">
+      <img src="https://img.shields.io/badge/python-3.13-blue" alt="Python version">
    </a>
    <a href="https://github.com/astral-sh/ruff">
       <img src="https://img.shields.io/badge/code_style-ruff-%236b00ff" alt="Code style">
@@ -59,7 +59,7 @@ Ensure the following services are installed and running:
 
 1. Create and activate a virtual environment:
    ```bash
-   uv venv --python 3.12
+   uv venv --python 3.13
    source ./.venv/bin/activate
    ```
 
@@ -102,6 +102,7 @@ Configure the following environment variables before running the application:
 | `GAME_MAPPER_GAME_EXPIRES_IN`    | No (default: 86400) | Game expiration time in seconds.         |
 | `LOCK_EXPIRES_IN`                | No (default: 5)     | Lock expiration time in seconds.         |
 | `TEST_REDIS_URL`                 | Yes (for tests)     | URL for the test Redis instance.         |
+| `TEST_NATS_URL`                  | Yes (for tests)     | URL for the test NATS server.            |
 
 </div>
 
