@@ -85,7 +85,7 @@ Ensure the following services are installed and running:
    pip install -e .
    ```
 
-### Using Docker
+### Using Docker (Recommended)
 
 1. Build Docker image:
 
