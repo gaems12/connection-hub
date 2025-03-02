@@ -46,7 +46,7 @@ class NATSEventPublisher:
     async def publish(self, event: Event) -> None:
         subject = _EVENT_TO_SUBJECT_MAP[type(event)]
 
-        event_as_dict = self._common_retort.dump(event, dict)
+        event_as_dict = self._common_retort.dump(event)
         payload = json.dumps(event_as_dict).encode()
 
         await self._jetstream.publish(
