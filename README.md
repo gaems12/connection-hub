@@ -45,6 +45,26 @@ Ensure the following services are installed and running:
 
 ## 🚀 Installation
 
+### Using uv (Recommended)
+
+1. Create and activate a virtual environment:
+   ```bash
+   uv venv --python 3.13
+   source ./.venv/bin/activate
+   ```
+
+2. Install dependencies:
+
+   **For development**
+   ```bash
+   uv sync --all-extras --frozen
+   ```
+
+   **For production**
+   ```bash
+   uv sync --frozen
+   ```
+
 ### Using pip
 
 1. Create and activate a virtual environment:
@@ -63,26 +83,6 @@ Ensure the following services are installed and running:
    **For production:**
    ```bash
    pip install -e .
-   ```
-
-### Using uv
-
-1. Create and activate a virtual environment:
-   ```bash
-   uv venv --python 3.13
-   source ./.venv/bin/activate
-   ```
-
-2. Install dependencies:
-
-   **For development**
-   ```bash
-   uv sync --all-extras --frozen
-   ```
-
-   **For production**
-   ```bash
-   uv sync --frozen
    ```
 
 ### Using Docker
@@ -135,12 +135,12 @@ connection-hub run-message-consumer
 
 Run the task scheduler:
 ```bash
-connect-four run-task-scheduler
+connection-hub run-task-scheduler
 ```
 
 ### Run Task Executor
 
 Run the task executor for scheduled tasks:
 ```bash
-connect-four run-task-executor
+connection-hub run-task-executor
 ```
