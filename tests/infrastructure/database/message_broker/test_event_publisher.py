@@ -45,6 +45,7 @@ async def nats_jetstream(
             lobby_id=LobbyId(uuid7()),
             name="Connect Four Game For Money!!!",
             admin_id=UserId(uuid7()),
+            has_password=False,
             rule_set=ConnectFourRuleSet(
                 time_for_each_player=timedelta(minutes=1),
             ),

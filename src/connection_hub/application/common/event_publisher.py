@@ -27,6 +27,7 @@ class LobbyCreatedEvent:
     lobby_id: LobbyId
     name: str
     admin_id: UserId
+    has_password: bool
     rule_set: RuleSet
 
 

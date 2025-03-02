@@ -6,7 +6,12 @@ from dataclasses import dataclass
 from datetime import timedelta
 from typing import Final
 
-from connection_hub.domain import LobbyId, RuleSet, CreateLobby
+from connection_hub.domain import (
+    LobbyId,
+    ConnectFourRuleSet,
+    RuleSet,
+    CreateLobby,
+)
 from connection_hub.application.common import (
     LobbyGateway,
     GameGateway,
@@ -25,8 +30,8 @@ from connection_hub.application.common import (
 _MIN_NAME_LENGTH: Final = 3
 _MAX_NAME_LENGTH: Final = 128
 
-_MIN_FOUR_IN_A_ROW_TIME_FOR_EACH_PLAYER: Final = timedelta(seconds=30)
-_MAX_FOUR_IN_A_ROW_TIME_FOR_EACH_PLAYER: Final = timedelta(minutes=3)
+_MIN_CONNECT_FOUR_TIME_FOR_EACH_PLAYER: Final = timedelta(seconds=30)
+_MAX_CONNECT_FOUR_TIME_FOR_EACH_PLAYER: Final = timedelta(minutes=3)
 
 _MIN_PASSWORD_LENGTH: Final = 3
 _MAX_PASSWORD_LENGTH: Final = 64
@@ -98,6 +103,7 @@ class CreateLobbyProcessor:
             lobby_id=new_lobby.id,
             name=new_lobby.name,
             admin_id=current_user_id,
+            has_password=new_lobby.password is not None,
             rule_set=command.rule_set,
         )
         await self._event_publisher.publish(event)
@@ -111,12 +117,13 @@ class CreateLobbyProcessor:
             raise InvalidLobbyNameError()
 
     def _validate_rule_set(self, rule_set: RuleSet) -> None:
-        if not (
-            _MIN_FOUR_IN_A_ROW_TIME_FOR_EACH_PLAYER
-            <= rule_set.time_for_each_player
-            <= _MAX_FOUR_IN_A_ROW_TIME_FOR_EACH_PLAYER
-        ):
-            raise InvalidLobbyRuleSetError()
+        if isinstance(rule_set, ConnectFourRuleSet):
+            if not (
+                _MIN_CONNECT_FOUR_TIME_FOR_EACH_PLAYER
+                <= rule_set.time_for_each_player
+                <= _MAX_CONNECT_FOUR_TIME_FOR_EACH_PLAYER
+            ):
+                raise InvalidLobbyRuleSetError()
 
     def _validate_password(self, password: str) -> None:
         if not (_MIN_PASSWORD_LENGTH <= len(password) <= _MAX_PASSWORD_LENGTH):
