@@ -2,12 +2,24 @@
 
 <p align="left">
    <a>
-      <img src="https://img.shields.io/badge/python-3.13-blue" alt="Python version">
+      <img src="https://img.shields.io/badge/python-3.13-blue?logo=python" alt="Python version">
    </a>
    <a href="https://github.com/astral-sh/ruff">
-      <img src="https://img.shields.io/badge/code_style-ruff-%236b00ff" alt="Code style">
+      <img src="https://img.shields.io/badge/code_style-ruff-%236b00ff?logo=python" alt="Code style">
+   </a>
+   <a href="https://github.com/gaems12/connection-hub/actions/workflows/lint-and-test.yaml">
+      <img src="https://img.shields.io/github/actions/workflow/status/gaems12/connection-hub/lint-and-test.yaml?label=lint&logo=github" alt="Status of passing 'lint' job">
+   </a>
+   <a href="https://github.com/gaems12/connection-hub/actions/workflows/lint-and-test.yaml">
+      <img src="https://img.shields.io/github/actions/workflow/status/gaems12/connection-hub/lint-and-test.yaml?label=test&logo=github" alt="Status of passing 'test' job">
+   </a>
+   <a href="https://codecov.io/gh/gaems12/connection-hub" >
+      <img src="https://codecov.io/gh/gaems12/connection-hub/graph/badge.svg?token=4N8N3D3NES"/>
    </a>
 </p>
+
+## 📜 License
+This project is licensed under the Personal Use License. See the [LICENSE](LICENSE) file for details.
 
 ## 📚 Table of Contents
 
@@ -50,9 +62,7 @@ Ensure the following services are installed and running:
 
    **For production:**
    ```bash
-   pip install build
-   python3 -m build --wheel
-   pip install ./dist/connection_hub*.whl
+   pip install -e .
    ```
 
 ### Using uv
@@ -72,8 +82,7 @@ Ensure the following services are installed and running:
 
    **For production**
    ```bash
-   uv build --wheel
-   uv pip install ./dist/connection_hub*.whl
+   uv sync --frozen
    ```
 
 ### Using Docker
