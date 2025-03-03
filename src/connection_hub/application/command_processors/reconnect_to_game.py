@@ -2,11 +2,15 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-from connection_hub.domain import ReconnectToGame
+from connection_hub.domain import (
+    UserId,
+    ConnectFourGame,
+    Game,
+    ReconnectToGame,
+)
 from connection_hub.application.common import (
-    GAME_TO_GAME_TYPE_MAP,
     GameGateway,
-    PlayerReconnectedEvent,
+    ConnectFourGamePlayerReconnectedEvent,
     EventPublisher,
     TaskScheduler,
     TransactionManager,
@@ -60,11 +64,23 @@ class ReconnectToGameProcessor:
         current_player_state = game.players[current_user_id]
         await self._task_scheduler.unschedule(current_player_state.id)
 
-        event = PlayerReconnectedEvent(
-            game_id=game.id,
-            game_type=GAME_TO_GAME_TYPE_MAP[type(game)],
-            player_id=current_user_id,
+        await self._publish_event(
+            game=game,
+            current_player_id=current_user_id,
         )
-        await self._event_publisher.publish(event)
 
         await self._transaction_manager.commit()
+
+    async def _publish_event(
+        self,
+        *,
+        game: Game,
+        current_player_id: UserId,
+    ) -> None:
+        if isinstance(game, ConnectFourGame):
+            event = ConnectFourGamePlayerReconnectedEvent(
+                game_id=game.id,
+                player_id=current_player_id,
+            )
+
+        await self._event_publisher.publish(event)

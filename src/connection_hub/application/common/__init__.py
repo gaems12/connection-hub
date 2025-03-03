@@ -2,7 +2,6 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-from .constants import *
 from .exceptions import *
 from .gateways import *
 from .event_publisher import *

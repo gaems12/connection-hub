@@ -7,9 +7,9 @@ __all__ = (
     "UserJoinedLobbyEvent",
     "UserLeftLobbyEvent",
     "ConnectFourGameCreatedEvent",
-    "PlayerDisconnectedEvent",
-    "PlayerReconnectedEvent",
-    "PlayerDisqualifiedEvent",
+    "ConnectFourGamePlayerDisconnectedEvent",
+    "ConnectFourGamePlayerReconnectedEvent",
+    "ConnectFourGamePlayerDisqualifiedEvent",
     "Event",
     "EventPublisher",
 )
@@ -19,7 +19,6 @@ from datetime import datetime, timedelta
 from typing import Protocol
 
 from connection_hub.domain import LobbyId, GameId, UserId, RuleSet
-from .constants import GameType
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -55,23 +54,20 @@ class ConnectFourGameCreatedEvent:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class PlayerDisconnectedEvent:
+class ConnectFourGamePlayerDisconnectedEvent:
     game_id: GameId
-    game_type: GameType
     player_id: UserId
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class PlayerReconnectedEvent:
+class ConnectFourGamePlayerReconnectedEvent:
     game_id: GameId
-    game_type: GameType
     player_id: UserId
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class PlayerDisqualifiedEvent:
+class ConnectFourGamePlayerDisqualifiedEvent:
     game_id: GameId
-    game_type: GameType
     player_id: UserId
 
 
@@ -80,9 +76,9 @@ type Event = (
     | UserJoinedLobbyEvent
     | UserLeftLobbyEvent
     | ConnectFourGameCreatedEvent
-    | PlayerDisconnectedEvent
-    | PlayerReconnectedEvent
-    | PlayerDisqualifiedEvent
+    | ConnectFourGamePlayerDisconnectedEvent
+    | ConnectFourGamePlayerReconnectedEvent
+    | ConnectFourGamePlayerDisqualifiedEvent
 )
 
 

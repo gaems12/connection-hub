@@ -12,9 +12,9 @@ from connection_hub.application import (
     UserJoinedLobbyEvent,
     UserLeftLobbyEvent,
     ConnectFourGameCreatedEvent,
-    PlayerDisconnectedEvent,
-    PlayerReconnectedEvent,
-    PlayerDisqualifiedEvent,
+    ConnectFourGamePlayerDisconnectedEvent,
+    ConnectFourGamePlayerReconnectedEvent,
+    ConnectFourGamePlayerDisqualifiedEvent,
     Event,
 )
 from connection_hub.infrastructure.common_retort import CommonRetort
@@ -27,9 +27,15 @@ _EVENT_TO_SUBJECT_MAP: Final = {
     UserJoinedLobbyEvent: "connection_hub.lobby.user_joined",
     UserLeftLobbyEvent: "connection_hub.lobby.user_left",
     ConnectFourGameCreatedEvent: "connection_hub.game.created",
-    PlayerDisconnectedEvent: "connection_hub.game.player_disconnected",
-    PlayerReconnectedEvent: "connection_hub.game.player_reconnected",
-    PlayerDisqualifiedEvent: "connection_hub.game.player_disqualified",
+    ConnectFourGamePlayerDisconnectedEvent: (
+        "connection_hub.connect_four.game.player_disconnected"
+    ),
+    ConnectFourGamePlayerReconnectedEvent: (
+        "connection_hub.connect_four.game.player_reconnected"
+    ),
+    ConnectFourGamePlayerDisqualifiedEvent: (
+        "connection_hub.connect_four.game.player_disqualified"
+    ),
 }
 
 

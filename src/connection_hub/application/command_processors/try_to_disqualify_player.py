@@ -8,12 +8,13 @@ from connection_hub.domain import (
     GameId,
     UserId,
     PlayerStateId,
+    ConnectFourGame,
+    Game,
     TryToDisqualifyPlayer,
 )
 from connection_hub.application.common import (
-    GAME_TO_GAME_TYPE_MAP,
     GameGateway,
-    PlayerDisqualifiedEvent,
+    ConnectFourGamePlayerDisqualifiedEvent,
     EventPublisher,
     TaskScheduler,
     TransactionManager,
@@ -82,11 +83,20 @@ class TryToDisqualifyPlayerProcessor:
         else:
             await self._game_gateway.update(game)
 
-        event = PlayerDisqualifiedEvent(
-            game_id=command.game_id,
-            game_type=GAME_TO_GAME_TYPE_MAP[type(game)],
-            player_id=command.player_id,
-        )
-        await self._event_publisher.publish(event)
+        await self._publish_event(game=game, player_id=command.player_id)
 
         await self._transaction_manager.commit()
+
+    async def _publish_event(
+        self,
+        *,
+        game: Game,
+        player_id: UserId,
+    ) -> None:
+        if isinstance(game, ConnectFourGame):
+            event = ConnectFourGamePlayerDisqualifiedEvent(
+                game_id=game.id,
+                player_id=player_id,
+            )
+
+        await self._event_publisher.publish(event)

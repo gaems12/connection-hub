@@ -22,9 +22,9 @@ from connection_hub.application import (
     UserJoinedLobbyEvent,
     UserLeftLobbyEvent,
     ConnectFourGameCreatedEvent,
-    PlayerDisconnectedEvent,
-    PlayerReconnectedEvent,
-    PlayerDisqualifiedEvent,
+    ConnectFourGamePlayerDisconnectedEvent,
+    ConnectFourGamePlayerReconnectedEvent,
+    ConnectFourGamePlayerDisqualifiedEvent,
     Event,
 )
 from connection_hub.infrastructure.utils import get_env_var
@@ -88,13 +88,13 @@ class HTTPXCentrifugoClient:
         elif isinstance(event, ConnectFourGameCreatedEvent):
             await self._publish_connect_four_game_created(event)
 
-        elif isinstance(event, PlayerDisconnectedEvent):
+        elif isinstance(event, ConnectFourGamePlayerDisconnectedEvent):
             await self._publish_player_disconnected(event)
 
-        elif isinstance(event, PlayerReconnectedEvent):
+        elif isinstance(event, ConnectFourGamePlayerReconnectedEvent):
             await self._publish_player_reconnected(event)
 
-        elif isinstance(event, PlayerDisqualifiedEvent):
+        elif isinstance(event, ConnectFourGamePlayerDisqualifiedEvent):
             await self._publish_player_disqualified(event)
 
     async def _publish_lobby_created(
@@ -171,7 +171,7 @@ class HTTPXCentrifugoClient:
 
     async def _publish_player_disconnected(
         self,
-        event: PlayerDisconnectedEvent,
+        event: ConnectFourGamePlayerDisconnectedEvent,
     ) -> None:
         event_as_dict = {
             "type": "player_disconnected",
@@ -184,7 +184,7 @@ class HTTPXCentrifugoClient:
 
     async def _publish_player_reconnected(
         self,
-        event: PlayerReconnectedEvent,
+        event: ConnectFourGamePlayerReconnectedEvent,
     ) -> None:
         event_as_dict = {
             "type": "player_reconnected",
@@ -197,7 +197,7 @@ class HTTPXCentrifugoClient:
 
     async def _publish_player_disqualified(
         self,
-        event: PlayerDisqualifiedEvent,
+        event: ConnectFourGamePlayerDisqualifiedEvent,
     ) -> None:
         event_as_dict = {
             "type": "player_disqualified",

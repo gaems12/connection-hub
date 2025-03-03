@@ -6,14 +6,19 @@ import json
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Iterable
+from enum import StrEnum
 
 from redis.asyncio.client import Redis, Pipeline
 
 from connection_hub.domain import GameId, UserId, ConnectFourGame, Game
-from connection_hub.application import GameType, GameGateway
+from connection_hub.application import GameGateway
 from connection_hub.infrastructure.database.lock_manager import LockManager
 from connection_hub.infrastructure.common_retort import CommonRetort
 from connection_hub.infrastructure.utils import get_env_var, str_to_timedelta
+
+
+class _GameType(StrEnum):
+    CONNECT_FOUR = "connect_four"
 
 
 def load_game_mapper_config() -> "GameMapperConfig":
@@ -137,16 +142,16 @@ class GameMapper(GameGateway):
                 "dict has no 'type' key.",
             )
 
-        game_type = GameType(raw_game_type)
+        game_type = _GameType(raw_game_type)
 
-        if game_type == GameType.CONNECT_FOUR:
+        if game_type == _GameType.CONNECT_FOUR:
             return self._common_retort.load(dict_, ConnectFourGame)
 
     def _game_to_dict(self, game: Game) -> dict:
         game_as_dict = self._common_retort.dump(game)
 
         if isinstance(game, ConnectFourGame):
-            game_as_dict["type"] = GameType.CONNECT_FOUR
+            game_as_dict["type"] = _GameType.CONNECT_FOUR
 
         return game_as_dict
 
