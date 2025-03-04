@@ -1,0 +1,74 @@
+name: Mutation test
+run-name: Testing Mutated Code
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+jobs:
+  mutation-test:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+
+    steps:
+      - name: Run nats
+        run: |
+          docker rm -f nats || echo "nats container doesn't exist"
+          docker run -d --name nats -p 4222:4222 nats:2.10-alpine -js
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PUSH_KILLED_MUTANTS_BADGE_TOKEN }}
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: uv sync --all-extras --frozen
+
+      - name: Create nats streams
+        run: uv run connect-four create-nats-streams nats://localhost:4222
+
+      - name: Run tests
+        run: |
+          uv run cosmic-ray init \
+            --force \
+            ./.cosmic-ray-config.toml \
+            ./.cosmic-ray-session.sqlite
+          uv run cosmic-ray exec \
+            ./.cosmic-ray-config.toml \
+            ./.cosmic-ray-session.sqlite
+          uv run cr-badge \
+            ./.cosmic-ray-config.toml \
+            ./assets/killed_mutants_badge.svg \
+            ./.cosmic-ray-session.sqlite
+          uv run cr-html \
+            --skip-success \
+            ./.cosmic-ray-session.sqlite > survived_mutants.html
+
+      - name: Upload new badge
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add ./assets/killed_mutants_badge.svg
+          git commit -m "Update killed mutants badge" \
+            || echo "No changes in 'killed_mutants_badge.svg' file"
+          git push
+
+      - name: Upload survived mutants report
+        uses: actions/upload-artifact@v4
+        with:
+          name: survivors-mutants-report
+          path: survived_mutants.html
+
+      - name: Remove nats
+        run: docker rm -f nats || echo "nats container doesn't exist"
