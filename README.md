@@ -16,6 +16,9 @@
    <a href="https://codecov.io/gh/gaems12/connection-hub" >
       <img src="https://codecov.io/gh/gaems12/connection-hub/graph/badge.svg?token=4N8N3D3NES"/>
    </a>
+    <a href="https://github.com/gaems12/connect-four/actions/workflows/mutation-test.yaml">
+      <img src="./assets/killed_mutants_badge.svg">
+   </a>
 </p>
 
 ## 📜 License
