@@ -8,18 +8,33 @@ from contextvars import ContextVar
 
 from pythonjsonlogger.json import JsonFormatter
 
+from connection_hub.infrastructure.operation_id import OperationId
 from .config import load_logging_config
 
 
-log_extra_context_var: ContextVar[dict] = ContextVar(
-    "log_extra_context_var",
-    default={},
-)
+_log_extra: ContextVar[dict] = ContextVar("log_extra", default={})
+
+
+def set_operation_id(operation_id: OperationId) -> None:
+    """
+    Sets the operation ID in the exta context var.
+    """
+    current_log_extra = _log_extra.get().copy()
+    current_log_extra["operation_id"] = operation_id
+    _log_extra.set(current_log_extra)
+
+
+def get_operation_id() -> OperationId:
+    """
+    Returns the operation ID from the exta context var.
+    """
+    current_log_extra = _log_extra.get()
+    return current_log_extra["operation_id"]
 
 
 class _ContextVarLogExtraSetterFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
-        log_extra = log_extra_context_var.get()
+        log_extra = _log_extra.get()
 
         for key, value in log_extra.values():
             setattr(record, key, value)

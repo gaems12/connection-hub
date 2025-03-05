@@ -44,9 +44,8 @@ from connection_hub.infrastructure import (
     load_redis_config,
     common_retort_factory,
     RealEventPublisher,
-    default_operation_id_factory,
+    get_operation_id,
 )
-from .context_var_setter import ContextVarSetter
 
 
 def ioc_container_factory() -> AsyncContainer:
@@ -68,8 +67,7 @@ def ioc_container_factory() -> AsyncContainer:
     provider.from_context(LockManagerConfig, scope=Scope.APP)
     provider.from_context(NATSConfig, scope=Scope.APP)
 
-    provider.provide(default_operation_id_factory, scope=Scope.REQUEST)
-    provider.provide(ContextVarSetter, scope=Scope.REQUEST)
+    provider.provide(get_operation_id, scope=Scope.REQUEST)
     provider.provide(common_retort_factory, scope=Scope.APP)
 
     provider.provide(httpx_client_factory, scope=Scope.APP)

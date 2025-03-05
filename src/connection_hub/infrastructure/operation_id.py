@@ -13,7 +13,7 @@ from uuid_extensions import uuid7
 OperationId = NewType("OperationId", UUID)
 
 
-async def default_operation_id_factory() -> OperationId:
+def default_operation_id_factory() -> OperationId:
     """
     Operation id factory that should be used if
     there is no other factory

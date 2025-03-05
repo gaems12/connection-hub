@@ -21,18 +21,8 @@ from connection_hub.application import (
     TryToDisqualifyPlayerProcessor,
     EndGameProcessor,
 )
-from connection_hub.infrastructure import (
-    NATSConfig,
-    common_retort_factory,
-)
-from connection_hub.presentation.message_consumer import (
-    create_broker,
-    create_lobby_command_factory,
-    join_lobby_command_factory,
-    end_game_command_factory,
-    ContextVarSetter,
-    operation_id_factory,
-)
+from connection_hub.infrastructure import NATSConfig
+from connection_hub.presentation.message_consumer import create_broker
 from connection_hub.main.message_consumer import create_message_consumer_app
 
 
@@ -44,14 +34,6 @@ def broker(nats_config: NATSConfig) -> NatsBroker:
 @pytest.fixture(scope="function")
 def ioc_container() -> AsyncContainer:
     provider = Provider()
-
-    provider.provide(operation_id_factory, scope=Scope.REQUEST)
-    provider.provide(common_retort_factory, scope=Scope.APP)
-    provider.provide(ContextVarSetter, scope=Scope.REQUEST)
-
-    provider.provide(create_lobby_command_factory, scope=Scope.REQUEST)
-    provider.provide(join_lobby_command_factory, scope=Scope.REQUEST)
-    provider.provide(end_game_command_factory, scope=Scope.REQUEST)
 
     provider.provide(
         lambda: AsyncMock(),

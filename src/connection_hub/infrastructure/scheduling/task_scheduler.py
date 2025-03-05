@@ -9,17 +9,24 @@ from taskiq import ScheduledTask
 from taskiq_redis import RedisScheduleSource
 
 from connection_hub.application import (
+    TryToDisqualifyPlayerCommand,
     TryToDisqualifyPlayerTask,
     Task,
     TaskScheduler,
 )
+from connection_hub.infrastructure.operation_id import OperationId
 
 
 class TaskiqTaskScheduler(TaskScheduler):
-    __slots__ = ("schedule_source",)
+    __slots__ = ("_schedule_source", "_operation_id")
 
-    def __init__(self, schedule_source: RedisScheduleSource):
+    def __init__(
+        self,
+        schedule_source: RedisScheduleSource,
+        operation_id: OperationId,
+    ):
         self._schedule_source = schedule_source
+        self._operation_id = operation_id
 
     async def schedule(self, task: Task) -> None:
         if isinstance(task, TryToDisqualifyPlayerTask):
@@ -36,15 +43,17 @@ class TaskiqTaskScheduler(TaskScheduler):
         self,
         task: TryToDisqualifyPlayerTask,
     ) -> None:
+        command = TryToDisqualifyPlayerCommand(
+            game_id=task.game_id,
+            player_id=task.player_id,
+            player_state_id=task.player_state_id,
+        )
+
         schedule = ScheduledTask(
             task_name="try_to_disqualify_player",
             labels={},
-            args=[],
-            kwargs={
-                "game_id": task,
-                "player_id": task.player_id,
-                "player_state_id": task.player_state_id,
-            },
+            args=[self._operation_id],
+            kwargs={"command": command},
             schedule_id=task.id.hex,
             time=task.execute_at,
         )

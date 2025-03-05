@@ -16,6 +16,7 @@ from connection_hub.domain import (
     LeaveLobby,
     CreateGame,
     DisconnectFromGame,
+    ReconnectToGame,
 )
 from connection_hub.application import (
     LobbyGateway,
@@ -60,15 +61,9 @@ from connection_hub.infrastructure import (
     load_redis_config,
     common_retort_factory,
     RealEventPublisher,
-)
-from .commands import (
-    create_lobby_command_factory,
-    join_lobby_command_factory,
-    end_game_command_factory,
+    get_operation_id,
 )
 from .identity_provider import MessageBrokerIdentityProvider
-from .context_var_setter import ContextVarSetter
-from .operation_id import operation_id_factory
 
 
 def ioc_container_factory() -> AsyncContainer:
@@ -90,8 +85,7 @@ def ioc_container_factory() -> AsyncContainer:
     provider.from_context(LockManagerConfig, scope=Scope.APP)
     provider.from_context(NATSConfig, scope=Scope.APP)
 
-    provider.provide(operation_id_factory, scope=Scope.REQUEST)
-    provider.provide(ContextVarSetter, scope=Scope.REQUEST)
+    provider.provide(get_operation_id, scope=Scope.REQUEST)
     provider.provide(common_retort_factory, scope=Scope.APP)
 
     provider.provide(httpx_client_factory, scope=Scope.APP)
@@ -135,10 +129,7 @@ def ioc_container_factory() -> AsyncContainer:
     provider.provide(LeaveLobby, scope=Scope.APP)
     provider.provide(CreateGame, scope=Scope.APP)
     provider.provide(DisconnectFromGame, scope=Scope.APP)
-
-    provider.provide(create_lobby_command_factory, scope=Scope.REQUEST)
-    provider.provide(join_lobby_command_factory, scope=Scope.REQUEST)
-    provider.provide(end_game_command_factory, scope=Scope.REQUEST)
+    provider.provide(ReconnectToGame, scope=Scope.APP)
 
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
