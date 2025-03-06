@@ -12,6 +12,6 @@ label = "🧬 killed mutants"
 format = "%.2f %%"
 
 [cosmic-ray.badge.thresholds]
-50  = "red"
-70  = "yellow"
+50 = "red"
+70 = "yellow"
 90 = "green"
