@@ -13,6 +13,8 @@ This project uses the following third-party libraries:
 - ruff (License: MIT)
 - pre-commit (License: MIT)
 - pytest (License: MIT)
+- pytest-cov (License: MIT)
+- cosmic-ray (License: MIT)
 - nats-py (License: Apache-2.0)
 - pytest-asyncio (License: Apache-2.0)
 - python-json-logger (License: BSD-2-Clause)
