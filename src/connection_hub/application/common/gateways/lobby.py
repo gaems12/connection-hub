@@ -47,3 +47,6 @@ class LobbyGateway(Protocol):
 
     async def update(self, lobby: Lobby) -> None:
         raise NotImplementedError
+
+    async def delete(self, lobby: Lobby) -> None:
+        raise NotImplementedError

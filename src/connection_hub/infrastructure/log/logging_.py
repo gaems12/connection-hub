@@ -51,7 +51,7 @@ def setup_logging() -> None:
     stream_handler.addFilter(context_var_log_extra_filter)
 
     json_formatter = JsonFormatter(
-        fmt="%(timestamp)s %(levelname)s %(message)s",
+        fmt="%(filename)s %(timestamp)s %(levelname)s %(message)s",
         timestamp=True,
         json_ensure_ascii=False,
     )

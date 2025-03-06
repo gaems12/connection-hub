@@ -138,8 +138,7 @@ class GameMapper(GameGateway):
         raw_game_type = dict_.get("type")
         if not raw_game_type:
             raise Exception(
-                "GameMapper. Cannot convert dict to game: "
-                "dict has no 'type' key.",
+                "Cannot convert dict to game: dict has no 'type' key.",
             )
 
         game_type = _GameType(raw_game_type)

@@ -17,8 +17,7 @@ class ReconnectToGame:
     ) -> None:
         if current_user_id not in game.players:
             raise Exception(
-                "ReconnectToGame. Cannot disconnect from game: "
-                "player is not in the game.",
+                "Cannot disconnect from game: player is not in the game.",
             )
 
         if game.players[current_user_id].status == PlayerStatus.CONNECTED:

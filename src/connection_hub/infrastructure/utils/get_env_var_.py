@@ -56,7 +56,7 @@ def get_env_var[T: Any, D: Any](
         if default:
             return default
 
-        raise Exception(f"Env var {key} doesn't exist")
+        raise Exception(f"Env var {key} doesn't exist.")
 
     if value_factory:
         return value_factory(value)

@@ -144,8 +144,7 @@ class LobbyMapper(LobbyGateway):
         raw_lobby_type = dict_.get("type")
         if not raw_lobby_type:
             raise Exception(
-                "LobbyMapper. Cannot convert dict to lobby: "
-                "dict has no 'type' key.",
+                "Cannot convert dict to lobby: dict has no 'type' key.",
             )
         lobby_type = _LobbyType(raw_lobby_type)
 
