@@ -16,7 +16,8 @@ OperationId = NewType("OperationId", UUID)
 def default_operation_id_factory() -> OperationId:
     """
     Operation id factory that should be used if
-    there is no other factory
-    (for example if no operation id was provided with request).
+    there is no other factory for getting an operation id
+    (for example, when using cli) or if the operation was
+    not provided.
     """
     return OperationId(uuid7())

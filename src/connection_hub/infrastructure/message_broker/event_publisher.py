@@ -18,6 +18,7 @@ from connection_hub.application import (
     Event,
 )
 from connection_hub.infrastructure.common_retort import CommonRetort
+from connection_hub.infrastructure.operation_id import OperationId
 
 
 _STREAM: Final = "games"
@@ -40,20 +41,23 @@ _EVENT_TO_SUBJECT_MAP: Final = {
 
 
 class NATSEventPublisher:
-    __all__ = ("_jetstream", "_common_retort")
+    __all__ = ("_jetstream", "_common_retort", "_operation_id")
 
     def __init__(
         self,
         jetstream: JetStreamContext,
         common_retort: CommonRetort,
+        operation_id: OperationId,
     ):
         self._jetstream = jetstream
         self._common_retort = common_retort
+        self._operation_id = operation_id
 
     async def publish(self, event: Event) -> None:
         subject = _EVENT_TO_SUBJECT_MAP[type(event)]
 
         event_as_dict = self._common_retort.dump(event)
+        event_as_dict["operation_id"] = str(self._operation_id)
         payload = json.dumps(event_as_dict).encode()
 
         await self._jetstream.publish(
