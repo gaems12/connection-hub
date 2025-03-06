@@ -54,6 +54,9 @@ class FakeLobbyGateway(LobbyGateway):
     async def update(self, lobby: Lobby) -> None:
         self._lobbies[lobby.id] = lobby
 
+    async def delete(self, lobby: Lobby) -> None:
+        self._lobbies.pop(lobby.id, None)
+
 
 class FakeGameGateway(GameGateway):
     __slots__ = ("_games",)
