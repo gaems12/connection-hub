@@ -36,7 +36,7 @@ class _ContextVarLogExtraSetterFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         log_extra = _log_extra.get()
 
-        for key, value in log_extra.values():
+        for key, value in log_extra.items():
             setattr(record, key, value)
 
         return True
@@ -51,7 +51,10 @@ def setup_logging() -> None:
     stream_handler.addFilter(context_var_log_extra_filter)
 
     json_formatter = JsonFormatter(
-        fmt="%(filename)s %(timestamp)s %(levelname)s %(message)s",
+        fmt=(
+            "%(levelname)s %(message)s %(module)s %(filename)s "
+            "%(funcName)s %(timestamp)s"
+        ),
         timestamp=True,
         json_ensure_ascii=False,
     )
