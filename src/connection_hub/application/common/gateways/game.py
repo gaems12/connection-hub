@@ -10,7 +10,7 @@ from connection_hub.domain import UserId, GameId, Game
 class GameGateway(Protocol):
     async def by_id(
         self,
-        game_id: GameId,
+        id: GameId,
         *,
         acquire: bool = False,
     ) -> Game | None:

@@ -61,11 +61,11 @@ class GameMapper(GameGateway):
 
     async def by_id(
         self,
-        game_id: GameId,
+        id: GameId,
         *,
         acquire: bool = False,
     ) -> Game | None:
-        pattern = self._pattern_to_find_game_by_id(game_id)
+        pattern = self._pattern_to_find_game_by_id(id)
         keys = await self._keys_by_pattern(pattern=pattern, limit=1)
         if not keys:
             return None

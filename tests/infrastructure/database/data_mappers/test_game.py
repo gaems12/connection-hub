@@ -83,7 +83,7 @@ async def test_game_mapper(
     await transaction_manager.commit()
 
     game_from_database = await game_mapper.by_id(
-        game_id=_GAME_ID,
+        id=_GAME_ID,
         acquire=True,
     )
     assert game_from_database == new_game
@@ -109,7 +109,7 @@ async def test_game_mapper(
     await transaction_manager.commit()
 
     game_from_database = await game_mapper.by_id(
-        game_id=_GAME_ID,
+        id=_GAME_ID,
         acquire=True,
     )
     assert game_from_database is None

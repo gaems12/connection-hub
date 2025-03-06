@@ -11,4 +11,3 @@ from .clients import *
 from .database import *
 from .scheduling import *
 from .message_broker import *
-from .event_publisher import *
