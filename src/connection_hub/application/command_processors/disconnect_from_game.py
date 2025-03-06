@@ -16,6 +16,8 @@ from connection_hub.application.common import (
     EventPublisher,
     TryToDisqualifyPlayerTask,
     TaskScheduler,
+    CentrifugoClient,
+    centrifugo_game_channel_factory,
     TransactionManager,
     IdentityProvider,
     UserNotInGameError,
@@ -28,6 +30,7 @@ class DisconnectFromGameProcessor:
         "_game_gateway",
         "_task_scheduler",
         "_event_publisher",
+        "_centrifugo_client",
         "_transaction_manager",
         "_identity_provider",
     )
@@ -38,6 +41,7 @@ class DisconnectFromGameProcessor:
         game_gateway: GameGateway,
         task_scheduler: TaskScheduler,
         event_publisher: EventPublisher,
+        centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
     ):
@@ -45,6 +49,7 @@ class DisconnectFromGameProcessor:
         self._game_gateway = game_gateway
         self._task_scheduler = task_scheduler
         self._event_publisher = event_publisher
+        self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
@@ -82,6 +87,15 @@ class DisconnectFromGameProcessor:
         await self._publish_event(
             game=game,
             current_player_id=current_user_id,
+        )
+
+        centrfugo_publication = {
+            "type": "player_disconnected",
+            "player_id": current_user_id.hex,
+        }
+        await self._centrifugo_client.publish(
+            channel=centrifugo_game_channel_factory(game.id),
+            data=centrfugo_publication,  # type: ignore[arg-type]
         )
 
         await self._transaction_manager.commit()

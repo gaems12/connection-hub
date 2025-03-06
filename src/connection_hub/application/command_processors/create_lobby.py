@@ -8,8 +8,10 @@ from typing import Final
 
 from connection_hub.domain import (
     LobbyId,
+    UserId,
     ConnectFourRuleSet,
     RuleSet,
+    Lobby,
     CreateLobby,
 )
 from connection_hub.application.common import (
@@ -17,6 +19,8 @@ from connection_hub.application.common import (
     GameGateway,
     LobbyCreatedEvent,
     EventPublisher,
+    CentrifugoClient,
+    centrifugo_user_personal_channel_factory,
     TransactionManager,
     IdentityProvider,
     InvalidLobbyNameError,
@@ -50,6 +54,7 @@ class CreateLobbyProcessor:
         "_lobby_gateway",
         "_game_gateway",
         "_event_publisher",
+        "_centrifugo_client",
         "_transaction_manager",
         "_identity_provider",
     )
@@ -60,6 +65,7 @@ class CreateLobbyProcessor:
         lobby_gateway: LobbyGateway,
         game_gateway: GameGateway,
         event_publisher: EventPublisher,
+        centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
     ):
@@ -67,6 +73,7 @@ class CreateLobbyProcessor:
         self._lobby_gateway = lobby_gateway
         self._game_gateway = game_gateway
         self._event_publisher = event_publisher
+        self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
@@ -108,6 +115,12 @@ class CreateLobbyProcessor:
         )
         await self._event_publisher.publish(event)
 
+        await self._publish_data_to_centrifugo(
+            lobby=new_lobby,
+            rule_set=command.rule_set,
+            current_user_id=current_user_id,
+        )
+
         await self._transaction_manager.commit()
 
         return new_lobby.id
@@ -128,3 +141,29 @@ class CreateLobbyProcessor:
     def _validate_password(self, password: str) -> None:
         if not (_MIN_PASSWORD_LENGTH <= len(password) <= _MAX_PASSWORD_LENGTH):
             raise InvalidLobbyPasswordError()
+
+    async def _publish_data_to_centrifugo(
+        self,
+        *,
+        lobby: Lobby,
+        rule_set: RuleSet,
+        current_user_id: UserId,
+    ) -> None:
+        if isinstance(rule_set, ConnectFourRuleSet):
+            rule_set_as_dict = {
+                "type": "connect_four",
+                "time_for_each_player": (
+                    rule_set.time_for_each_player.total_seconds()
+                ),
+            }
+
+        centrifugo_publication = {
+            "type": "lobby_created",
+            "lobby_id": lobby.id.hex,
+            "name": lobby.name,
+            "rule_set": rule_set_as_dict,
+        }
+        await self._centrifugo_client.publish(
+            channel=centrifugo_user_personal_channel_factory(current_user_id),
+            data=centrifugo_publication,  # type: ignore[arg-type]
+        )

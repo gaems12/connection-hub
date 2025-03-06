@@ -8,12 +8,14 @@ from dishka import (
     AsyncContainer,
     make_async_container,
 )
+from dishka.integrations.taskiq import TaskiqProvider
 
 from connection_hub.domain import TryToDisqualifyPlayer
 from connection_hub.application import (
     GameGateway,
     EventPublisher,
     TaskScheduler,
+    CentrifugoClient,
     TransactionManager,
     TryToDisqualifyPlayerProcessor,
 )
@@ -43,7 +45,6 @@ from connection_hub.infrastructure import (
     RedisConfig,
     load_redis_config,
     common_retort_factory,
-    RealEventPublisher,
     get_operation_id,
 )
 
@@ -85,14 +86,16 @@ def ioc_container_factory() -> AsyncContainer:
         scope=Scope.REQUEST,
     )
 
-    provider.provide(NATSEventPublisher, scope=Scope.REQUEST)
-    provider.provide(HTTPXCentrifugoClient, scope=Scope.REQUEST)
     provider.provide(
-        RealEventPublisher,
-        provides=EventPublisher,
+        NATSEventPublisher,
         scope=Scope.REQUEST,
+        provides=EventPublisher,
     )
-
+    provider.provide(
+        HTTPXCentrifugoClient,
+        scope=Scope.REQUEST,
+        provides=CentrifugoClient,
+    )
     provider.provide(
         TaskiqTaskScheduler,
         scope=Scope.REQUEST,
@@ -102,4 +105,4 @@ def ioc_container_factory() -> AsyncContainer:
     provider.provide(TryToDisqualifyPlayer, scope=Scope.APP)
     provider.provide(TryToDisqualifyPlayerProcessor, scope=Scope.REQUEST)
 
-    return make_async_container(provider, context=context)
+    return make_async_container(provider, TaskiqProvider(), context=context)

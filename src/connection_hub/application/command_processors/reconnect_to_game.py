@@ -13,6 +13,8 @@ from connection_hub.application.common import (
     ConnectFourGamePlayerReconnectedEvent,
     EventPublisher,
     TaskScheduler,
+    CentrifugoClient,
+    centrifugo_game_channel_factory,
     TransactionManager,
     IdentityProvider,
     UserNotInGameError,
@@ -25,6 +27,7 @@ class ReconnectToGameProcessor:
         "_game_gateway",
         "_event_publisher",
         "_task_scheduler",
+        "_centrifugo_client",
         "_transaction_manager",
         "_identity_provider",
     )
@@ -35,6 +38,7 @@ class ReconnectToGameProcessor:
         game_gateway: GameGateway,
         event_publisher: EventPublisher,
         task_scheduler: TaskScheduler,
+        centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
     ):
@@ -42,6 +46,7 @@ class ReconnectToGameProcessor:
         self._game_gateway = game_gateway
         self._event_publisher = event_publisher
         self._task_scheduler = task_scheduler
+        self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
@@ -67,6 +72,15 @@ class ReconnectToGameProcessor:
         await self._publish_event(
             game=game,
             current_player_id=current_user_id,
+        )
+
+        centrifugo_publication = {
+            "type": "player_reconnected",
+            "player_id": current_user_id.hex,
+        }
+        await self._centrifugo_client.publish(
+            channel=centrifugo_game_channel_factory(game.id),
+            data=centrifugo_publication,  # type: ignore[arg-type]
         )
 
         await self._transaction_manager.commit()

@@ -23,6 +23,7 @@ from connection_hub.application import (
     GameGateway,
     EventPublisher,
     TaskScheduler,
+    CentrifugoClient,
     TransactionManager,
     IdentityProvider,
     CreateLobbyProcessor,
@@ -60,7 +61,6 @@ from connection_hub.infrastructure import (
     RedisConfig,
     load_redis_config,
     common_retort_factory,
-    RealEventPublisher,
     get_operation_id,
 )
 from .identity_provider import MessageBrokerIdentityProvider
@@ -96,28 +96,29 @@ def ioc_container_factory() -> AsyncContainer:
     provider.provide(taskiq_redis_schedule_source_factory, scope=Scope.APP)
 
     provider.provide(lock_manager_factory, scope=Scope.REQUEST)
-    provider.provide(LobbyMapper, provides=LobbyGateway, scope=Scope.REQUEST)
-    provider.provide(GameMapper, provides=GameGateway, scope=Scope.REQUEST)
+    provider.provide(LobbyMapper, scope=Scope.REQUEST, provides=LobbyGateway)
+    provider.provide(GameMapper, scope=Scope.REQUEST, provides=GameGateway)
     provider.provide(
         RedisTransactionManager,
+        scope=Scope.REQUEST,
         provides=TransactionManager,
-        scope=Scope.REQUEST,
     )
 
-    provider.provide(NATSEventPublisher, scope=Scope.REQUEST)
-    provider.provide(HTTPXCentrifugoClient, scope=Scope.REQUEST)
     provider.provide(
-        RealEventPublisher,
-        provides=EventPublisher,
+        NATSEventPublisher,
         scope=Scope.REQUEST,
+        provides=EventPublisher,
     )
-
+    provider.provide(
+        HTTPXCentrifugoClient,
+        scope=Scope.REQUEST,
+        provides=CentrifugoClient,
+    )
     provider.provide(
         TaskiqTaskScheduler,
         scope=Scope.REQUEST,
         provides=TaskScheduler,
     )
-
     provider.provide(
         MessageBrokerIdentityProvider,
         scope=Scope.REQUEST,

@@ -6,5 +6,6 @@ from .exceptions import *
 from .gateways import *
 from .event_publisher import *
 from .task_scheduler import *
+from .centrifugo_client import *
 from .transaction_manager import *
 from .identity_provider import *

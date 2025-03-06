@@ -17,6 +17,8 @@ from connection_hub.application.common import (
     ConnectFourGamePlayerDisqualifiedEvent,
     EventPublisher,
     TaskScheduler,
+    CentrifugoClient,
+    centrifugo_game_channel_factory,
     TransactionManager,
     GameDoesNotExistError,
     UserNotInGameError,
@@ -36,6 +38,7 @@ class TryToDisqualifyPlayerProcessor:
         "_game_gateway",
         "_event_publisher",
         "_task_scheduler",
+        "_centrifugo_client",
         "_transaction_manager",
     )
 
@@ -45,12 +48,14 @@ class TryToDisqualifyPlayerProcessor:
         game_gateway: GameGateway,
         event_publisher: EventPublisher,
         task_scheduler: TaskScheduler,
+        centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
     ):
         self._try_to_disqualify_player = try_to_disqualify_player
         self._game_gateway = game_gateway
         self._event_publisher = event_publisher
         self._task_scheduler = task_scheduler
+        self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
 
     async def process(self, command: TryToDisqualifyPlayerCommand) -> None:
@@ -84,6 +89,15 @@ class TryToDisqualifyPlayerProcessor:
             await self._game_gateway.update(game)
 
         await self._publish_event(game=game, player_id=command.player_id)
+
+        centrifugo_publication = {
+            "type": "player_disqualified",
+            "player_id": command.player_id.hex,
+        }
+        await self._centrifugo_client.publish(
+            channel=centrifugo_game_channel_factory(game.id),
+            data=centrifugo_publication,  # type: ignore[arg-type]
+        )
 
         await self._transaction_manager.commit()
 

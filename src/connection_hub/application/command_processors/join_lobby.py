@@ -10,6 +10,8 @@ from connection_hub.application.common import (
     GameGateway,
     UserJoinedLobbyEvent,
     EventPublisher,
+    CentrifugoClient,
+    centrifugo_lobby_channel_factory,
     TransactionManager,
     IdentityProvider,
     UserInLobbyError,
@@ -30,6 +32,7 @@ class JoinLobbyProcessor:
         "_lobby_gateway",
         "_game_gateway",
         "_event_publisher",
+        "_centrifugo_client",
         "_transaction_manager",
         "_identity_provider",
     )
@@ -40,6 +43,7 @@ class JoinLobbyProcessor:
         lobby_gateway: LobbyGateway,
         game_gateway: GameGateway,
         event_publisher: EventPublisher,
+        centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
     ):
@@ -47,6 +51,7 @@ class JoinLobbyProcessor:
         self._lobby_gateway = lobby_gateway
         self._game_gateway = game_gateway
         self._event_publisher = event_publisher
+        self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
@@ -84,5 +89,14 @@ class JoinLobbyProcessor:
             user_id=current_user_id,
         )
         await self._event_publisher.publish(event)
+
+        centrifugo_publication = {
+            "type": "user_joined",
+            "user_id": current_user_id.hex,
+        }
+        await self._centrifugo_client.publish(
+            channel=centrifugo_lobby_channel_factory(command.lobby_id),
+            data=centrifugo_publication,  # type: ignore[arg-type]
+        )
 
         await self._transaction_manager.commit()

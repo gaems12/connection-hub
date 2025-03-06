@@ -7,6 +7,8 @@ from connection_hub.application.common import (
     LobbyGateway,
     UserLeftLobbyEvent,
     EventPublisher,
+    CentrifugoClient,
+    centrifugo_lobby_channel_factory,
     TransactionManager,
     IdentityProvider,
     UserNotInLobbyError,
@@ -18,6 +20,7 @@ class LeaveLobbyProcessor:
         "_leave_lobby",
         "_lobby_gateway",
         "_event_publisher",
+        "_centrifugo_client",
         "_transaction_manager",
         "_identity_provider",
     )
@@ -27,12 +30,14 @@ class LeaveLobbyProcessor:
         leave_lobby: LeaveLobby,
         lobby_gateway: LobbyGateway,
         event_publisher: EventPublisher,
+        centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
     ):
         self._leave_lobby = leave_lobby
         self._lobby_gateway = lobby_gateway
         self._event_publisher = event_publisher
+        self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
@@ -58,5 +63,15 @@ class LeaveLobbyProcessor:
             new_admin_id=new_admin_id,
         )
         await self._event_publisher.publish(event)
+
+        centrifugo_publication = {
+            "type": "user_left",
+            "user_id": current_user_id.hex,
+            "new_admin_id": new_admin_id.hex if new_admin_id else None,
+        }
+        await self._centrifugo_client.publish(
+            channel=centrifugo_lobby_channel_factory(lobby_to_leave.id),
+            data=centrifugo_publication,  # type: ignore[arg-type]
+        )
 
         await self._transaction_manager.commit()
