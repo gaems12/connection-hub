@@ -36,7 +36,7 @@ router = NatsRouter()
 @inject
 async def create_lobby(
     *,
-    command: FromDishka[CreateLobbyCommand],
+    command: CreateLobbyCommand,
     command_processor: FromDishka[CreateLobbyProcessor],
 ) -> None:
     await command_processor.process(command)
@@ -51,7 +51,7 @@ async def create_lobby(
 @inject
 async def join_lobby(
     *,
-    command: FromDishka[JoinLobbyCommand],
+    command: JoinLobbyCommand,
     command_processor: FromDishka[JoinLobbyProcessor],
 ) -> None:
     await command_processor.process(command)
@@ -94,7 +94,7 @@ async def create_game(
 @inject
 async def end_game(
     *,
-    command: FromDishka[EndGameCommand],
+    command: EndGameCommand,
     command_processor: FromDishka[EndGameProcessor],
 ) -> None:
     await command_processor.process(command)

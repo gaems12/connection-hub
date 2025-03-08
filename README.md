@@ -100,7 +100,6 @@ Ensure the following services are installed and running:
 
 Configure the following environment variables before running the application:
 
-
 <div align="center">
 
 | Variable                         | Required            | Description                              |
