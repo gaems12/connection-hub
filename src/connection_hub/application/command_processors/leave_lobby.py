@@ -70,7 +70,7 @@ class LeaveLobbyProcessor:
         await self._event_publisher.publish(event)
 
         await self._publish_data_to_centrifugo(
-            lobby_to_leave=lobby_to_leave,
+            lobby=lobby_to_leave,
             new_admin_id=new_admin_id,
             current_user_id=current_user_id,
         )
@@ -80,11 +80,11 @@ class LeaveLobbyProcessor:
     async def _publish_data_to_centrifugo(
         self,
         *,
-        lobby_to_leave: Lobby,
+        lobby: Lobby,
         new_admin_id: UserId | None,
         current_user_id: UserId,
     ) -> None:
-        lobby_channel = centrifugo_lobby_channel_factory(lobby_to_leave.id)
+        lobby_channel = centrifugo_lobby_channel_factory(lobby.id)
 
         centrifugo_publication = {
             "type": "user_left",

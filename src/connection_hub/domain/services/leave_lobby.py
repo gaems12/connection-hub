@@ -27,7 +27,7 @@ class LeaveLobby:
 
         current_user_role = lobby.users.pop(current_user_id)
         no_users_left = not lobby.users
-        if not no_users_left:
+        if no_users_left:
             return True, None
 
         if current_user_role != UserRole.ADMIN:
