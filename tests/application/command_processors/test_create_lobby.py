@@ -40,7 +40,7 @@ _CONNECT_FOUR_RULE_SET: Final = ConnectFourRuleSet(
 )
 
 
-async def test_create_lobby():
+async def test_create_lobby_processor():
     lobby_gateway = FakeLobbyGateway({})
     event_publisher = FakeEventPublisher([])
     centrifugo_client = FakeCentrifugoClient({})
