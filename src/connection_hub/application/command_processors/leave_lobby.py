@@ -2,11 +2,13 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-from connection_hub.domain.services import LeaveLobby
+from connection_hub.domain import UserId, Lobby, LeaveLobby
 from connection_hub.application.common import (
     LobbyGateway,
     UserLeftLobbyEvent,
     EventPublisher,
+    CentrifugoPublishCommand,
+    CentrifugoUnsubscribeCommand,
     CentrifugoClient,
     centrifugo_lobby_channel_factory,
     TransactionManager,
@@ -67,14 +69,37 @@ class LeaveLobbyProcessor:
         )
         await self._event_publisher.publish(event)
 
+        await self._publish_data_to_centrifugo(
+            lobby_to_leave=lobby_to_leave,
+            new_admin_id=new_admin_id,
+            current_user_id=current_user_id,
+        )
+
+        await self._transaction_manager.commit()
+
+    async def _publish_data_to_centrifugo(
+        self,
+        *,
+        lobby_to_leave: Lobby,
+        new_admin_id: UserId | None,
+        current_user_id: UserId,
+    ) -> None:
+        lobby_channel = centrifugo_lobby_channel_factory(lobby_to_leave.id)
+
         centrifugo_publication = {
             "type": "user_left",
             "user_id": current_user_id.hex,
             "new_admin_id": new_admin_id.hex if new_admin_id else None,
         }
-        await self._centrifugo_client.publish(
-            channel=centrifugo_lobby_channel_factory(lobby_to_leave.id),
+        first_centrifugo_command = CentrifugoPublishCommand(
+            channel=lobby_channel,
             data=centrifugo_publication,  # type: ignore[arg-type]
         )
+        second_centrifugo_command = CentrifugoUnsubscribeCommand(
+            user=current_user_id.hex,
+            channel=lobby_channel,
+        )
 
-        await self._transaction_manager.commit()
+        await self._centrifugo_client.batch(
+            commands=[first_centrifugo_command, second_centrifugo_command],
+        )

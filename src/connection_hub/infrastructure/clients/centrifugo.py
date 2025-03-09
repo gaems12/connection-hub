@@ -14,6 +14,7 @@ from httpx import AsyncClient
 from connection_hub.application import (
     Serializable,
     CentrifugoPublishCommand,
+    CentrifugoUnsubscribeCommand,
     CentrifugoCommand,
     CentrifugoClient,
 )
@@ -91,6 +92,13 @@ class HTTPXCentrifugoClient(CentrifugoClient):
                 command_as_dict = {
                     "channel": command.channel,
                     "data": command.data,
+                }
+                commands_as_dicts.append(command_as_dict)
+
+            elif isinstance(command, CentrifugoUnsubscribeCommand):
+                command_as_dict = {
+                    "user": command.user,
+                    "channel": command.channel,
                 }
                 commands_as_dicts.append(command_as_dict)
 

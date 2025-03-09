@@ -8,6 +8,7 @@ __all__ = (
     "centrifugo_game_channel_factory",
     "Serializable",
     "CentrifugoPublishCommand",
+    "CentrifugoUnsubscribeCommand",
     "CentrifugoCommand",
     "CentrifugoClient",
 )
@@ -47,7 +48,15 @@ class CentrifugoPublishCommand:
     data: Serializable
 
 
-type CentrifugoCommand = CentrifugoPublishCommand
+@dataclass(frozen=True, slots=True, kw_only=True)
+class CentrifugoUnsubscribeCommand:
+    user: str
+    channel: str
+
+
+type CentrifugoCommand = (
+    CentrifugoPublishCommand | CentrifugoUnsubscribeCommand
+)
 
 
 class CentrifugoClient(Protocol):

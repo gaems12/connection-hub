@@ -49,8 +49,8 @@ async def test_join_lobby_processor():
     )
 
     lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
-    event_publisher = FakeEventPublisher([])
-    centrifugo_client = FakeCentrifugoClient({})
+    event_publisher = FakeEventPublisher()
+    centrifugo_client = FakeCentrifugoClient()
     identity_provider = FakeIdentityProvider(_CURRENT_USER_ID)
 
     command = JoinLobbyCommand(

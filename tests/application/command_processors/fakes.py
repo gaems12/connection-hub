@@ -15,6 +15,7 @@ from connection_hub.application import (
     TaskScheduler,
     Serializable,
     CentrifugoPublishCommand,
+    CentrifugoUnsubscribeCommand,
     CentrifugoCommand,
     CentrifugoClient,
     IdentityProvider,
@@ -24,8 +25,8 @@ from connection_hub.application import (
 class FakeLobbyGateway(LobbyGateway):
     __slots__ = ("_lobbies",)
 
-    def __init__(self, lobbies: dict[LobbyId, Lobby]):
-        self._lobbies = lobbies
+    def __init__(self, lobbies: dict[LobbyId, Lobby] | None = None):
+        self._lobbies = lobbies or {}
 
     @property
     def lobbies(self) -> list[Lobby]:
@@ -63,8 +64,8 @@ class FakeLobbyGateway(LobbyGateway):
 class FakeGameGateway(GameGateway):
     __slots__ = ("_games",)
 
-    def __init__(self, games: dict[GameId, Game]):
-        self._games = games
+    def __init__(self, games: dict[GameId, Game] | None = None):
+        self._games = games or {}
 
     @property
     def games(self) -> list[Game]:
@@ -102,8 +103,8 @@ class FakeGameGateway(GameGateway):
 class FakeEventPublisher(EventPublisher):
     __slots__ = ("_events",)
 
-    def __init__(self, events: list[Event]):
-        self._events = events
+    def __init__(self, events: list[Event] | None = None):
+        self._events = events or []
 
     @property
     def events(self) -> list[Event]:
@@ -116,8 +117,8 @@ class FakeEventPublisher(EventPublisher):
 class FakeTaskScheduler(TaskScheduler):
     __slots__ = ("_tasks",)
 
-    def __init__(self, tasks: dict[UUID, Task]):
-        self._tasks = tasks
+    def __init__(self, tasks: dict[UUID, Task] | None = None):
+        self._tasks = tasks or {}
 
     @property
     def tasks(self) -> list[Task]:
@@ -131,14 +132,23 @@ class FakeTaskScheduler(TaskScheduler):
 
 
 class FakeCentrifugoClient(CentrifugoClient):
-    __slots__ = ("_publications",)
+    __slots__ = ("_publications", "_subscriptions")
 
-    def __init__(self, publications: dict[str, Serializable]):
-        self._publications = publications
+    def __init__(
+        self,
+        publications: dict[str, Serializable] | None = None,
+        subscriptons: dict[str, list[str]] | None = None,
+    ):
+        self._publications = publications or {}
+        self._subscriptions = subscriptons or {}
 
     @property
     def publications(self) -> dict[str, Serializable]:
         return self._publications
+
+    @property
+    def subscriptions(self) -> dict[str, list[str]]:
+        return self._subscriptions
 
     async def publish(
         self,
@@ -157,6 +167,11 @@ class FakeCentrifugoClient(CentrifugoClient):
         for command in commands:
             if isinstance(command, CentrifugoPublishCommand):
                 self._publications[command.channel] = command.data
+
+            elif isinstance(command, CentrifugoUnsubscribeCommand):
+                channels = self._subscriptions.setdefault(command.user, [])
+                if command.channel in channels:
+                    channels.remove(command.channel)
 
 
 class FakeIdentityProvider(IdentityProvider):
