@@ -2,7 +2,7 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-from typing import Any, Final, cast, overload
+from typing import Any, Iterable, Final, cast, overload
 from uuid import UUID
 
 from connection_hub.domain import LobbyId, GameId, UserId, Lobby, Game
@@ -14,6 +14,8 @@ from connection_hub.application import (
     Task,
     TaskScheduler,
     Serializable,
+    CentrifugoPublishCommand,
+    CentrifugoCommand,
     CentrifugoClient,
     IdentityProvider,
 )
@@ -138,8 +140,23 @@ class FakeCentrifugoClient(CentrifugoClient):
     def publications(self) -> dict[str, Serializable]:
         return self._publications
 
-    async def publish(self, *, channel: str, data: Serializable) -> None:
+    async def publish(
+        self,
+        *,
+        channel: str,
+        data: Serializable,
+    ) -> None:
         self._publications[channel] = data
+
+    async def batch(
+        self,
+        *,
+        commands: Iterable[CentrifugoCommand],
+        parallel: bool = True,
+    ) -> None:
+        for command in commands:
+            if isinstance(command, CentrifugoPublishCommand):
+                self._publications[command.channel] = command.data
 
 
 class FakeIdentityProvider(IdentityProvider):

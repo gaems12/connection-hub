@@ -4,13 +4,15 @@
 
 from dataclasses import dataclass
 
-from connection_hub.domain import LobbyId, JoinLobby
+from connection_hub.domain import LobbyId, UserId, Lobby, JoinLobby
 from connection_hub.application.common import (
     LobbyGateway,
     GameGateway,
     UserJoinedLobbyEvent,
     EventPublisher,
+    CentrifugoPublishCommand,
     CentrifugoClient,
+    centrifugo_user_channel_factory,
     centrifugo_lobby_channel_factory,
     TransactionManager,
     IdentityProvider,
@@ -90,13 +92,41 @@ class JoinLobbyProcessor:
         )
         await self._event_publisher.publish(event)
 
-        centrifugo_publication = {
-            "type": "user_joined",
-            "user_id": current_user_id.hex,
-        }
-        await self._centrifugo_client.publish(
-            channel=centrifugo_lobby_channel_factory(command.lobby_id),
-            data=centrifugo_publication,  # type: ignore[arg-type]
+        await self._publish_data_to_centrifugo(
+            lobby=lobby_to_join,
+            current_user_id=current_user_id,
         )
 
         await self._transaction_manager.commit()
+
+    async def _publish_data_to_centrifugo(
+        self,
+        *,
+        lobby: Lobby,
+        current_user_id: UserId,
+    ) -> None:
+        centrifugo_lobby_channel_publication = {
+            "type": "user_joined",
+            "user_id": current_user_id.hex,
+        }
+        first_centrifugo_command = CentrifugoPublishCommand(
+            channel=centrifugo_lobby_channel_factory(lobby.id),
+            data=centrifugo_lobby_channel_publication,  # type: ignore[arg-type]
+        )
+
+        raw_users = {
+            user_id.hex: user_role
+            for user_id, user_role in lobby.users.items()
+        }
+        centrifugo_user_channel_publication = {
+            "type": "joined_to_lobby",
+            "users": raw_users,
+        }
+        second_centrifugo_command = CentrifugoPublishCommand(
+            channel=centrifugo_user_channel_factory(current_user_id),
+            data=centrifugo_user_channel_publication,  # type: ignore[arg-type]
+        )
+
+        await self._centrifugo_client.batch(
+            commands=[first_centrifugo_command, second_centrifugo_command],
+        )

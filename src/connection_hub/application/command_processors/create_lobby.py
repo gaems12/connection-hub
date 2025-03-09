@@ -20,7 +20,7 @@ from connection_hub.application.common import (
     LobbyCreatedEvent,
     EventPublisher,
     CentrifugoClient,
-    centrifugo_user_personal_channel_factory,
+    centrifugo_user_channel_factory,
     TransactionManager,
     IdentityProvider,
     InvalidLobbyNameError,
@@ -164,6 +164,6 @@ class CreateLobbyProcessor:
             "rule_set": rule_set_as_dict,
         }
         await self._centrifugo_client.publish(
-            channel=centrifugo_user_personal_channel_factory(current_user_id),
+            channel=centrifugo_user_channel_factory(current_user_id),
             data=centrifugo_publication,  # type: ignore[arg-type]
         )

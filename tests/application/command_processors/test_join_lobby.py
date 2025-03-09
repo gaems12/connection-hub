@@ -88,11 +88,23 @@ async def test_join_lobby_processor():
     )
     assert expected_event in event_publisher.events
 
-    expected_centrifugo_publication = {
+    expected_centrifugo_lobby_channel_publication = {
         "type": "user_joined",
         "user_id": _CURRENT_USER_ID.hex,
     }
     assert (
         centrifugo_client.publications[f"lobbies:{_LOBBY_ID.hex}"]
-        == expected_centrifugo_publication
+        == expected_centrifugo_lobby_channel_publication
+    )
+
+    expected_centrifugo_user_channel_publication = {
+        "type": "joined_to_lobby",
+        "users": {
+            _ADMIN_ID.hex: UserRole.ADMIN,
+            _CURRENT_USER_ID.hex: UserRole.REGULAR_MEMBER,
+        },
+    }
+    assert (
+        centrifugo_client.publications[f"#{_CURRENT_USER_ID.hex}"]
+        == expected_centrifugo_user_channel_publication
     )

@@ -7,11 +7,16 @@ import random
 import logging
 from urllib.parse import urljoin
 from dataclasses import dataclass
-from typing import Final
+from typing import Iterable, Final
 
 from httpx import AsyncClient
 
-from connection_hub.application import Serializable, CentrifugoClient
+from connection_hub.application import (
+    Serializable,
+    CentrifugoPublishCommand,
+    CentrifugoCommand,
+    CentrifugoClient,
+)
 from connection_hub.infrastructure.utils import get_env_var
 
 
@@ -60,6 +65,36 @@ class HTTPXCentrifugoClient(CentrifugoClient):
             json_={"channel": channel, "data": data},
             retry_on_failure=True,
         )
+
+    async def batch(
+        self,
+        *,
+        commands: Iterable[CentrifugoCommand],
+        parallel: bool = True,
+    ) -> None:
+        commands_as_dicts = self._commands_to_dicts(commands)
+
+        await self._send_request(
+            url=urljoin(self._config.url, "batch"),
+            json_={"commands": commands_as_dicts, "parallel": parallel},
+            retry_on_failure=True,
+        )
+
+    def _commands_to_dicts(
+        self,
+        commands: Iterable[CentrifugoCommand],
+    ) -> list[Serializable]:
+        commands_as_dicts: list[Serializable] = []
+
+        for command in commands:
+            if isinstance(command, CentrifugoPublishCommand):
+                command_as_dict = {
+                    "channel": command.channel,
+                    "data": command.data,
+                }
+                commands_as_dicts.append(command_as_dict)
+
+        return commands_as_dicts
 
     async def _send_request(
         self,
