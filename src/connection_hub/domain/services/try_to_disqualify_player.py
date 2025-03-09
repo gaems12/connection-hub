@@ -27,7 +27,7 @@ class TryToDisqualifyPlayer:
         disqualification was successful and whether game is ended.
         """
         player_state = game.players[player_id]
-        if not player_state.id != player_state_id:
+        if player_state.id != player_state_id:
             return False, False
 
         game.players.pop(player_id)
