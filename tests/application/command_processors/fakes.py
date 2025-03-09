@@ -3,9 +3,17 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from typing import Any, Iterable, Final, cast, overload
+from datetime import datetime
 from uuid import UUID
 
-from connection_hub.domain import LobbyId, GameId, UserId, Lobby, Game
+from connection_hub.domain import (
+    LobbyId,
+    GameId,
+    UserId,
+    PlayerStateId,
+    Lobby,
+    Game,
+)
 from connection_hub.application import (
     LobbyGateway,
     GameGateway,
@@ -243,7 +251,21 @@ ANY_LOBBY_ID: Final = _Anything.create(
     type_=UUID,
     type_hint=LobbyId,
 )
+ANY_PLAYER_STATE_ID: Final = _Anything.create(
+    name="ANY_PLAYER_STATE_ID",
+    type_=UUID,
+    type_hint=PlayerStateId,
+)
+ANY_GAME_ID: Final = _Anything.create(
+    name="ANY_GAME_ID",
+    type_=UUID,
+    type_hint=GameId,
+)
 ANY_STR: Final = _Anything.create(
     name="ANY_STR",
     type_=str,
+)
+ANY_DATETIME: Final = _Anything.create(
+    name="ANY_DATETIME",
+    type_=datetime,
 )
