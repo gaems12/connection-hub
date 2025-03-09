@@ -138,6 +138,10 @@ class FakeTaskScheduler(TaskScheduler):
     async def unschedule(self, task_id: UUID) -> None:
         self._tasks.pop(task_id, None)
 
+    async def unschedule_many(self, task_ids: Iterable[UUID]) -> None:
+        for task_id in task_ids:
+            self._tasks.pop(task_id, None)
+
 
 class FakeCentrifugoClient(CentrifugoClient):
     __slots__ = ("_publications", "_subscriptions")

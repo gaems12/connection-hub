@@ -12,6 +12,7 @@ from connection_hub.domain import (
     PlayerStatus,
     UserId,
     GameId,
+    PlayerStateId,
     PlayerState,
     ConnectFourGame,
     DisconnectFromGame,
@@ -32,10 +33,10 @@ from .fakes import (
 )
 
 _CURRENT_USER_ID: Final = UserId(uuid7())
-_CURRENT_PLAYER_STATE_ID: Final = UserId(uuid7())
+_CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _OTHER_USER_ID: Final = UserId(uuid7())
-_OTHER_PLAYER_STATE_ID: Final = UserId(uuid7())
+_OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _GAME_ID: Final = GameId(uuid7())
 _CREATED_AT: Final = datetime.now(timezone.utc)
