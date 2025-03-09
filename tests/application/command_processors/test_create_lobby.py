@@ -31,10 +31,10 @@ from .fakes import (
 )
 
 
-_USER_ID: Final = UserId(uuid7())
+_CURRENT_USER_ID: Final = UserId(uuid7())
+
 _NAME: Final = "Connect Four for money!!"
 _PASSWORD: Final = "12345"
-
 _CONNECT_FOUR_RULE_SET: Final = ConnectFourRuleSet(
     time_for_each_player=timedelta(minutes=3),
 )
@@ -57,7 +57,7 @@ async def test_create_lobby_processor():
         event_publisher=event_publisher,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
-        identity_provider=FakeIdentityProvider(_USER_ID),
+        identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
 
     await command_processor.process(command)
@@ -65,7 +65,7 @@ async def test_create_lobby_processor():
     expected_lobby = ConnectFourLobby(
         id=ANY_LOBBY_ID,
         name=_NAME,
-        users={_USER_ID: UserRole.ADMIN},
+        users={_CURRENT_USER_ID: UserRole.ADMIN},
         admin_role_transfer_queue=[],
         password=_PASSWORD,
         time_for_each_player=_CONNECT_FOUR_RULE_SET.time_for_each_player,
@@ -75,7 +75,7 @@ async def test_create_lobby_processor():
     expected_event = LobbyCreatedEvent(
         lobby_id=ANY_LOBBY_ID,
         name=_NAME,
-        admin_id=_USER_ID,
+        admin_id=_CURRENT_USER_ID,
         has_password=True,
         rule_set=_CONNECT_FOUR_RULE_SET,
     )
@@ -93,6 +93,6 @@ async def test_create_lobby_processor():
         },
     }
     assert (
-        centrifugo_client.publications[f"#{_USER_ID.hex}"]
+        centrifugo_client.publications[f"#{_CURRENT_USER_ID.hex}"]
         == expected_centrifugo_publication
     )

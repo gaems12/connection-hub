@@ -29,8 +29,8 @@ from .fakes import (
 )
 
 
-_ADMIN_ID: Final = UserId(uuid7())
 _CURRENT_USER_ID: Final = UserId(uuid7())
+_OTHER_USER_ID: Final = UserId(uuid7())
 
 _LOBBY_ID: Final = LobbyId(uuid7())
 _NAME: Final = "Connect Four for money!!"
@@ -42,7 +42,7 @@ async def test_join_lobby_processor():
     lobby = ConnectFourLobby(
         id=_LOBBY_ID,
         name=_NAME,
-        users={_ADMIN_ID: UserRole.ADMIN},
+        users={_OTHER_USER_ID: UserRole.ADMIN},
         admin_role_transfer_queue=[],
         password=_PASSWORD,
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
@@ -72,7 +72,7 @@ async def test_join_lobby_processor():
         id=_LOBBY_ID,
         name=_NAME,
         users={
-            _ADMIN_ID: UserRole.ADMIN,
+            _OTHER_USER_ID: UserRole.ADMIN,
             _CURRENT_USER_ID: UserRole.REGULAR_MEMBER,
         },
         admin_role_transfer_queue=[_CURRENT_USER_ID],
@@ -99,7 +99,7 @@ async def test_join_lobby_processor():
     expected_centrifugo_user_channel_publication = {
         "type": "joined_to_lobby",
         "users": {
-            _ADMIN_ID.hex: UserRole.ADMIN,
+            _OTHER_USER_ID.hex: UserRole.ADMIN,
             _CURRENT_USER_ID.hex: UserRole.REGULAR_MEMBER,
         },
     }
