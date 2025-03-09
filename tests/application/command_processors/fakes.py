@@ -3,7 +3,7 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from typing import Any, Iterable, Final, cast, overload
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import UUID
 
 from connection_hub.domain import (
@@ -272,4 +272,8 @@ ANY_STR: Final = _Anything.create(
 ANY_DATETIME: Final = _Anything.create(
     name="ANY_DATETIME",
     type_=datetime,
+)
+ANY_TIMEDELTA: Final = _Anything.create(
+    name="ANY_TIMEDELTA",
+    type_=timedelta,
 )

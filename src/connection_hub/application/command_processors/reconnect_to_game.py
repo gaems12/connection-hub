@@ -60,14 +60,16 @@ class ReconnectToGameProcessor:
         if not game:
             raise UserNotInGameError()
 
+        old_current_player_state = game.players[current_user_id]
+        old_current_player_state_id = old_current_player_state.id
+
         self._reconnect_to_game(
             game=game,
             current_user_id=current_user_id,
         )
         await self._game_gateway.update(game)
 
-        current_player_state = game.players[current_user_id]
-        await self._task_scheduler.unschedule(current_player_state.id)
+        await self._task_scheduler.unschedule(old_current_player_state_id)
 
         await self._publish_event(
             game=game,

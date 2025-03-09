@@ -2,7 +2,9 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-from connection_hub.domain.identitifiers import UserId
+from uuid import uuid4
+
+from connection_hub.domain.identitifiers import UserId, PlayerStateId
 from connection_hub.domain.constants import PlayerStatus
 from connection_hub.domain.models import Game
 from connection_hub.domain.exceptions import PlayerIsConnectedError
@@ -20,7 +22,10 @@ class ReconnectToGame:
                 "Cannot disconnect from game: player is not in the game.",
             )
 
-        if game.players[current_user_id].status == PlayerStatus.CONNECTED:
+        current_player_state = game.players[current_user_id]
+
+        if current_player_state.status == PlayerStatus.CONNECTED:
             raise PlayerIsConnectedError()
 
-        game.players[current_user_id].status = PlayerStatus.CONNECTED
+        current_player_state.id = PlayerStateId(uuid4())
+        current_player_state.status = PlayerStatus.CONNECTED
