@@ -9,6 +9,7 @@ from connection_hub.application.common import (
     EventPublisher,
     CentrifugoPublishCommand,
     CentrifugoUnsubscribeCommand,
+    CentrifugoCommand,
     CentrifugoClient,
     centrifugo_lobby_channel_factory,
     TransactionManager,
@@ -71,6 +72,7 @@ class LeaveLobbyProcessor:
 
         await self._publish_data_to_centrifugo(
             lobby=lobby_to_leave,
+            lobby_is_deleted=no_users_left,
             new_admin_id=new_admin_id,
             current_user_id=current_user_id,
         )
@@ -81,25 +83,28 @@ class LeaveLobbyProcessor:
         self,
         *,
         lobby: Lobby,
+        lobby_is_deleted: bool,
         new_admin_id: UserId | None,
         current_user_id: UserId,
     ) -> None:
         lobby_channel = centrifugo_lobby_channel_factory(lobby.id)
 
-        centrifugo_publication = {
-            "type": "user_left",
-            "user_id": current_user_id.hex,
-            "new_admin_id": new_admin_id.hex if new_admin_id else None,
-        }
-        first_centrifugo_command = CentrifugoPublishCommand(
-            channel=lobby_channel,
-            data=centrifugo_publication,  # type: ignore[arg-type]
-        )
-        second_centrifugo_command = CentrifugoUnsubscribeCommand(
-            user=current_user_id.hex,
-            channel=lobby_channel,
-        )
+        centrifugo_commands: list[CentrifugoCommand] = [
+            CentrifugoUnsubscribeCommand(
+                user=current_user_id.hex,
+                channel=lobby_channel,
+            ),
+        ]
+        if not lobby_is_deleted:
+            centrifugo_publication = {
+                "type": "user_left",
+                "user_id": current_user_id.hex,
+                "new_admin_id": new_admin_id.hex if new_admin_id else None,
+            }
+            centrifugo_command = CentrifugoPublishCommand(
+                channel=lobby_channel,
+                data=centrifugo_publication,  # type: ignore[arg-type]
+            )
+            centrifugo_commands.append(centrifugo_command)
 
-        await self._centrifugo_client.batch(
-            commands=[first_centrifugo_command, second_centrifugo_command],
-        )
+        await self._centrifugo_client.batch(commands=centrifugo_commands)
