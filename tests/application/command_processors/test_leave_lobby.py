@@ -49,10 +49,7 @@ async def test_leave_lobby_processor():
     lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient(
-        subscriptons={
-            _CURRENT_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"],
-            _OTHER_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"],
-        },
+        subscriptons={_CURRENT_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"]},
     )
 
     processor = LeaveLobbyProcessor(
