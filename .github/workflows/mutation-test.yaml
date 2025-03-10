@@ -36,7 +36,7 @@ jobs:
         run: uv sync --all-extras --frozen
 
       - name: Create nats streams
-        run: uv run connect-four create-nats-streams nats://localhost:4222
+        run: uv run connection-hub create-nats-streams nats://localhost:4222
 
       - name: Run tests
         run: |
