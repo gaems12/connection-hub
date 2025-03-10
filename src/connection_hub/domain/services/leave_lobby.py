@@ -31,6 +31,7 @@ class LeaveLobby:
             return True, None
 
         if current_user_role != UserRole.ADMIN:
+            lobby.admin_role_transfer_queue.remove(current_user_id)
             return False, None
 
         next_admin = lobby.admin_role_transfer_queue.pop(0)
