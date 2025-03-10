@@ -20,7 +20,7 @@ class NATSStreamCreator:
                 "connection_hub.lobby.user_joined",
                 "connection_hub.lobby.user_left",
                 "connection_hub.lobby.user_kicked",
-                "connection_hub.game.created",
+                "connection_hub.connect_four.game.created",
                 "connection_hub.connect_four.game.player_disconnected",
                 "connection_hub.connect_four.game.player_reconnected",
                 "connection_hub.connect_four.game.player_disqualified",
