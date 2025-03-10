@@ -14,6 +14,7 @@ from connection_hub.application import (
     LobbyCreatedEvent,
     UserJoinedLobbyEvent,
     UserLeftLobbyEvent,
+    UserKickedFromLobbyEvent,
     ConnectFourGameCreatedEvent,
     ConnectFourGamePlayerDisconnectedEvent,
     ConnectFourGamePlayerReconnectedEvent,
@@ -58,6 +59,10 @@ async def nats_jetstream(
             lobby_id=LobbyId(uuid7()),
             user_id=UserId(uuid7()),
             new_admin_id=None,
+        ),
+        UserKickedFromLobbyEvent(
+            lobby_id=LobbyId(uuid7()),
+            user_id=UserId(uuid7()),
         ),
         ConnectFourGameCreatedEvent(
             game_id=GameId(uuid7()),

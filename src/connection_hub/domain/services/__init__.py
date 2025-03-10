@@ -6,6 +6,7 @@ __all__ = (
     "CreateLobby",
     "JoinLobby",
     "LeaveLobby",
+    "KickFromLobby",
     "CreateGame",
     "DisconnectFromGame",
     "ReconnectToGame",
@@ -15,6 +16,7 @@ __all__ = (
 from .create_lobby import CreateLobby
 from .join_lobby import JoinLobby
 from .leave_lobby import LeaveLobby
+from .kick_from_lobby import KickFromLobby
 from .create_game import CreateGame
 from .disconnect_from_game import DisconnectFromGame
 from .reconnect_to_game import ReconnectToGame

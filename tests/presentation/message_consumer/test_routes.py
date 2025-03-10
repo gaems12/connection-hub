@@ -15,6 +15,7 @@ from connection_hub.application import (
     CreateLobbyProcessor,
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
+    KickFromLobbyProcessor,
     CreateGameProcessor,
     DisconnectFromGameProcessor,
     ReconnectToGameProcessor,
@@ -49,6 +50,11 @@ def ioc_container() -> AsyncContainer:
         lambda: AsyncMock(),
         scope=Scope.REQUEST,
         provides=LeaveLobbyProcessor,
+    )
+    provider.provide(
+        lambda: AsyncMock(),
+        scope=Scope.REQUEST,
+        provides=KickFromLobbyProcessor,
     )
     provider.provide(
         lambda: AsyncMock(),
@@ -134,6 +140,18 @@ async def test_leave_lobby(app: FastStream, broker: NatsBroker):
         await test_broker.publish(
             message={"user_id": uuid7().hex},
             subject="api_gateway.lobby.user_left",
+            stream="games",
+        )
+
+
+async def test_kick_from_lobby(app: FastStream, broker: NatsBroker):
+    async with (
+        TestApp(app),
+        TestNatsBroker(broker, with_real=True) as test_broker,
+    ):
+        await test_broker.publish(
+            message={"lobby_id": uuid7().hex, "user_id": uuid7().hex},
+            subject="api_gateway.lobby.user_kicked",
             stream="games",
         )
 

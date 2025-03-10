@@ -13,6 +13,8 @@ from connection_hub.application import (
     JoinLobbyCommand,
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
+    KickFromLobbyCommand,
+    KickFromLobbyProcessor,
     CreateGameProcessor,
     EndGameCommand,
     EndGameProcessor,
@@ -69,6 +71,21 @@ async def leave_lobby(
     processor: FromDishka[LeaveLobbyProcessor],
 ) -> None:
     await processor.process()
+
+
+@router.subscriber(
+    subject="api_gateway.lobby.user_kicked",
+    durable="connection_hub_lobby_user_kicked",
+    stream=_STREAM,
+    pull_sub=PullSub(timeout=0.2),
+)
+@inject
+async def kick_from_lobby(
+    *,
+    command: KickFromLobbyCommand,
+    command_processor: FromDishka[KickFromLobbyProcessor],
+) -> None:
+    await command_processor.process(command)
 
 
 @router.subscriber(

@@ -14,6 +14,7 @@ from connection_hub.domain import (
     CreateLobby,
     JoinLobby,
     LeaveLobby,
+    KickFromLobby,
     CreateGame,
     DisconnectFromGame,
     ReconnectToGame,
@@ -29,6 +30,7 @@ from connection_hub.application import (
     CreateLobbyProcessor,
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
+    KickFromLobbyProcessor,
     CreateGameProcessor,
     DisconnectFromGameProcessor,
     ReconnectToGameProcessor,
@@ -128,6 +130,7 @@ def ioc_container_factory() -> AsyncContainer:
     provider.provide(CreateLobby, scope=Scope.APP)
     provider.provide(JoinLobby, scope=Scope.APP)
     provider.provide(LeaveLobby, scope=Scope.APP)
+    provider.provide(KickFromLobby, scope=Scope.APP)
     provider.provide(CreateGame, scope=Scope.APP)
     provider.provide(DisconnectFromGame, scope=Scope.APP)
     provider.provide(ReconnectToGame, scope=Scope.APP)
@@ -135,6 +138,7 @@ def ioc_container_factory() -> AsyncContainer:
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(JoinLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(LeaveLobbyProcessor, scope=Scope.REQUEST)
+    provider.provide(KickFromLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(CreateGameProcessor, scope=Scope.REQUEST)
     provider.provide(DisconnectFromGameProcessor, scope=Scope.REQUEST)
     provider.provide(ReconnectToGameProcessor, scope=Scope.REQUEST)

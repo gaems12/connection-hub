@@ -11,6 +11,7 @@ from connection_hub.application import (
     LobbyCreatedEvent,
     UserJoinedLobbyEvent,
     UserLeftLobbyEvent,
+    UserKickedFromLobbyEvent,
     ConnectFourGameCreatedEvent,
     ConnectFourGamePlayerDisconnectedEvent,
     ConnectFourGamePlayerReconnectedEvent,
@@ -27,6 +28,7 @@ _EVENT_TO_SUBJECT_MAP: Final = {
     LobbyCreatedEvent: "connection_hub.lobby.created",
     UserJoinedLobbyEvent: "connection_hub.lobby.user_joined",
     UserLeftLobbyEvent: "connection_hub.lobby.user_left",
+    UserKickedFromLobbyEvent: "connection_hub.lobby.user_kicked",
     ConnectFourGameCreatedEvent: "connection_hub.game.created",
     ConnectFourGamePlayerDisconnectedEvent: (
         "connection_hub.connect_four.game.player_disconnected"
