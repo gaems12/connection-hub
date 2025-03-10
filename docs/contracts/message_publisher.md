@@ -135,7 +135,7 @@
 ### Player Disqualified From Connect Four Game
 
 **Stream**: `games` \
-**Subject**: `connection_hub.connect_four.games.player_disconnected` \
+**Subject**: `connection_hub.connect_four.games.player_disqualified` \
 **Body Example:**
 ```json
 {
