@@ -56,7 +56,6 @@ _GAME_ID: Final = GameId(uuid7())
 _CREATED_AT: Final = datetime.now(timezone.utc)
 _CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 _OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
-_ANOTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 
 async def test_join_lobby_processor():
@@ -196,9 +195,9 @@ async def test_join_lobby_processor():
                 name=_NAME,
                 users={
                     _OTHER_USER_ID: UserRole.ADMIN,
-                    _ANOTHER_PLAYER_STATE_ID: UserRole.REGULAR_MEMBER,
+                    _ANOTHER_USER_ID: UserRole.REGULAR_MEMBER,
                 },
-                admin_role_transfer_queue=[_ANOTHER_PLAYER_STATE_ID],
+                admin_role_transfer_queue=[_ANOTHER_USER_ID],
                 password=_PASSWORD,
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),

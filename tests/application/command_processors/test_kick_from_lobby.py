@@ -98,3 +98,6 @@ async def test_kick_from_lobby_processor():
         f"lobbies:{_LOBBY_ID.hex}"
         not in centrifugo_client.subscriptions[_OTHER_USER_ID.hex]
     )
+
+
+async def test_kick_from_lobby_processor_errors(): ...
