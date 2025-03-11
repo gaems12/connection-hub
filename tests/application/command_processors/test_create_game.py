@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock
 from datetime import timedelta
 from typing import Final
 
+import pytest
 from uuid_extensions import uuid7
 
 from connection_hub.domain import (
@@ -15,12 +16,15 @@ from connection_hub.domain import (
     UserId,
     PlayerState,
     ConnectFourLobby,
+    Lobby,
     ConnectFourGame,
     CreateGame,
+    UserIsNotAdminError,
 )
 from connection_hub.application import (
     ConnectFourGameCreatedEvent,
     CreateGameProcessor,
+    UserNotInLobbyError,
 )
 from .fakes import (
     ANY_PLAYER_STATE_ID,
@@ -98,3 +102,54 @@ async def test_create_game_processor():
         created_at=ANY_DATETIME,
     )
     assert expected_event in event_publisher.events
+
+
+@pytest.mark.parametrize(
+    ["lobby", "expected_error"],
+    [
+        [
+            None,
+            UserNotInLobbyError,
+        ],
+        [
+            ConnectFourLobby(
+                id=_LOBBY_ID,
+                name=_NAME,
+                users={
+                    _OTHER_USER_ID: UserRole.ADMIN,
+                    _CURRENT_USER_ID: UserRole.REGULAR_MEMBER,
+                },
+                admin_role_transfer_queue=[_CURRENT_USER_ID],
+                password=_PASSWORD,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
+            ),
+            UserIsNotAdminError,
+        ],
+    ],
+)
+async def test_create_game_processor_errors(
+    lobby: Lobby | None,
+    expected_error: Exception,
+):
+    if lobby:
+        lobbies = {lobby.id: lobby}
+    else:
+        lobbies = {}
+
+    lobby_gateway = FakeLobbyGateway(lobbies)
+    game_gateway = FakeGameGateway()
+    event_publisher = FakeEventPublisher()
+
+    processor = CreateGameProcessor(
+        create_game=CreateGame(),
+        lobby_gateway=lobby_gateway,
+        game_gateway=game_gateway,
+        event_publisher=event_publisher,
+        transaction_manager=AsyncMock(),
+        identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
+    )
+
+    with pytest.raises(expected_error):
+        await processor.process()
+
+    assert not event_publisher.events
