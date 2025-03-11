@@ -19,15 +19,6 @@ class KickFromLobby:
         user_to_kick: UserId,
         current_user_id: UserId,
     ) -> None:
-        if current_user_id not in lobby.users:
-            raise Exception(
-                "Cannot kick from game: current user is not in the lobby.",
-            )
-        if user_to_kick not in lobby.users:
-            raise Exception(
-                "Cannot kick from game: user to kick is not in the lobby.",
-            )
-
         if lobby.users[current_user_id] != UserRole.ADMIN:
             raise UserIsNotAdminError()
 

@@ -16,6 +16,7 @@ from connection_hub.application.common import (
     TransactionManager,
     IdentityProvider,
     LobbyDoesNotExistError,
+    UserNotInLobbyError,
 )
 
 
@@ -59,6 +60,9 @@ class KickFromLobbyProcessor:
         )
         if not lobby:
             raise LobbyDoesNotExistError()
+
+        if command.user_id not in lobby.users:
+            raise UserNotInLobbyError()
 
         self._kick_from_lobby(
             lobby=lobby,

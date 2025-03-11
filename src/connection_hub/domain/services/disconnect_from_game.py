@@ -17,11 +17,6 @@ class DisconnectFromGame:
         game: Game,
         current_user_id: UserId,
     ) -> None:
-        if current_user_id not in game.players:
-            raise Exception(
-                "Cannot disconnect from game: player is not in the game.",
-            )
-
         current_player_state = game.players[current_user_id]
 
         if current_player_state.status == PlayerStatus.DISCONNECTED:

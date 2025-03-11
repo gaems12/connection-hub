@@ -20,11 +20,6 @@ class LeaveLobby:
         remain in the lobby and the id of the next admin if the admin
         role was transferred.
         """
-        if current_user_id not in lobby.users:
-            raise Exception(
-                "Cannot leave lobby: user is not in the lobby.",
-            )
-
         current_user_role = lobby.users.pop(current_user_id)
         no_users_left = not lobby.users
         if no_users_left:

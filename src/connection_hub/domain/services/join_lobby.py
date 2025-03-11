@@ -27,9 +27,6 @@ class JoinLobby:
         current_user_id: UserId,
         password: str | None,
     ) -> None:
-        if current_user_id in lobby.users:
-            raise Exception("Cannot join lobby: user already in the lobby.")
-
         max_players = _LOBBY_TO_MAX_PLAYERS_MAP[type(lobby)]
         if len(lobby.users) == max_players:
             raise UserLimitReachedError()
