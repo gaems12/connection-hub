@@ -132,11 +132,10 @@ async def test_create_game_processor_errors(
     expected_error: Exception,
 ):
     if lobby:
-        lobbies = {lobby.id: lobby}
+        lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
     else:
-        lobbies = {}
+        lobby_gateway = FakeLobbyGateway()
 
-    lobby_gateway = FakeLobbyGateway(lobbies)
     game_gateway = FakeGameGateway()
     event_publisher = FakeEventPublisher()
 

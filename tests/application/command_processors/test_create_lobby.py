@@ -3,22 +3,36 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from unittest.mock import AsyncMock
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Final
 
+import pytest
 from uuid_extensions import uuid7
 
 from connection_hub.domain import (
     UserRole,
+    PlayerStatus,
+    LobbyId,
+    GameId,
     UserId,
+    PlayerStateId,
+    PlayerState,
     ConnectFourRuleSet,
     ConnectFourLobby,
     CreateLobby,
+    Lobby,
+    ConnectFourGame,
+    Game,
 )
 from connection_hub.application import (
     LobbyCreatedEvent,
     CreateLobbyCommand,
     CreateLobbyProcessor,
+    UserInLobbyError,
+    UserInGameError,
+    InvalidLobbyNameError,
+    InvalidLobbyRuleSetError,
+    InvalidLobbyPasswordError,
 )
 from .fakes import (
     ANY_LOBBY_ID,
@@ -32,12 +46,18 @@ from .fakes import (
 
 
 _CURRENT_USER_ID: Final = UserId(uuid7())
+_OTHER_USER_ID: Final = UserId(uuid7())
 
+_LOBBY_ID: Final = LobbyId(uuid7())
 _NAME: Final = "Connect Four for money!!"
 _PASSWORD: Final = "12345"
 _CONNECT_FOUR_RULE_SET: Final = ConnectFourRuleSet(
     time_for_each_player=timedelta(minutes=3),
 )
+
+_GAME_ID: Final = GameId(uuid7())
+_CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
+_OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 
 async def test_create_lobby_processor():
@@ -96,3 +116,155 @@ async def test_create_lobby_processor():
         centrifugo_client.publications[f"#{_CURRENT_USER_ID.hex}"]
         == expected_centrifugo_publication
     )
+
+
+@pytest.mark.parametrize(
+    ["lobby", "game", "command", "expected_error"],
+    [
+        [
+            ConnectFourLobby(
+                id=_LOBBY_ID,
+                name=_NAME,
+                users={_CURRENT_USER_ID: UserRole.ADMIN},
+                admin_role_transfer_queue=[],
+                password=_PASSWORD,
+                time_for_each_player=_CONNECT_FOUR_RULE_SET.time_for_each_player,
+            ),
+            None,
+            CreateLobbyCommand(
+                name=_NAME,
+                rule_set=_CONNECT_FOUR_RULE_SET,
+                password=_PASSWORD,
+            ),
+            UserInLobbyError,
+        ],
+        [
+            None,
+            ConnectFourGame(
+                id=_GAME_ID,
+                players={
+                    _CURRENT_USER_ID: PlayerState(
+                        id=_CURRENT_PLAYER_STATE_ID,
+                        status=PlayerStatus.CONNECTED,
+                        time_left=timedelta(seconds=40),
+                    ),
+                    _OTHER_USER_ID: PlayerState(
+                        id=_OTHER_PLAYER_STATE_ID,
+                        status=PlayerStatus.CONNECTED,
+                        time_left=timedelta(seconds=40),
+                    ),
+                },
+                created_at=datetime.now(timezone.utc),
+                time_for_each_player=(
+                    _CONNECT_FOUR_RULE_SET.time_for_each_player
+                ),
+            ),
+            CreateLobbyCommand(
+                name=_NAME,
+                rule_set=_CONNECT_FOUR_RULE_SET,
+                password=_PASSWORD,
+            ),
+            UserInGameError,
+        ],
+        [
+            None,
+            None,
+            CreateLobbyCommand(
+                name="ab",
+                rule_set=_CONNECT_FOUR_RULE_SET,
+                password=_PASSWORD,
+            ),
+            InvalidLobbyNameError,
+        ],
+        [
+            None,
+            None,
+            CreateLobbyCommand(
+                name="a" * 129,
+                rule_set=_CONNECT_FOUR_RULE_SET,
+                password=_PASSWORD,
+            ),
+            InvalidLobbyNameError,
+        ],
+        [
+            None,
+            None,
+            CreateLobbyCommand(
+                name=_NAME,
+                rule_set=(
+                    ConnectFourRuleSet(
+                        time_for_each_player=timedelta(seconds=15),
+                    )
+                ),
+                password=_PASSWORD,
+            ),
+            InvalidLobbyRuleSetError,
+        ],
+        [
+            None,
+            None,
+            CreateLobbyCommand(
+                name=_NAME,
+                rule_set=(
+                    ConnectFourRuleSet(time_for_each_player=timedelta(days=1))
+                ),
+                password=_PASSWORD,
+            ),
+            InvalidLobbyRuleSetError,
+        ],
+        [
+            None,
+            None,
+            CreateLobbyCommand(
+                name=_NAME,
+                rule_set=_CONNECT_FOUR_RULE_SET,
+                password="a",
+            ),
+            InvalidLobbyPasswordError,
+        ],
+        [
+            None,
+            None,
+            CreateLobbyCommand(
+                name=_NAME,
+                rule_set=_CONNECT_FOUR_RULE_SET,
+                password="a" * 65,
+            ),
+            InvalidLobbyPasswordError,
+        ],
+    ],
+)
+async def test_create_lobby_processor_error(
+    lobby: Lobby | None,
+    game: Game | None,
+    command: CreateLobbyCommand,
+    expected_error: Exception,
+):
+    if lobby:
+        lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
+    else:
+        lobby_gateway = FakeLobbyGateway()
+
+    if game:
+        game_gateway = FakeGameGateway({game.id: game})
+    else:
+        game_gateway = FakeGameGateway()
+
+    event_publisher = FakeEventPublisher()
+    centrifugo_client = FakeCentrifugoClient()
+
+    command_processor = CreateLobbyProcessor(
+        create_lobby=CreateLobby(),
+        lobby_gateway=lobby_gateway,
+        game_gateway=game_gateway,
+        event_publisher=event_publisher,
+        centrifugo_client=centrifugo_client,
+        transaction_manager=AsyncMock(),
+        identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
+    )
+
+    with pytest.raises(expected_error):
+        await command_processor.process(command)
+
+    assert not event_publisher.events
+    assert not centrifugo_client.publications
