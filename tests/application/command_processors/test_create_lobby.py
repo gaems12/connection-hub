@@ -166,6 +166,7 @@ async def test_create_lobby_processor():
             ),
             UserInGameError,
         ],
+        # Password has too few characters ( < 3 )
         [
             None,
             None,
@@ -176,6 +177,7 @@ async def test_create_lobby_processor():
             ),
             InvalidLobbyNameError,
         ],
+        # Password has too much characters ( > 128 )
         [
             None,
             None,
@@ -186,6 +188,7 @@ async def test_create_lobby_processor():
             ),
             InvalidLobbyNameError,
         ],
+        # Rule set has too little time for each player ( < 30 sec. )
         [
             None,
             None,
@@ -193,25 +196,29 @@ async def test_create_lobby_processor():
                 name=_NAME,
                 rule_set=(
                     ConnectFourRuleSet(
-                        time_for_each_player=timedelta(seconds=15),
+                        time_for_each_player=timedelta(seconds=29),
                     )
                 ),
                 password=_PASSWORD,
             ),
             InvalidLobbyRuleSetError,
         ],
+        # Rule set has too much time for each player ( > 3 min. )
         [
             None,
             None,
             CreateLobbyCommand(
                 name=_NAME,
                 rule_set=(
-                    ConnectFourRuleSet(time_for_each_player=timedelta(days=1))
+                    ConnectFourRuleSet(
+                        time_for_each_player=timedelta(minutes=3, seconds=1),
+                    )
                 ),
                 password=_PASSWORD,
             ),
             InvalidLobbyRuleSetError,
         ],
+        # Password has too few characters ( < 3 )
         [
             None,
             None,
@@ -222,6 +229,7 @@ async def test_create_lobby_processor():
             ),
             InvalidLobbyPasswordError,
         ],
+        # Password has too many characters ( > 64 )
         [
             None,
             None,
