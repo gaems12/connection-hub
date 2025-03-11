@@ -37,14 +37,13 @@ from .fakes import (
 )
 
 _CURRENT_USER_ID: Final = UserId(uuid7())
-_CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
-
 _OTHER_USER_ID: Final = UserId(uuid7())
-_OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _GAME_ID: Final = GameId(uuid7())
 _CREATED_AT: Final = datetime.now(timezone.utc)
 _TIME_FOR_EACH_PLAYER: Final = timedelta(minutes=1)
+_CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
+_OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 
 async def test_disconnect_from_game_processor():
