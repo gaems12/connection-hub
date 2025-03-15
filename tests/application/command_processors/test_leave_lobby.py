@@ -105,7 +105,7 @@ async def test_leave_lobby_processor_errors():
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()
 
-    command_processor = LeaveLobbyProcessor(
+    processor = LeaveLobbyProcessor(
         leave_lobby=LeaveLobby(),
         lobby_gateway=FakeLobbyGateway(),
         event_publisher=event_publisher,
@@ -115,7 +115,7 @@ async def test_leave_lobby_processor_errors():
     )
 
     with pytest.raises(CurrentUserNotInLobbyError):
-        await command_processor.process()
+        await processor.process()
 
     assert not event_publisher.events
     assert not centrifugo_client.publications

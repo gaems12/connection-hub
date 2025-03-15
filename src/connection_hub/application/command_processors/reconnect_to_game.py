@@ -17,7 +17,7 @@ from connection_hub.application.common import (
     centrifugo_game_channel_factory,
     TransactionManager,
     IdentityProvider,
-    CurrentUserInGameError,
+    CurrentUserNotInGameError,
 )
 
 
@@ -58,7 +58,7 @@ class ReconnectToGameProcessor:
             acquire=True,
         )
         if not game:
-            raise CurrentUserInGameError()
+            raise CurrentUserNotInGameError()
 
         old_current_player_state = game.players[current_user_id]
         old_current_player_state_id = old_current_player_state.id
