@@ -20,7 +20,7 @@ from connection_hub.domain.models import (
     ConnectFourGame,
     Game,
 )
-from connection_hub.domain.exceptions import UserIsNotAdminError
+from connection_hub.domain.exceptions import CurrentUserIsNotAdminError
 
 
 _TIME_FOR_RECONNECT: Final = timedelta(seconds=40)
@@ -34,7 +34,7 @@ class CreateGame:
         current_user_id: UserId,
     ) -> Game:
         if lobby.users[current_user_id] != UserRole.ADMIN:
-            raise UserIsNotAdminError()
+            raise CurrentUserIsNotAdminError()
 
         players = {
             player_id: PlayerState(

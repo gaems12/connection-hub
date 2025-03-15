@@ -19,7 +19,7 @@ from connection_hub.domain import (
     Lobby,
     ConnectFourGame,
     CreateGame,
-    UserIsNotAdminError,
+    CurrentUserIsNotAdminError,
 )
 from connection_hub.application import (
     ConnectFourGameCreatedEvent,
@@ -123,7 +123,7 @@ async def test_create_game_processor():
                 password=_PASSWORD,
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
-            UserIsNotAdminError,
+            CurrentUserIsNotAdminError,
         ],
     ],
 )

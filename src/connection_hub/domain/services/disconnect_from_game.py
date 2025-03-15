@@ -7,7 +7,9 @@ from uuid import uuid4
 from connection_hub.domain.identitifiers import UserId, PlayerStateId
 from connection_hub.domain.constants import PlayerStatus
 from connection_hub.domain.models import Game
-from connection_hub.domain.exceptions import PlayerIsDisconnectedError
+from connection_hub.domain.exceptions import (
+    CurrentUserIsDisconnectedFromGameError,
+)
 
 
 class DisconnectFromGame:
@@ -20,7 +22,7 @@ class DisconnectFromGame:
         current_player_state = game.players[current_user_id]
 
         if current_player_state.status == PlayerStatus.DISCONNECTED:
-            raise PlayerIsDisconnectedError()
+            raise CurrentUserIsDisconnectedFromGameError()
 
         current_player_state.id = PlayerStateId(uuid4())
         current_player_state.status = PlayerStatus.DISCONNECTED

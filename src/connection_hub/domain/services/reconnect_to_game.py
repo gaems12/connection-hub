@@ -7,7 +7,7 @@ from uuid import uuid4
 from connection_hub.domain.identitifiers import UserId, PlayerStateId
 from connection_hub.domain.constants import PlayerStatus
 from connection_hub.domain.models import Game
-from connection_hub.domain.exceptions import PlayerIsConnectedError
+from connection_hub.domain.exceptions import CurrentUserIsConnectedToGameError
 
 
 class ReconnectToGame:
@@ -20,7 +20,7 @@ class ReconnectToGame:
         current_player_state = game.players[current_user_id]
 
         if current_player_state.status == PlayerStatus.CONNECTED:
-            raise PlayerIsConnectedError()
+            raise CurrentUserIsConnectedToGameError()
 
         current_player_state.id = PlayerStateId(uuid4())
         current_player_state.status = PlayerStatus.CONNECTED

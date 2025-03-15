@@ -6,8 +6,8 @@ from connection_hub.domain.constants import UserRole
 from connection_hub.domain.identitifiers import UserId
 from connection_hub.domain.models import Lobby
 from connection_hub.domain.exceptions import (
-    UserIsNotAdminError,
-    UserIsTryingKickHimselfError,
+    CurrentUserIsNotAdminError,
+    CurrentUserIsTryingKickHimselfError,
 )
 
 
@@ -20,10 +20,10 @@ class KickFromLobby:
         current_user_id: UserId,
     ) -> None:
         if lobby.users[current_user_id] != UserRole.ADMIN:
-            raise UserIsNotAdminError()
+            raise CurrentUserIsNotAdminError()
 
         if user_to_kick == current_user_id:
-            raise UserIsTryingKickHimselfError()
+            raise CurrentUserIsTryingKickHimselfError()
 
         lobby.users.pop(user_to_kick)
         lobby.admin_role_transfer_queue.remove(user_to_kick)
