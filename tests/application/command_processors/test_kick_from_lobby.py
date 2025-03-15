@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock
 from datetime import timedelta
 from typing import Final
 
+import pytest
 from uuid_extensions import uuid7
 
 from connection_hub.domain import (
@@ -13,12 +14,17 @@ from connection_hub.domain import (
     UserId,
     LobbyId,
     ConnectFourLobby,
+    Lobby,
     KickFromLobby,
+    CurrentUserIsNotAdminError,
+    CurrentUserIsTryingKickHimselfError,
 )
 from connection_hub.application import (
     UserKickedFromLobbyEvent,
     KickFromLobbyCommand,
     KickFromLobbyProcessor,
+    LobbyDoesNotExistError,
+    UserNotInLobbyError,
 )
 from .fakes import (
     FakeLobbyGateway,
@@ -100,4 +106,82 @@ async def test_kick_from_lobby_processor():
     )
 
 
-async def test_kick_from_lobby_processor_errors(): ...
+@pytest.mark.parametrize(
+    ["lobby", "command", "expected_error"],
+    [
+        [
+            None,
+            KickFromLobbyCommand(user_id=_OTHER_USER_ID),
+            LobbyDoesNotExistError,
+        ],
+        [
+            ConnectFourLobby(
+                id=_LOBBY_ID,
+                name=_NAME,
+                users={_CURRENT_USER_ID: UserRole.ADMIN},
+                admin_role_transfer_queue=[],
+                password=_PASSWORD,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
+            ),
+            KickFromLobbyCommand(user_id=_OTHER_USER_ID),
+            UserNotInLobbyError,
+        ],
+        [
+            ConnectFourLobby(
+                id=_LOBBY_ID,
+                name=_NAME,
+                users={
+                    _OTHER_USER_ID: UserRole.ADMIN,
+                    _CURRENT_USER_ID: UserRole.REGULAR_MEMBER,
+                },
+                admin_role_transfer_queue=[_CURRENT_USER_ID],
+                password=_PASSWORD,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
+            ),
+            KickFromLobbyCommand(user_id=_OTHER_USER_ID),
+            CurrentUserIsNotAdminError,
+        ],
+        [
+            ConnectFourLobby(
+                id=_LOBBY_ID,
+                name=_NAME,
+                users={
+                    _CURRENT_USER_ID: UserRole.ADMIN,
+                    _OTHER_USER_ID: UserRole.REGULAR_MEMBER,
+                },
+                admin_role_transfer_queue=[_OTHER_USER_ID],
+                password=_PASSWORD,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
+            ),
+            KickFromLobbyCommand(user_id=_CURRENT_USER_ID),
+            CurrentUserIsTryingKickHimselfError,
+        ],
+    ],
+)
+async def test_kick_from_lobby_processor_errors(
+    lobby: Lobby | None,
+    command: KickFromLobbyCommand,
+    expected_error: Exception,
+):
+    if lobby:
+        lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
+    else:
+        lobby_gateway = FakeLobbyGateway()
+
+    event_publisher = FakeEventPublisher()
+    centrifugo_client = FakeCentrifugoClient()
+
+    command_processor = KickFromLobbyProcessor(
+        kick_from_lobby=KickFromLobby(),
+        lobby_gateway=lobby_gateway,
+        event_publisher=event_publisher,
+        centrifugo_client=centrifugo_client,
+        tranaction_manager=AsyncMock(),
+        identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
+    )
+
+    with pytest.raises(expected_error):
+        await command_processor.process(command)
+
+    assert not event_publisher.events
+    assert not centrifugo_client.publications
