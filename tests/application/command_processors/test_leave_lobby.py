@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock
 from datetime import timedelta
 from typing import Final
 
+import pytest
 from uuid_extensions import uuid7
 
 from connection_hub.domain import (
@@ -15,7 +16,11 @@ from connection_hub.domain import (
     ConnectFourLobby,
     LeaveLobby,
 )
-from connection_hub.application import UserLeftLobbyEvent, LeaveLobbyProcessor
+from connection_hub.application import (
+    UserLeftLobbyEvent,
+    LeaveLobbyProcessor,
+    CurrentUserNotInLobbyError,
+)
 from .fakes import (
     FakeLobbyGateway,
     FakeEventPublisher,
@@ -94,3 +99,23 @@ async def test_leave_lobby_processor():
         f"lobbies:{_LOBBY_ID.hex}"
         not in centrifugo_client.subscriptions[_CURRENT_USER_ID.hex]
     )
+
+
+async def test_leave_lobby_processor_errors():
+    event_publisher = FakeEventPublisher()
+    centrifugo_client = FakeCentrifugoClient()
+
+    command_processor = LeaveLobbyProcessor(
+        leave_lobby=LeaveLobby(),
+        lobby_gateway=FakeLobbyGateway(),
+        event_publisher=event_publisher,
+        centrifugo_client=centrifugo_client,
+        transaction_manager=AsyncMock(),
+        identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
+    )
+
+    with pytest.raises(CurrentUserNotInLobbyError):
+        await command_processor.process()
+
+    assert not event_publisher.events
+    assert not centrifugo_client.publications
