@@ -7,9 +7,11 @@ __all__ = (
     "InvalidLobbyNameError",
     "InvalidLobbyRuleSetError",
     "InvalidLobbyPasswordError",
-    "UserInLobbyError",
+    "CurrentUserInLobbyError",
+    "CurrentUserNotInLobbyError",
     "UserNotInLobbyError",
-    "UserInGameError",
+    "CurrentUserInGameError",
+    "CurrentUserNotInGameError",
     "UserNotInGameError",
     "LobbyDoesNotExistError",
     "GameDoesNotExistError",
@@ -28,13 +30,19 @@ class InvalidLobbyRuleSetError(ApplicationError): ...
 class InvalidLobbyPasswordError(ApplicationError): ...
 
 
-class UserInLobbyError(ApplicationError): ...
+class CurrentUserInLobbyError(ApplicationError): ...
+
+
+class CurrentUserNotInLobbyError(ApplicationError): ...
 
 
 class UserNotInLobbyError(ApplicationError): ...
 
 
-class UserInGameError(ApplicationError): ...
+class CurrentUserInGameError(ApplicationError): ...
+
+
+class CurrentUserNotInGameError(ApplicationError): ...
 
 
 class UserNotInGameError(ApplicationError): ...

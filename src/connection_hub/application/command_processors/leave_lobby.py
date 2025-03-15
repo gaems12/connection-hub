@@ -14,7 +14,7 @@ from connection_hub.application.common import (
     centrifugo_lobby_channel_factory,
     TransactionManager,
     IdentityProvider,
-    UserNotInLobbyError,
+    CurrentUserNotInLobbyError,
 )
 
 
@@ -52,7 +52,7 @@ class LeaveLobbyProcessor:
             acquire=True,
         )
         if not lobby_to_leave:
-            raise UserNotInLobbyError()
+            raise CurrentUserNotInLobbyError()
 
         no_users_left, new_admin_id = self._leave_lobby(
             lobby=lobby_to_leave,

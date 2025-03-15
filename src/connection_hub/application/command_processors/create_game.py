@@ -15,7 +15,7 @@ from connection_hub.application.common import (
     EventPublisher,
     TransactionManager,
     IdentityProvider,
-    UserNotInLobbyError,
+    CurrentUserNotInLobbyError,
 )
 
 
@@ -53,7 +53,7 @@ class CreateGameProcessor:
             acquire=True,
         )
         if not lobby:
-            raise UserNotInLobbyError()
+            raise CurrentUserNotInLobbyError()
 
         new_game = self._create_game(
             lobby=lobby,

@@ -24,7 +24,7 @@ from connection_hub.application import (
     TryToDisqualifyPlayerTask,
     ConnectFourGamePlayerDisconnectedEvent,
     DisconnectFromGameProcessor,
-    UserNotInGameError,
+    CurrentUserNotInGameError,
 )
 from .fakes import (
     ANY_PLAYER_STATE_ID,
@@ -131,7 +131,7 @@ async def test_disconnect_from_game_processor():
     [
         [
             None,
-            UserNotInGameError,
+            CurrentUserNotInGameError,
         ],
         [
             ConnectFourGame(

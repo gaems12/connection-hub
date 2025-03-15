@@ -20,7 +20,7 @@ from connection_hub.application.common import (
     centrifugo_game_channel_factory,
     TransactionManager,
     IdentityProvider,
-    UserNotInGameError,
+    CurrentUserNotInGameError,
 )
 
 
@@ -61,7 +61,7 @@ class DisconnectFromGameProcessor:
             acquire=True,
         )
         if not game:
-            raise UserNotInGameError()
+            raise CurrentUserNotInGameError()
 
         self._disconnect_from_game(
             game=game,

@@ -26,8 +26,8 @@ from connection_hub.application.common import (
     InvalidLobbyNameError,
     InvalidLobbyRuleSetError,
     InvalidLobbyPasswordError,
-    UserInLobbyError,
-    UserInGameError,
+    CurrentUserInLobbyError,
+    CurrentUserInGameError,
 )
 
 
@@ -84,13 +84,13 @@ class CreateLobbyProcessor:
             current_user_id,
         )
         if lobby:
-            raise UserInLobbyError()
+            raise CurrentUserInLobbyError()
 
         game = await self._game_gateway.by_player_id(
             current_user_id,
         )
         if game:
-            raise UserInGameError()
+            raise CurrentUserInGameError()
 
         self._validate_name(command.name)
         self._validate_rule_set(command.rule_set)

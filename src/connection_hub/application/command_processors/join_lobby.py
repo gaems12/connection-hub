@@ -16,8 +16,8 @@ from connection_hub.application.common import (
     centrifugo_lobby_channel_factory,
     TransactionManager,
     IdentityProvider,
-    UserInLobbyError,
-    UserInGameError,
+    CurrentUserInLobbyError,
+    CurrentUserInGameError,
     LobbyDoesNotExistError,
 )
 
@@ -64,13 +64,13 @@ class JoinLobbyProcessor:
             current_user_id,
         )
         if lobby:
-            raise UserInLobbyError()
+            raise CurrentUserInLobbyError()
 
         game = await self._game_gateway.by_player_id(
             current_user_id,
         )
         if game:
-            raise UserInGameError()
+            raise CurrentUserInGameError()
 
         lobby_to_join = await self._lobby_gateway.by_id(
             id=command.lobby_id,

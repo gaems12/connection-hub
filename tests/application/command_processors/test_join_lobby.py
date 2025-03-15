@@ -30,8 +30,8 @@ from connection_hub.application import (
     UserJoinedLobbyEvent,
     JoinLobbyCommand,
     JoinLobbyProcessor,
-    UserInLobbyError,
-    UserInGameError,
+    CurrentUserInLobbyError,
+    CurrentUserInGameError,
     LobbyDoesNotExistError,
 )
 from .fakes import (
@@ -146,7 +146,7 @@ async def test_join_lobby_processor():
                 lobby_id=LobbyId(uuid7()),
                 password=_PASSWORD,
             ),
-            UserInLobbyError,
+            CurrentUserInLobbyError,
         ],
         [
             ConnectFourLobby(
@@ -178,7 +178,7 @@ async def test_join_lobby_processor():
                 lobby_id=_LOBBY_ID,
                 password=_PASSWORD,
             ),
-            UserInGameError,
+            CurrentUserInGameError,
         ],
         [
             None,

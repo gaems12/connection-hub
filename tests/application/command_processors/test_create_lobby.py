@@ -28,8 +28,8 @@ from connection_hub.application import (
     LobbyCreatedEvent,
     CreateLobbyCommand,
     CreateLobbyProcessor,
-    UserInLobbyError,
-    UserInGameError,
+    CurrentUserInLobbyError,
+    CurrentUserInGameError,
     InvalidLobbyNameError,
     InvalidLobbyRuleSetError,
     InvalidLobbyPasswordError,
@@ -136,7 +136,7 @@ async def test_create_lobby_processor():
                 rule_set=_CONNECT_FOUR_RULE_SET,
                 password=_PASSWORD,
             ),
-            UserInLobbyError,
+            CurrentUserInLobbyError,
         ],
         [
             None,
@@ -164,7 +164,7 @@ async def test_create_lobby_processor():
                 rule_set=_CONNECT_FOUR_RULE_SET,
                 password=_PASSWORD,
             ),
-            UserInGameError,
+            CurrentUserInGameError,
         ],
         # Password has too few characters ( < 3 )
         [

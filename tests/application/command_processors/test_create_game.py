@@ -24,7 +24,7 @@ from connection_hub.domain import (
 from connection_hub.application import (
     ConnectFourGameCreatedEvent,
     CreateGameProcessor,
-    UserNotInLobbyError,
+    CurrentUserNotInLobbyError,
 )
 from .fakes import (
     ANY_PLAYER_STATE_ID,
@@ -109,7 +109,7 @@ async def test_create_game_processor():
     [
         [
             None,
-            UserNotInLobbyError,
+            CurrentUserNotInLobbyError,
         ],
         [
             ConnectFourLobby(
