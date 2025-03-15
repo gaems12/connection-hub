@@ -75,7 +75,7 @@ class OperationIdMiddleware(BaseMiddleware):
                 {
                     "message": (
                         "Operation id from message received from "
-                        "message broker cannot be converted to UUID."
+                        "message broker cannot be converted to UUID. "
                         "Default operation id will be used instead."
                     ),
                     "operation_id": default_operation_id,
