@@ -105,26 +105,26 @@ class JoinLobbyProcessor:
         lobby: Lobby,
         current_user_id: UserId,
     ) -> None:
-        centrifugo_lobby_channel_publication = {
+        first_centrifugo_publication = {
             "type": "user_joined",
             "user_id": current_user_id.hex,
         }
         first_centrifugo_command = CentrifugoPublishCommand(
             channel=centrifugo_lobby_channel_factory(lobby.id),
-            data=centrifugo_lobby_channel_publication,  # type: ignore[arg-type]
+            data=first_centrifugo_publication,  # type: ignore[arg-type]
         )
 
         raw_users = {
             user_id.hex: user_role
             for user_id, user_role in lobby.users.items()
         }
-        centrifugo_user_channel_publication = {
+        second_centrifugo_publication = {
             "type": "joined_to_lobby",
             "users": raw_users,
         }
         second_centrifugo_command = CentrifugoPublishCommand(
             channel=centrifugo_user_channel_factory(current_user_id),
-            data=centrifugo_user_channel_publication,  # type: ignore[arg-type]
+            data=second_centrifugo_publication,  # type: ignore[arg-type]
         )
 
         await self._centrifugo_client.batch(
