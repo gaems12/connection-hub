@@ -3,6 +3,7 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 __all__ = (
+    "CENTRIFUGO_LOBBY_BROWSER_CHANNEL",
     "centrifugo_user_channel_factory",
     "centrifugo_lobby_channel_factory",
     "centrifugo_game_channel_factory",
@@ -14,7 +15,7 @@ __all__ = (
 )
 
 from dataclasses import dataclass
-from typing import Iterable, Protocol
+from typing import Iterable, Protocol, Final
 
 from connection_hub.domain import GameId, UserId, LobbyId
 
@@ -28,6 +29,9 @@ type Serializable = (
     | list[Serializable]
     | dict[str, Serializable]
 )
+
+
+CENTRIFUGO_LOBBY_BROWSER_CHANNEL: Final = "lobby_browser"
 
 
 def centrifugo_user_channel_factory(user_id: UserId) -> str:

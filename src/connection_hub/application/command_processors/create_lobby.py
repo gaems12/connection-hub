@@ -19,6 +19,8 @@ from connection_hub.application.common import (
     GameGateway,
     LobbyCreatedEvent,
     EventPublisher,
+    CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
+    CentrifugoPublishCommand,
     CentrifugoClient,
     centrifugo_user_channel_factory,
     TransactionManager,
@@ -157,13 +159,29 @@ class CreateLobbyProcessor:
                 ),
             }
 
-        centrifugo_publication = {
+        first_centrifugo_publication = {
             "type": "lobby_created",
             "lobby_id": lobby.id.hex,
             "name": lobby.name,
             "rule_set": rule_set_as_dict,
         }
-        await self._centrifugo_client.publish(
+        first_centrifugo_command = CentrifugoPublishCommand(
             channel=centrifugo_user_channel_factory(current_user_id),
-            data=centrifugo_publication,  # type: ignore[arg-type]
+            data=first_centrifugo_publication,  # type: ignore[arg-type]
+        )
+
+        second_centrifugo_publication = {
+            "type": "lobby_created",
+            "lobby_id": lobby.id.hex,
+            "name": lobby.name,
+            "has_password": lobby.password is not None,
+            "rule_set": rule_set_as_dict,
+        }
+        second_centrifugo_command = CentrifugoPublishCommand(
+            channel=CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
+            data=second_centrifugo_publication,  # type: ignore[arg-type]
+        )
+
+        await self._centrifugo_client.batch(
+            commands=[first_centrifugo_command, second_centrifugo_command],
         )

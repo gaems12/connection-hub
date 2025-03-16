@@ -101,7 +101,7 @@ async def test_create_lobby_processor():
     )
     assert expected_event in event_publisher.events
 
-    expected_centrifugo_publication = {
+    expected_first_centrifugo_publication = {
         "type": "lobby_created",
         "lobby_id": ANY_STR,
         "name": _NAME,
@@ -114,7 +114,24 @@ async def test_create_lobby_processor():
     }
     assert (
         centrifugo_client.publications[f"#{_CURRENT_USER_ID.hex}"]
-        == expected_centrifugo_publication
+        == expected_first_centrifugo_publication
+    )
+
+    expected_second_centrifugo_publication = {
+        "type": "lobby_created",
+        "lobby_id": ANY_STR,
+        "name": _NAME,
+        "has_password": True,
+        "rule_set": {
+            "type": "connect_four",
+            "time_for_each_player": (
+                _CONNECT_FOUR_RULE_SET.time_for_each_player.total_seconds()
+            ),
+        },
+    }
+    assert (
+        centrifugo_client.publications["lobby_browser"]
+        == expected_second_centrifugo_publication
     )
 
 
