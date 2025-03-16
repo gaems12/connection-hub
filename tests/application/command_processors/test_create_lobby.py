@@ -51,8 +51,9 @@ _OTHER_USER_ID: Final = UserId(uuid7())
 _LOBBY_ID: Final = LobbyId(uuid7())
 _NAME: Final = "Connect Four for money!!"
 _PASSWORD: Final = "12345"
+_TIME_FOR_EACH_PLAYER: Final = timedelta(minutes=3)
 _CONNECT_FOUR_RULE_SET: Final = ConnectFourRuleSet(
-    time_for_each_player=timedelta(minutes=3),
+    time_for_each_player=_TIME_FOR_EACH_PLAYER,
 )
 
 _GAME_ID: Final = GameId(uuid7())
@@ -88,7 +89,7 @@ async def test_create_lobby_processor():
         users={_CURRENT_USER_ID: UserRole.ADMIN},
         admin_role_transfer_queue=[],
         password=_PASSWORD,
-        time_for_each_player=_CONNECT_FOUR_RULE_SET.time_for_each_player,
+        time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
     assert expected_lobby in lobby_gateway.lobbies
 
@@ -107,9 +108,7 @@ async def test_create_lobby_processor():
         "name": _NAME,
         "rule_set": {
             "type": "connect_four",
-            "time_for_each_player": (
-                _CONNECT_FOUR_RULE_SET.time_for_each_player.total_seconds()
-            ),
+            "time_for_each_player": _TIME_FOR_EACH_PLAYER.total_seconds(),
         },
     }
     assert (
@@ -124,9 +123,7 @@ async def test_create_lobby_processor():
         "has_password": True,
         "rule_set": {
             "type": "connect_four",
-            "time_for_each_player": (
-                _CONNECT_FOUR_RULE_SET.time_for_each_player.total_seconds()
-            ),
+            "time_for_each_player": _TIME_FOR_EACH_PLAYER.total_seconds(),
         },
     }
     assert (
@@ -145,7 +142,7 @@ async def test_create_lobby_processor():
                 users={_CURRENT_USER_ID: UserRole.ADMIN},
                 admin_role_transfer_queue=[],
                 password=_PASSWORD,
-                time_for_each_player=_CONNECT_FOUR_RULE_SET.time_for_each_player,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
             None,
             CreateLobbyCommand(
@@ -172,9 +169,7 @@ async def test_create_lobby_processor():
                     ),
                 },
                 created_at=datetime.now(timezone.utc),
-                time_for_each_player=(
-                    _CONNECT_FOUR_RULE_SET.time_for_each_player
-                ),
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
             CreateLobbyCommand(
                 name=_NAME,
