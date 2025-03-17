@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+from typing import Protocol
+
 from dishka import (
     Provider,
     Scope,
@@ -49,16 +51,37 @@ from connection_hub.infrastructure import (
 )
 
 
-def ioc_container_factory() -> AsyncContainer:
+class _ConfigFactory[C](Protocol):
+    def __call__(self) -> C:
+        raise NotImplementedError
+
+
+def ioc_container_factory(
+    *,
+    centrifugo_config_factory: _ConfigFactory[CentrifugoConfig] = (
+        load_centrifugo_config
+    ),
+    redis_config_factory: _ConfigFactory[RedisConfig] = load_redis_config,
+    lobby_mapper_config_factory: _ConfigFactory[LobbyMapperConfig] = (
+        load_lobby_mapper_config
+    ),
+    game_mapper_config_factory: _ConfigFactory[GameMapperConfig] = (
+        load_game_mapper_config
+    ),
+    lock_manager_config_factory: _ConfigFactory[LockManagerConfig] = (
+        load_lock_manager_config
+    ),
+    nats_config_factory: _ConfigFactory[NATSConfig] = load_nats_config,
+) -> AsyncContainer:
     provider = Provider()
 
     context = {
-        CentrifugoConfig: load_centrifugo_config(),
-        RedisConfig: load_redis_config(),
-        LobbyMapperConfig: load_lobby_mapper_config(),
-        GameMapperConfig: load_game_mapper_config(),
-        LockManagerConfig: load_lock_manager_config(),
-        NATSConfig: load_nats_config(),
+        CentrifugoConfig: centrifugo_config_factory(),
+        RedisConfig: redis_config_factory(),
+        LobbyMapperConfig: lobby_mapper_config_factory(),
+        GameMapperConfig: game_mapper_config_factory(),
+        LockManagerConfig: lock_manager_config_factory(),
+        NATSConfig: nats_config_factory(),
     }
 
     provider.from_context(CentrifugoConfig, scope=Scope.APP)
