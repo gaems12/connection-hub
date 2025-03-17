@@ -181,7 +181,7 @@ dev = [
 requires-dist = [
     { name = "adaptix", specifier = "==3.0b9" },
     { name = "cosmic-ray", marker = "extra == 'dev'", specifier = "==8.4.*" },
-    { name = "cyclopts", specifier = "==3.9.*" },
+    { name = "cyclopts", specifier = "==3.10.*" },
     { name = "dishka", specifier = "==1.4.*" },
     { name = "faststream", extras = ["nats", "cli"], specifier = "==0.5.*" },
     { name = "httpx", specifier = "==0.28.*" },
@@ -256,7 +256,7 @@ wheels = [
 
 [[package]]
 name = "cyclopts"
-version = "3.9.2"
+version = "3.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
@@ -264,9 +264,9 @@ dependencies = [
     { name = "rich" },
     { name = "rich-rst" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/49/0c04eeb72c2e1f9c47ceeb12b174154ec13e32121152da591fbbcb653dba/cyclopts-3.9.2.tar.gz", hash = "sha256:5295db5f4e47b04292c2e6c7cb958c788db61e5d7cce6176bb25b5598f0867c2", size = 67260 }
+sdist = { url = "https://files.pythonhosted.org/packages/19/2b/79ad6eab53c9c557b083bf34021d3966e79d2457824a2577935cee566c39/cyclopts-3.10.0.tar.gz", hash = "sha256:97891b603219957773df1b075b43e6ddba261e242278d563a31e7e6f2edad6ab", size = 68232 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f8/e4/3e4ad0a7bb04c1b2196f84fa527b6aabf40b66dc4b66f6456d22f941c90b/cyclopts-3.9.2-py3-none-any.whl", hash = "sha256:7627e2a30f354f208df50edb68a806055cdb46f34d7d5a0cfe24780f2b71ef25", size = 76995 },
+    { url = "https://files.pythonhosted.org/packages/d1/ae/91e6240b43ab056d2caf58947aff06ae239e0de05c8ea0a18eb5d878ce13/cyclopts-3.10.0-py3-none-any.whl", hash = "sha256:9b5632b6b67a166879e5e92d91c6c5896219936a0684dc4c5651a7d4cfa0ea17", size = 77933 },
 ]
 
 [[package]]
