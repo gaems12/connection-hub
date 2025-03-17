@@ -14,11 +14,14 @@ from connection_hub.domain import (
     LobbyId,
     UserId,
     ConnectFourLobby,
+    Lobby,
     LeaveLobby,
 )
 from connection_hub.application import (
     UserLeftLobbyEvent,
+    LeaveLobbyCommand,
     LeaveLobbyProcessor,
+    LobbyDoesNotExistError,
     CurrentUserNotInLobbyError,
 )
 from .fakes import (
@@ -57,7 +60,8 @@ async def test_leave_lobby_processor():
         subscriptons={_CURRENT_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"]},
     )
 
-    processor = LeaveLobbyProcessor(
+    command = LeaveLobbyCommand(lobby_id=_LOBBY_ID)
+    command_processor = LeaveLobbyProcessor(
         leave_lobby=LeaveLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
@@ -66,7 +70,7 @@ async def test_leave_lobby_processor():
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
 
-    await processor.process()
+    await command_processor.process(command)
 
     expected_lobby = lobby = ConnectFourLobby(
         id=_LOBBY_ID,
@@ -101,21 +105,52 @@ async def test_leave_lobby_processor():
     )
 
 
-async def test_leave_lobby_processor_errors():
+@pytest.mark.parametrize(
+    ["lobby", "command", "expected_error"],
+    [
+        [
+            None,
+            LeaveLobbyCommand(lobby_id=_LOBBY_ID),
+            LobbyDoesNotExistError,
+        ],
+        [
+            ConnectFourLobby(
+                id=_LOBBY_ID,
+                name=_NAME,
+                users={_OTHER_USER_ID: UserRole.ADMIN},
+                admin_role_transfer_queue=[],
+                password=_PASSWORD,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
+            ),
+            LeaveLobbyCommand(lobby_id=_LOBBY_ID),
+            CurrentUserNotInLobbyError,
+        ],
+    ],
+)
+async def test_leave_lobby_processor_errors(
+    lobby: Lobby | None,
+    command: LeaveLobbyCommand,
+    expected_error: Exception,
+):
+    if lobby:
+        lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
+    else:
+        lobby_gateway = FakeLobbyGateway()
+
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()
 
-    processor = LeaveLobbyProcessor(
+    command_processor = LeaveLobbyProcessor(
         leave_lobby=LeaveLobby(),
-        lobby_gateway=FakeLobbyGateway(),
+        lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
 
-    with pytest.raises(CurrentUserNotInLobbyError):
-        await processor.process()
+    with pytest.raises(expected_error):
+        await command_processor.process(command)
 
     assert not event_publisher.events
     assert not centrifugo_client.publications

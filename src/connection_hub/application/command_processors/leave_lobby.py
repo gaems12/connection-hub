@@ -2,7 +2,14 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-from connection_hub.domain import UserId, Lobby, LeaveLobby
+from dataclasses import dataclass
+
+from connection_hub.domain import (
+    LobbyId,
+    UserId,
+    Lobby,
+    LeaveLobby,
+)
 from connection_hub.application.common import (
     LobbyGateway,
     UserLeftLobbyEvent,
@@ -14,8 +21,14 @@ from connection_hub.application.common import (
     centrifugo_lobby_channel_factory,
     TransactionManager,
     IdentityProvider,
+    LobbyDoesNotExistError,
     CurrentUserNotInLobbyError,
 )
+
+
+@dataclass(frozen=True, slots=True)
+class LeaveLobbyCommand:
+    lobby_id: LobbyId
 
 
 class LeaveLobbyProcessor:
@@ -44,14 +57,17 @@ class LeaveLobbyProcessor:
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
-    async def process(self) -> None:
+    async def process(self, command: LeaveLobbyCommand) -> None:
         current_user_id = await self._identity_provider.user_id()
 
-        lobby_to_leave = await self._lobby_gateway.by_user_id(
-            user_id=current_user_id,
+        lobby_to_leave = await self._lobby_gateway.by_id(
+            id=command.lobby_id,
             acquire=True,
         )
         if not lobby_to_leave:
+            raise LobbyDoesNotExistError()
+
+        if current_user_id not in lobby_to_leave.users:
             raise CurrentUserNotInLobbyError()
 
         no_users_left, new_admin_id = self._leave_lobby(
