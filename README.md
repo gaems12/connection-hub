@@ -4,19 +4,19 @@
    <a>
       <img src="https://img.shields.io/badge/python-3.13-blue?logo=python" alt="Python version">
    </a>
-   <a href="https://github.com/astral-sh/ruff">
+   <a href="https://github.com/astral-sh/ruff" target="_blank">
       <img src="https://img.shields.io/badge/code_style-ruff-%236b00ff?logo=python" alt="Code style">
    </a>
-   <a href="https://github.com/gaems12/connection-hub/actions/workflows/lint-and-test.yaml">
+   <a href="https://github.com/gaems12/connection-hub/actions/workflows/lint-and-test.yaml" target="_blank">
       <img src="https://img.shields.io/github/actions/workflow/status/gaems12/connection-hub/lint-and-test.yaml?label=lint&logo=github" alt="Status of passing 'lint' job">
    </a>
-   <a href="https://github.com/gaems12/connection-hub/actions/workflows/lint-and-test.yaml">
+   <a href="https://github.com/gaems12/connection-hub/actions/workflows/lint-and-test.yaml" target="_blank">
       <img src="https://img.shields.io/github/actions/workflow/status/gaems12/connection-hub/lint-and-test.yaml?label=test&logo=github" alt="Status of passing 'test' job">
    </a>
-   <a href="https://codecov.io/gh/gaems12/connection-hub" >
+   <a href="https://codecov.io/gh/gaems12/connection-hub" target="_blank">
       <img src="https://codecov.io/gh/gaems12/connection-hub/graph/badge.svg?token=4N8N3D3NES"/>
    </a>
-    <a href="https://github.com/gaems12/connect-four/actions/workflows/mutation-test.yaml">
+    <a href="https://github.com/gaems12/connect-four/actions/workflows/mutation-test.yaml" target="_blank">
       <img src="./assets/killed_mutants_badge.svg">
    </a>
 </p>
