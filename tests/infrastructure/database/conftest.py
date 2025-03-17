@@ -8,7 +8,6 @@ import pytest
 from redis.asyncio.client import Redis, Pipeline
 
 from connection_hub.infrastructure import (
-    get_env_var,
     RedisConfig,
     redis_factory,
     redis_pipeline_factory,
@@ -16,10 +15,7 @@ from connection_hub.infrastructure import (
 
 
 @pytest.fixture(scope="function")
-async def redis() -> AsyncGenerator[Redis, None]:
-    redis_url = get_env_var("TEST_REDIS_URL")
-    redis_config = RedisConfig(url=redis_url)
-
+async def redis(redis_config: RedisConfig) -> AsyncGenerator[Redis, None]:
     async for redis in redis_factory(redis_config):
         yield redis
 

@@ -4,7 +4,13 @@
 
 import pytest
 
-from connection_hub.infrastructure import NATSConfig, get_env_var
+from connection_hub.infrastructure import RedisConfig, NATSConfig, get_env_var
+
+
+@pytest.fixture(scope="session")
+def redis_config() -> RedisConfig:
+    redis_url = get_env_var("TEST_REDIS_URL")
+    return RedisConfig(url=redis_url)
 
 
 @pytest.fixture(scope="session")
