@@ -23,7 +23,17 @@ from connection_hub.application import (
     EndGameProcessor,
 )
 from connection_hub.infrastructure import NATSConfig
-from connection_hub.presentation.message_consumer import create_broker
+from connection_hub.presentation.message_consumer import (
+    create_lobby,
+    join_lobby,
+    leave_lobby,
+    kick_from_lobby,
+    create_game,
+    end_game,
+    disconnect_from_game,
+    reconnect_to_game,
+    create_broker,
+)
 from connection_hub.main.message_consumer import create_message_consumer_app
 
 
@@ -113,6 +123,7 @@ async def test_create_lobby(app: FastStream, broker: NatsBroker):
             subject="api_gateway.lobby.created",
             stream="games",
         )
+        await create_lobby.wait_call(1)
 
 
 async def test_join_lobby(app: FastStream, broker: NatsBroker):
@@ -130,6 +141,7 @@ async def test_join_lobby(app: FastStream, broker: NatsBroker):
             subject="api_gateway.lobby.user_joined",
             stream="games",
         )
+        await join_lobby.wait_call(1)
 
 
 async def test_leave_lobby(app: FastStream, broker: NatsBroker):
@@ -138,10 +150,11 @@ async def test_leave_lobby(app: FastStream, broker: NatsBroker):
         TestNatsBroker(broker, with_real=True) as test_broker,
     ):
         await test_broker.publish(
-            message={"user_id": uuid7().hex},
+            message={"user_id": uuid7().hex, "lobby_id": uuid7().hex},
             subject="api_gateway.lobby.user_left",
             stream="games",
         )
+        await leave_lobby.wait_call(1)
 
 
 async def test_kick_from_lobby(app: FastStream, broker: NatsBroker):
@@ -154,6 +167,7 @@ async def test_kick_from_lobby(app: FastStream, broker: NatsBroker):
             subject="api_gateway.lobby.user_kicked",
             stream="games",
         )
+        await kick_from_lobby.wait_call(1)
 
 
 async def test_create_game(app: FastStream, broker: NatsBroker):
@@ -162,10 +176,11 @@ async def test_create_game(app: FastStream, broker: NatsBroker):
         TestNatsBroker(broker, with_real=True) as test_broker,
     ):
         await test_broker.publish(
-            message={"user_id": uuid7().hex},
+            message={"user_id": uuid7().hex, "lobby_id": uuid7().hex},
             subject="api_gateway.game.created",
             stream="games",
         )
+        await create_game.wait_call(1)
 
 
 async def test_end_game(app: FastStream, broker: NatsBroker):
@@ -178,6 +193,7 @@ async def test_end_game(app: FastStream, broker: NatsBroker):
             subject="connect_four.game.ended",
             stream="games",
         )
+        await end_game.wait_call(1)
 
 
 async def test_disconnect_from_game(app: FastStream, broker: NatsBroker):
@@ -190,6 +206,7 @@ async def test_disconnect_from_game(app: FastStream, broker: NatsBroker):
             subject="api_gateway.game.player_disconnected",
             stream="games",
         )
+        await disconnect_from_game.wait_call(1)
 
 
 async def test_reconnect_to_game(app: FastStream, broker: NatsBroker):
@@ -202,3 +219,4 @@ async def test_reconnect_to_game(app: FastStream, broker: NatsBroker):
             subject="api_gateway.game.player_reconnected",
             stream="games",
         )
+        await reconnect_to_game.wait_call(1)
