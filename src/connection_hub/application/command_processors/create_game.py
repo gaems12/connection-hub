@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+from dataclasses import dataclass
+
 from connection_hub.domain import (
     LobbyId,
     ConnectFourGame,
@@ -15,8 +17,14 @@ from connection_hub.application.common import (
     EventPublisher,
     TransactionManager,
     IdentityProvider,
+    LobbyDoesNotExistError,
     CurrentUserNotInLobbyError,
 )
+
+
+@dataclass(frozen=True, slots=True)
+class CreateGameCommand:
+    lobby_id: LobbyId
 
 
 class CreateGameProcessor:
@@ -45,14 +53,17 @@ class CreateGameProcessor:
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
-    async def process(self) -> None:
+    async def process(self, command: CreateGameCommand) -> None:
         current_user_id = await self._identity_provider.user_id()
 
-        lobby = await self._lobby_gateway.by_user_id(
-            user_id=current_user_id,
+        lobby = await self._lobby_gateway.by_id(
+            id=command.lobby_id,
             acquire=True,
         )
         if not lobby:
+            raise LobbyDoesNotExistError()
+
+        if current_user_id not in lobby.users:
             raise CurrentUserNotInLobbyError()
 
         new_game = self._create_game(

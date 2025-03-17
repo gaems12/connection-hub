@@ -23,7 +23,9 @@ from connection_hub.domain import (
 )
 from connection_hub.application import (
     ConnectFourGameCreatedEvent,
+    CreateGameCommand,
     CreateGameProcessor,
+    LobbyDoesNotExistError,
     CurrentUserNotInLobbyError,
 )
 from .fakes import (
@@ -63,7 +65,8 @@ async def test_create_game_processor():
     game_gateway = FakeGameGateway()
     event_publisher = FakeEventPublisher()
 
-    processor = CreateGameProcessor(
+    command = CreateGameCommand(lobby_id=_LOBBY_ID)
+    command_processor = CreateGameProcessor(
         create_game=CreateGame(),
         lobby_gateway=lobby_gateway,
         game_gateway=game_gateway,
@@ -72,7 +75,7 @@ async def test_create_game_processor():
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
 
-    await processor.process()
+    await command_processor.process(command)
 
     expected_game = ConnectFourGame(
         id=ANY_GAME_ID,
@@ -105,10 +108,23 @@ async def test_create_game_processor():
 
 
 @pytest.mark.parametrize(
-    ["lobby", "expected_error"],
+    ["lobby", "command", "expected_error"],
     [
         [
             None,
+            CreateGameCommand(lobby_id=_LOBBY_ID),
+            LobbyDoesNotExistError,
+        ],
+        [
+            ConnectFourLobby(
+                id=_LOBBY_ID,
+                name=_NAME,
+                users={_OTHER_USER_ID: UserRole.ADMIN},
+                admin_role_transfer_queue=[],
+                password=_PASSWORD,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
+            ),
+            CreateGameCommand(lobby_id=_LOBBY_ID),
             CurrentUserNotInLobbyError,
         ],
         [
@@ -123,12 +139,14 @@ async def test_create_game_processor():
                 password=_PASSWORD,
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
+            CreateGameCommand(lobby_id=_LOBBY_ID),
             CurrentUserIsNotAdminError,
         ],
     ],
 )
 async def test_create_game_processor_errors(
     lobby: Lobby | None,
+    command: CreateGameCommand,
     expected_error: Exception,
 ):
     if lobby:
@@ -139,7 +157,7 @@ async def test_create_game_processor_errors(
     game_gateway = FakeGameGateway()
     event_publisher = FakeEventPublisher()
 
-    processor = CreateGameProcessor(
+    command_processor = CreateGameProcessor(
         create_game=CreateGame(),
         lobby_gateway=lobby_gateway,
         game_gateway=game_gateway,
@@ -149,6 +167,6 @@ async def test_create_game_processor_errors(
     )
 
     with pytest.raises(expected_error):
-        await processor.process()
+        await command_processor.process(command)
 
     assert not event_publisher.events

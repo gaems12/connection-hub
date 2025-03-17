@@ -15,6 +15,7 @@ from connection_hub.application import (
     LeaveLobbyProcessor,
     KickFromLobbyCommand,
     KickFromLobbyProcessor,
+    CreateGameCommand,
     CreateGameProcessor,
     EndGameCommand,
     EndGameProcessor,
@@ -97,9 +98,10 @@ async def kick_from_lobby(
 @inject
 async def create_game(
     *,
-    processor: FromDishka[CreateGameProcessor],
+    command: CreateGameCommand,
+    command_processor: FromDishka[CreateGameProcessor],
 ) -> None:
-    await processor.process()
+    await command_processor.process(command)
 
 
 @router.subscriber(
