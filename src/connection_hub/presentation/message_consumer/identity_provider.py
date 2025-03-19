@@ -21,5 +21,5 @@ class MessageBrokerIdentityProvider(IdentityProvider):
         if not decoded_message or not isinstance(decoded_message, dict):
             raise Exception("StreamMessage cannot be converter to dict.")
 
-        user_id = decoded_message.get("user_id")
+        user_id = decoded_message.get("current_user_id")
         return UserId(UUID(user_id))
