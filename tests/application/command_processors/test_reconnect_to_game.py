@@ -23,7 +23,9 @@ from connection_hub.domain import (
 from connection_hub.application import (
     TryToDisqualifyPlayerTask,
     ConnectFourGamePlayerReconnectedEvent,
+    ReconnectToGameCommand,
     ReconnectToGameProcessor,
+    GameDoesNotExistError,
     CurrentUserNotInGameError,
 )
 from .fakes import (
@@ -42,6 +44,9 @@ _CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _OTHER_USER_ID: Final = UserId(uuid7())
 _OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
+
+_ANOTHER_USER_ID: Final = UserId(uuid7())
+_ANOTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _GAME_ID: Final = GameId(uuid7())
 _CREATED_AT: Final = datetime.now(timezone.utc)
@@ -81,7 +86,8 @@ async def test_reconnect_to_game_processor():
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()
 
-    processor = ReconnectToGameProcessor(
+    command = ReconnectToGameCommand(game_id=_GAME_ID)
+    command_processor = ReconnectToGameProcessor(
         reconnect_to_game=ReconnectToGame(),
         game_gateway=game_gateway,
         event_publisher=event_publisher,
@@ -91,7 +97,7 @@ async def test_reconnect_to_game_processor():
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
 
-    await processor.process()
+    await command_processor.process(command)
 
     expected_game = ConnectFourGame(
         id=_GAME_ID,
@@ -131,10 +137,32 @@ async def test_reconnect_to_game_processor():
 
 
 @pytest.mark.parametrize(
-    ["game", "expected_error"],
+    ["game", "command", "expected_error"],
     [
         [
             None,
+            ReconnectToGameCommand(game_id=_GAME_ID),
+            GameDoesNotExistError,
+        ],
+        [
+            ConnectFourGame(
+                id=_GAME_ID,
+                players={
+                    _OTHER_USER_ID: PlayerState(
+                        id=_OTHER_PLAYER_STATE_ID,
+                        status=PlayerStatus.CONNECTED,
+                        time_left=timedelta(seconds=40),
+                    ),
+                    _ANOTHER_USER_ID: PlayerState(
+                        id=_ANOTHER_PLAYER_STATE_ID,
+                        status=PlayerStatus.CONNECTED,
+                        time_left=timedelta(seconds=40),
+                    ),
+                },
+                created_at=_CREATED_AT,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
+            ),
+            ReconnectToGameCommand(game_id=_GAME_ID),
             CurrentUserNotInGameError,
         ],
         [
@@ -144,7 +172,7 @@ async def test_reconnect_to_game_processor():
                     _CURRENT_USER_ID: PlayerState(
                         id=ANY_PLAYER_STATE_ID,
                         status=PlayerStatus.CONNECTED,
-                        time_left=ANY_TIMEDELTA,
+                        time_left=timedelta(seconds=40),
                     ),
                     _OTHER_USER_ID: PlayerState(
                         id=_OTHER_PLAYER_STATE_ID,
@@ -155,12 +183,14 @@ async def test_reconnect_to_game_processor():
                 created_at=_CREATED_AT,
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
+            ReconnectToGameCommand(game_id=_GAME_ID),
             CurrentUserIsConnectedToGameError,
         ],
     ],
 )
 async def test_reconnect_to_game_processor_errors(
     game: Game | None,
+    command: ReconnectToGameCommand,
     expected_error: Exception,
 ):
     if game:
@@ -172,7 +202,7 @@ async def test_reconnect_to_game_processor_errors(
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()
 
-    processor = ReconnectToGameProcessor(
+    command_processor = ReconnectToGameProcessor(
         reconnect_to_game=ReconnectToGame(),
         game_gateway=game_gateway,
         event_publisher=event_publisher,
@@ -183,7 +213,7 @@ async def test_reconnect_to_game_processor_errors(
     )
 
     with pytest.raises(expected_error):
-        await processor.process()
+        await command_processor.process(command)
 
     assert not task_scheduler.tasks
     assert not event_publisher.events

@@ -14,6 +14,7 @@ __all__ = (
     "CreateGameCommand",
     "CreateGameProcessor",
     "DisconnectFromGameProcessor",
+    "ReconnectToGameCommand",
     "ReconnectToGameProcessor",
     "TryToDisqualifyPlayerCommand",
     "TryToDisqualifyPlayerProcessor",
@@ -27,7 +28,10 @@ from .leave_lobby import LeaveLobbyCommand, LeaveLobbyProcessor
 from .kick_from_lobby import KickFromLobbyCommand, KickFromLobbyProcessor
 from .create_game import CreateGameCommand, CreateGameProcessor
 from .disconnect_from_game import DisconnectFromGameProcessor
-from .reconnect_to_game import ReconnectToGameProcessor
+from .reconnect_to_game import (
+    ReconnectToGameCommand,
+    ReconnectToGameProcessor,
+)
 from .try_to_disqualify_player import (
     TryToDisqualifyPlayerCommand,
     TryToDisqualifyPlayerProcessor,

@@ -2,7 +2,10 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+from dataclasses import dataclass
+
 from connection_hub.domain import (
+    GameId,
     UserId,
     ConnectFourGame,
     Game,
@@ -17,8 +20,14 @@ from connection_hub.application.common import (
     centrifugo_game_channel_factory,
     TransactionManager,
     IdentityProvider,
+    GameDoesNotExistError,
     CurrentUserNotInGameError,
 )
+
+
+@dataclass(frozen=True, slots=True)
+class ReconnectToGameCommand:
+    game_id: GameId
 
 
 class ReconnectToGameProcessor:
@@ -50,14 +59,17 @@ class ReconnectToGameProcessor:
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
 
-    async def process(self) -> None:
+    async def process(self, command: ReconnectToGameCommand) -> None:
         current_user_id = await self._identity_provider.user_id()
 
-        game = await self._game_gateway.by_player_id(
-            player_id=current_user_id,
+        game = await self._game_gateway.by_id(
+            id=command.game_id,
             acquire=True,
         )
         if not game:
+            raise GameDoesNotExistError()
+
+        if current_user_id not in game.players:
             raise CurrentUserNotInGameError()
 
         old_current_player_state = game.players[current_user_id]

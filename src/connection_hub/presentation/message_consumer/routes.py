@@ -21,6 +21,7 @@ from connection_hub.application import (
     EndGameCommand,
     EndGameProcessor,
     DisconnectFromGameProcessor,
+    ReconnectToGameCommand,
     ReconnectToGameProcessor,
 )
 
@@ -144,6 +145,7 @@ async def disconnect_from_game(
 @inject
 async def reconnect_to_game(
     *,
-    processor: FromDishka[ReconnectToGameProcessor],
+    command: ReconnectToGameCommand,
+    command_processor: FromDishka[ReconnectToGameProcessor],
 ) -> None:
-    await processor.process()
+    await command_processor.process(command)
