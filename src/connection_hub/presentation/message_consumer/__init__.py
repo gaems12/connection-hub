@@ -9,6 +9,7 @@ __all__ = (
     "kick_from_lobby",
     "create_game",
     "end_game",
+    "acknowledge_presence",
     "disconnect_from_game",
     "reconnect_to_game",
     "create_broker",
@@ -22,6 +23,7 @@ from .routes import (
     kick_from_lobby,
     create_game,
     end_game,
+    acknowledge_presence,
     disconnect_from_game,
     reconnect_to_game,
 )

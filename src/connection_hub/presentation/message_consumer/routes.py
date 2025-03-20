@@ -20,6 +20,7 @@ from connection_hub.application import (
     CreateGameProcessor,
     EndGameCommand,
     EndGameProcessor,
+    AcknowledgePresenceProcessor,
     DisconnectFromGameProcessor,
     ReconnectToGameCommand,
     ReconnectToGameProcessor,
@@ -120,6 +121,20 @@ async def end_game(
     command_processor: FromDishka[EndGameProcessor],
 ) -> None:
     await command_processor.process(command)
+
+
+@router.subscriber(
+    subject="api_gateway.presence.acknowledged",
+    durable="connection_hub_api_gateway_presence_acknowledged",
+    stream=_STREAM,
+    pull_sub=PullSub(timeout=0.2),
+)
+@inject
+async def acknowledge_presence(
+    *,
+    processor: FromDishka[AcknowledgePresenceProcessor],
+) -> None:
+    await processor.process()
 
 
 @router.subscriber(

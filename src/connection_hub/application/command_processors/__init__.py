@@ -13,6 +13,7 @@ __all__ = (
     "KickFromLobbyProcessor",
     "CreateGameCommand",
     "CreateGameProcessor",
+    "AcknowledgePresenceProcessor",
     "DisconnectFromGameProcessor",
     "ReconnectToGameCommand",
     "ReconnectToGameProcessor",
@@ -27,6 +28,7 @@ from .join_lobby import JoinLobbyCommand, JoinLobbyProcessor
 from .leave_lobby import LeaveLobbyCommand, LeaveLobbyProcessor
 from .kick_from_lobby import KickFromLobbyCommand, KickFromLobbyProcessor
 from .create_game import CreateGameCommand, CreateGameProcessor
+from .acknowledge_presence import AcknowledgePresenceProcessor
 from .disconnect_from_game import DisconnectFromGameProcessor
 from .reconnect_to_game import (
     ReconnectToGameCommand,

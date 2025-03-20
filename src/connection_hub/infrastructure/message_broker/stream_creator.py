@@ -31,6 +31,7 @@ class NATSStreamCreator:
                 "api_gateway.game.created",
                 "api_gateway.game.player_disconnected",
                 "api_gateway.game.player_reconnected",
+                "api_gateway.presence.acknowledged",
                 "connect_four.game.ended",
             ],
         )
