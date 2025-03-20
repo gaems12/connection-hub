@@ -7,26 +7,26 @@ from connection_hub.domain.constants import UserRole
 from connection_hub.domain.models import Lobby
 
 
-class LeaveLobby:
+class DisconnectFromLobby:
     def __call__(
         self,
         *,
         lobby: Lobby,
-        current_user_id: UserId,
+        user_id: UserId,
     ) -> tuple[bool, UserId | None]:
         """
-        Handles a user leaving a lobby and manages admin role
-        transfer if necessary. Returns two values: whether no users
-        remain in the lobby and the id of the next admin if the admin
+        Disconnects user from lobby and manages admin role transfer
+        if necessary. Returns two values: whether no users remain
+        in the lobby and the id of the next admin if the admin
         role was transferred.
         """
-        current_user_role = lobby.users.pop(current_user_id)
+        user_role = lobby.users.pop(user_id)
         no_users_left = not lobby.users
         if no_users_left:
             return True, None
 
-        if current_user_role != UserRole.ADMIN:
-            lobby.admin_role_transfer_queue.remove(current_user_id)
+        if user_role != UserRole.ADMIN:
+            lobby.admin_role_transfer_queue.remove(user_id)
             return False, None
 
         next_admin = lobby.admin_role_transfer_queue.pop(0)

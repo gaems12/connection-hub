@@ -15,7 +15,7 @@ from connection_hub.domain import (
     UserId,
     ConnectFourLobby,
     Lobby,
-    LeaveLobby,
+    DisconnectFromLobby,
 )
 from connection_hub.application import (
     UserLeftLobbyEvent,
@@ -62,7 +62,7 @@ async def test_leave_lobby_processor():
 
     command = LeaveLobbyCommand(lobby_id=_LOBBY_ID)
     command_processor = LeaveLobbyProcessor(
-        leave_lobby=LeaveLobby(),
+        disconnect_from_lobby=DisconnectFromLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
         centrifugo_client=centrifugo_client,
@@ -141,7 +141,7 @@ async def test_leave_lobby_processor_errors(
     centrifugo_client = FakeCentrifugoClient()
 
     command_processor = LeaveLobbyProcessor(
-        leave_lobby=LeaveLobby(),
+        disconnect_from_lobby=DisconnectFromLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
         centrifugo_client=centrifugo_client,
