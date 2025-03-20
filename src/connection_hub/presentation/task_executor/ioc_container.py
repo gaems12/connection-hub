@@ -12,13 +12,18 @@ from dishka import (
 )
 from dishka.integrations.taskiq import TaskiqProvider
 
-from connection_hub.domain import TryToDisqualifyPlayer
+from connection_hub.domain import (
+    DisconnectFromLobby,
+    TryToDisqualifyPlayer,
+)
 from connection_hub.application import (
+    LobbyGateway,
     GameGateway,
     EventPublisher,
     TaskScheduler,
     CentrifugoClient,
     TransactionManager,
+    TryToDisconnectFromLobbyProcessor,
     TryToDisqualifyPlayerProcessor,
 )
 from connection_hub.infrastructure import (
@@ -30,6 +35,7 @@ from connection_hub.infrastructure import (
     redis_pipeline_factory,
     LobbyMapperConfig,
     load_lobby_mapper_config,
+    LobbyMapper,
     GameMapperConfig,
     load_game_mapper_config,
     GameMapper,
@@ -102,6 +108,7 @@ def ioc_container_factory(
     provider.provide(taskiq_redis_schedule_source_factory, scope=Scope.APP)
 
     provider.provide(lock_manager_factory, scope=Scope.REQUEST)
+    provider.provide(LobbyMapper, provides=LobbyGateway, scope=Scope.REQUEST)
     provider.provide(GameMapper, provides=GameGateway, scope=Scope.REQUEST)
     provider.provide(
         RedisTransactionManager,
@@ -125,7 +132,10 @@ def ioc_container_factory(
         provides=TaskScheduler,
     )
 
+    provider.provide(DisconnectFromLobby, scope=Scope.APP)
     provider.provide(TryToDisqualifyPlayer, scope=Scope.APP)
+
+    provider.provide(TryToDisconnectFromLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(TryToDisqualifyPlayerProcessor, scope=Scope.REQUEST)
 
     return make_async_container(provider, TaskiqProvider(), context=context)

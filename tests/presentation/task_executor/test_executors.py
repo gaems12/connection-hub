@@ -11,8 +11,10 @@ from dishka import Provider, Scope, AsyncContainer, make_async_container
 from dishka.integrations.taskiq import TaskiqProvider, setup_dishka
 from uuid_extensions import uuid7
 
-from connection_hub.domain import GameId, UserId, PlayerStateId
+from connection_hub.domain import LobbyId, GameId, UserId, PlayerStateId
 from connection_hub.application import (
+    TryToDisconnectFromLobbyCommand,
+    TryToDisconnectFromLobbyProcessor,
     TryToDisqualifyPlayerCommand,
     TryToDisqualifyPlayerProcessor,
 )
@@ -24,6 +26,11 @@ from connection_hub.presentation.task_executor import create_broker
 def ioc_container() -> AsyncContainer:
     provider = Provider()
 
+    provider.provide(
+        lambda: AsyncMock(),
+        scope=Scope.REQUEST,
+        provides=TryToDisconnectFromLobbyProcessor,
+    )
     provider.provide(
         lambda: AsyncMock(),
         scope=Scope.REQUEST,
@@ -41,6 +48,27 @@ async def app(ioc_container: AsyncContainer) -> InMemoryBroker:
     await broker.startup()
 
     return broker
+
+
+async def test_try_disconnect_from_lobby(app: InMemoryBroker) -> None:
+    taskiq_message = TaskiqMessage(
+        task_id=uuid7().hex,
+        task_name="try_to_disconnect_from_lobby",
+        labels={},
+        labels_types=None,
+        args=[OperationId(uuid7())],
+        kwargs={
+            "command": TryToDisconnectFromLobbyCommand(
+                lobby_id=LobbyId(uuid7()),
+                user_id=UserId(uuid7()),
+            ),
+        },
+    )
+
+    proxy_formatter = ProxyFormatter(app)
+    broker_message = proxy_formatter.dumps(taskiq_message)
+
+    await app.kick(broker_message)
 
 
 async def test_try_to_disqualify_player(app: InMemoryBroker) -> None:
