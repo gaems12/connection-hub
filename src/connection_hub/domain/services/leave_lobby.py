@@ -7,7 +7,7 @@ from connection_hub.domain.constants import UserRole
 from connection_hub.domain.models import Lobby
 
 
-class DisconnectFromLobby:
+class LeaveLobby:
     def __call__(
         self,
         *,
@@ -15,9 +15,9 @@ class DisconnectFromLobby:
         user_id: UserId,
     ) -> tuple[bool, UserId | None]:
         """
-        Disconnects user from lobby and manages admin role transfer
-        if necessary. Returns two values: whether no users remain
-        in the lobby and the id of the next admin if the admin
+        Handles a user leaving a lobby and manages admin role
+        transfer if necessary. Returns two values: whether no users
+        remain in the lobby and the id of the next admin if the admin
         role was transferred.
         """
         user_role = lobby.users.pop(user_id)

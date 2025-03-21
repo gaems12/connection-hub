@@ -7,18 +7,18 @@ from dishka.integrations.taskiq import FromDishka, inject
 from connection_hub.domain import DomainError
 from connection_hub.application import (
     ApplicationError,
-    TryToDisconnectFromLobbyCommand,
-    TryToDisconnectFromLobbyProcessor,
+    ForceLeaveLobbyCommand,
+    ForceLeaveLobbyProcessor,
     TryToDisqualifyPlayerCommand,
     TryToDisqualifyPlayerProcessor,
 )
 
 
 @inject
-async def try_to_disconnect_from_lobby(
+async def force_leave_lobby(
     *,
-    command: TryToDisconnectFromLobbyCommand,
-    command_processor: TryToDisconnectFromLobbyProcessor,
+    command: ForceLeaveLobbyCommand,
+    command_processor: ForceLeaveLobbyProcessor,
 ) -> None:
     try:
         await command_processor.process(command)

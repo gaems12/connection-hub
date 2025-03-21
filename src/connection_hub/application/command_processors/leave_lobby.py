@@ -8,7 +8,7 @@ from connection_hub.domain import (
     LobbyId,
     UserId,
     Lobby,
-    DisconnectFromLobby,
+    LeaveLobby,
 )
 from connection_hub.application.common import (
     LobbyGateway,
@@ -33,7 +33,7 @@ class LeaveLobbyCommand:
 
 class LeaveLobbyProcessor:
     __slots__ = (
-        "_disconnect_from_lobby",
+        "_leave_lobby",
         "_lobby_gateway",
         "_event_publisher",
         "_centrifugo_client",
@@ -43,14 +43,14 @@ class LeaveLobbyProcessor:
 
     def __init__(
         self,
-        disconnect_from_lobby: DisconnectFromLobby,
+        leave_lobby: LeaveLobby,
         lobby_gateway: LobbyGateway,
         event_publisher: EventPublisher,
         centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
     ):
-        self._disconnect_from_lobby = disconnect_from_lobby
+        self._leave_lobby = leave_lobby
         self._lobby_gateway = lobby_gateway
         self._event_publisher = event_publisher
         self._centrifugo_client = centrifugo_client
@@ -70,7 +70,7 @@ class LeaveLobbyProcessor:
         if current_user_id not in lobby_to_leave.users:
             raise CurrentUserNotInLobbyError()
 
-        no_users_left, new_admin_id = self._disconnect_from_lobby(
+        no_users_left, new_admin_id = self._leave_lobby(
             lobby=lobby_to_leave,
             user_id=current_user_id,
         )

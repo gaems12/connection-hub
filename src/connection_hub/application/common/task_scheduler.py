@@ -3,8 +3,8 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 __all__ = (
-    "TryToDisconnectFromLobbyTask",
-    "TryToDisconnectFromGameTask",
+    "ForceLeaveLobbyTask",
+    "ForceDisconnectFromGameTask",
     "TryToDisqualifyPlayerTask",
     "Task",
     "TaskScheduler",
@@ -25,13 +25,13 @@ class BaseTask:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class TryToDisconnectFromLobbyTask(BaseTask):
+class ForceLeaveLobbyTask(BaseTask):
     lobby_id: LobbyId
     user_id: UserId
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class TryToDisconnectFromGameTask(BaseTask):
+class ForceDisconnectFromGameTask(BaseTask):
     game_id: GameId
     player_id: UserId
 
@@ -44,8 +44,8 @@ class TryToDisqualifyPlayerTask(BaseTask):
 
 
 type Task = (
-    TryToDisconnectFromLobbyTask
-    | TryToDisconnectFromGameTask
+    ForceLeaveLobbyTask
+    | ForceDisconnectFromGameTask
     | TryToDisqualifyPlayerTask
 )
 

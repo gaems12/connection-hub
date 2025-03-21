@@ -7,8 +7,8 @@ from datetime import datetime, timedelta, timezone
 from connection_hub.application.common import (
     LobbyGateway,
     GameGateway,
-    TryToDisconnectFromLobbyTask,
-    TryToDisconnectFromGameTask,
+    ForceLeaveLobbyTask,
+    ForceDisconnectFromGameTask,
     TaskScheduler,
     IdentityProvider,
 )
@@ -35,7 +35,7 @@ class AcknowledgePresenceProcessor:
         self._identity_provider = identity_provider
 
     async def process(self) -> None:
-        task: TryToDisconnectFromLobbyTask | TryToDisconnectFromGameTask
+        task: ForceLeaveLobbyTask | ForceDisconnectFromGameTask
 
         current_user_id = await self._identity_provider.user_id()
 
@@ -46,7 +46,7 @@ class AcknowledgePresenceProcessor:
             execute_task_at = datetime.now(timezone.utc) + timedelta(
                 seconds=15,
             )
-            task = TryToDisconnectFromLobbyTask(
+            task = ForceLeaveLobbyTask(
                 id=lobby.id,
                 execute_at=execute_task_at,
                 lobby_id=lobby.id,
@@ -63,7 +63,7 @@ class AcknowledgePresenceProcessor:
             execute_task_at = datetime.now(timezone.utc) + timedelta(
                 seconds=15,
             )
-            task = TryToDisconnectFromGameTask(
+            task = ForceDisconnectFromGameTask(
                 id=game.id,
                 execute_at=execute_task_at,
                 game_id=game.id,

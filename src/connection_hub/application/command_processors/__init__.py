@@ -9,13 +9,13 @@ __all__ = (
     "JoinLobbyProcessor",
     "LeaveLobbyCommand",
     "LeaveLobbyProcessor",
+    "ForceLeaveLobbyCommand",
+    "ForceLeaveLobbyProcessor",
     "KickFromLobbyCommand",
     "KickFromLobbyProcessor",
     "CreateGameCommand",
     "CreateGameProcessor",
     "AcknowledgePresenceProcessor",
-    "TryToDisconnectFromLobbyCommand",
-    "TryToDisconnectFromLobbyProcessor",
     "DisconnectFromGameCommand",
     "DisconnectFromGameProcessor",
     "ReconnectToGameCommand",
@@ -29,13 +29,10 @@ __all__ = (
 from .create_lobby import CreateLobbyCommand, CreateLobbyProcessor
 from .join_lobby import JoinLobbyCommand, JoinLobbyProcessor
 from .leave_lobby import LeaveLobbyCommand, LeaveLobbyProcessor
+from .force_leave_lobby import ForceLeaveLobbyCommand, ForceLeaveLobbyProcessor
 from .kick_from_lobby import KickFromLobbyCommand, KickFromLobbyProcessor
 from .create_game import CreateGameCommand, CreateGameProcessor
 from .acknowledge_presence import AcknowledgePresenceProcessor
-from .try_to_disconnect_from_lobby import (
-    TryToDisconnectFromLobbyCommand,
-    TryToDisconnectFromLobbyProcessor,
-)
 from .disconnect_from_game import (
     DisconnectFromGameCommand,
     DisconnectFromGameProcessor,

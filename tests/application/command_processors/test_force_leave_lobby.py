@@ -13,12 +13,12 @@ from connection_hub.domain import (
     LobbyId,
     UserId,
     ConnectFourLobby,
-    DisconnectFromLobby,
+    LeaveLobby,
 )
 from connection_hub.application import (
-    UserDisconnectedFromLobbyEvent,
-    TryToDisconnectFromLobbyCommand,
-    TryToDisconnectFromLobbyProcessor,
+    UserLeftLobbyEvent,
+    ForceLeaveLobbyCommand,
+    ForceLeaveLobbyProcessor,
 )
 from .fakes import (
     FakeLobbyGateway,
@@ -36,7 +36,7 @@ _PASSWORD: Final = "12345"
 _TIME_FOR_EACH_PLAYER: Final = timedelta(minutes=1)
 
 
-async def test_try_to_disconnect_from_lobby():
+async def test_force_leave_lobby():
     lobby = ConnectFourLobby(
         id=_LOBBY_ID,
         name=_NAME,
@@ -51,14 +51,16 @@ async def test_try_to_disconnect_from_lobby():
 
     lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
     event_publisher = FakeEventPublisher()
-    centrifugo_client = FakeCentrifugoClient()
+    centrifugo_client = FakeCentrifugoClient(
+        subscriptons={_FIRST_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"]},
+    )
 
-    command = TryToDisconnectFromLobbyCommand(
+    command = ForceLeaveLobbyCommand(
         lobby_id=_LOBBY_ID,
         user_id=_FIRST_USER_ID,
     )
-    command_processor = TryToDisconnectFromLobbyProcessor(
-        disconnect_from_lobby=DisconnectFromLobby(),
+    command_processor = ForceLeaveLobbyProcessor(
+        leave_lobby=LeaveLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
         centrifugo_client=centrifugo_client,
@@ -77,7 +79,7 @@ async def test_try_to_disconnect_from_lobby():
     )
     assert expected_lobby == lobby
 
-    expected_event = UserDisconnectedFromLobbyEvent(
+    expected_event = UserLeftLobbyEvent(
         lobby_id=_LOBBY_ID,
         user_id=_FIRST_USER_ID,
         new_admin_id=_SECOND_USER_ID,
@@ -85,7 +87,7 @@ async def test_try_to_disconnect_from_lobby():
     assert expected_event in event_publisher.events
 
     expected_centrifugo_publication = {
-        "type": "user_disconnected",
+        "type": "user_left",
         "user_id": _FIRST_USER_ID.hex,
         "new_admin_id": _SECOND_USER_ID.hex,
     }

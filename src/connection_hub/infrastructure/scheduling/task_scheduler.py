@@ -10,8 +10,8 @@ from taskiq_redis import RedisScheduleSource
 
 from connection_hub.application import (
     TryToDisqualifyPlayerCommand,
-    TryToDisconnectFromLobbyTask,
-    TryToDisconnectFromGameTask,
+    ForceLeaveLobbyTask,
+    ForceDisconnectFromGameTask,
     TryToDisqualifyPlayerTask,
     Task,
     TaskScheduler,
@@ -34,11 +34,11 @@ class TaskiqTaskScheduler(TaskScheduler):
         if isinstance(task, TryToDisqualifyPlayerTask):
             await self._schedule_try_to_disqualify_player(task)
 
-        elif isinstance(task, TryToDisconnectFromLobbyTask):
-            await self._schedule_try_to_disconnect_from_lobby(task)
+        elif isinstance(task, ForceLeaveLobbyTask):
+            await self._schedule_force_leave_lobby(task)
 
-        elif isinstance(task, TryToDisconnectFromGameTask):
-            await self._schedule_try_to_disconnect_from_game(task)
+        elif isinstance(task, ForceDisconnectFromGameTask):
+            await self._schedule_force_disconnect_from_game(task)
 
     async def unschedule(self, task_id: UUID) -> None:
         await self._schedule_source.delete_schedule(task_id.hex)
@@ -67,12 +67,12 @@ class TaskiqTaskScheduler(TaskScheduler):
         )
         await self._schedule_source.add_schedule(schedule)
 
-    async def _schedule_try_to_disconnect_from_lobby(
+    async def _schedule_force_leave_lobby(
         self,
-        task: TryToDisconnectFromLobbyTask,
+        task: ForceLeaveLobbyTask,
     ) -> None: ...
 
-    async def _schedule_try_to_disconnect_from_game(
+    async def _schedule_force_disconnect_from_game(
         self,
-        task: TryToDisconnectFromGameTask,
+        task: ForceDisconnectFromGameTask,
     ) -> None: ...

@@ -22,8 +22,8 @@ from connection_hub.domain import (
     Game,
 )
 from connection_hub.application import (
-    TryToDisconnectFromLobbyTask,
-    TryToDisconnectFromGameTask,
+    ForceLeaveLobbyTask,
+    ForceDisconnectFromGameTask,
     Task,
     AcknowledgePresenceProcessor,
 )
@@ -64,7 +64,7 @@ _CREATED_AT: Final = datetime.now(timezone.utc)
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
             None,
-            TryToDisconnectFromLobbyTask(
+            ForceLeaveLobbyTask(
                 id=_LOBBY_ID,
                 execute_at=ANY_DATETIME,
                 lobby_id=_LOBBY_ID,
@@ -90,7 +90,7 @@ _CREATED_AT: Final = datetime.now(timezone.utc)
                 created_at=_CREATED_AT,
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
-            TryToDisconnectFromGameTask(
+            ForceDisconnectFromGameTask(
                 id=_GAME_ID,
                 execute_at=ANY_DATETIME,
                 game_id=_GAME_ID,

@@ -15,7 +15,7 @@ from dishka.integrations.faststream import FastStreamProvider
 from connection_hub.domain import (
     CreateLobby,
     JoinLobby,
-    DisconnectFromLobby,
+    LeaveLobby,
     KickFromLobby,
     CreateGame,
     DisconnectFromGame,
@@ -153,7 +153,7 @@ def ioc_container_factory(
 
     provider.provide(CreateLobby, scope=Scope.APP)
     provider.provide(JoinLobby, scope=Scope.APP)
-    provider.provide(DisconnectFromLobby, scope=Scope.APP)
+    provider.provide(LeaveLobby, scope=Scope.APP)
     provider.provide(KickFromLobby, scope=Scope.APP)
     provider.provide(CreateGame, scope=Scope.APP)
     provider.provide(DisconnectFromGame, scope=Scope.APP)
