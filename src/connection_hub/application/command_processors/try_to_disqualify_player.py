@@ -17,6 +17,8 @@ from connection_hub.application.common import (
     ConnectFourGamePlayerDisqualifiedEvent,
     EventPublisher,
     TaskScheduler,
+    force_disconnect_from_game_task_id_factory,
+    try_to_disqualify_player_task_id_factory,
     CentrifugoClient,
     centrifugo_game_channel_factory,
     TransactionManager,
@@ -78,11 +80,20 @@ class TryToDisqualifyPlayerProcessor:
             return
 
         if game_is_ended:
-            player_state_ids = map(
-                lambda player_state: player_state.id,
-                game.players.values(),
-            )
-            await self._task_scheduler.unschedule_many(player_state_ids)
+            task_ids = []
+            for player_id, player_state in game.players.items():
+                task_id = force_disconnect_from_game_task_id_factory(
+                    game_id=game.id,
+                    player_id=player_id,
+                )
+                task_ids.append(task_id)
+
+                task_id = try_to_disqualify_player_task_id_factory(
+                    player_state_id=player_state.id,
+                )
+                task_ids.append(task_id)
+
+            await self._task_scheduler.unschedule_many(task_ids)
 
             await self._game_gateway.delete(game)
         else:

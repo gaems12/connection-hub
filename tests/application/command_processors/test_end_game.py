@@ -59,7 +59,7 @@ async def test_end_game_processor():
     game_gateway = FakeGameGateway({game.id: game})
 
     task = TryToDisqualifyPlayerTask(
-        id=_SECOND_PLAYER_STATE_ID,
+        id=f"try_to_disqualify_player:{_SECOND_PLAYER_STATE_ID.hex}",
         execute_at=datetime.now(timezone.utc) + timedelta(seconds=39),
         game_id=_GAME_ID,
         player_id=_SECOND_USER_ID,

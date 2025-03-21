@@ -16,6 +16,7 @@ from connection_hub.application.common import (
     ConnectFourGamePlayerReconnectedEvent,
     EventPublisher,
     TaskScheduler,
+    try_to_disqualify_player_task_id_factory,
     CentrifugoClient,
     centrifugo_game_channel_factory,
     TransactionManager,
@@ -81,7 +82,10 @@ class ReconnectToGameProcessor:
         )
         await self._game_gateway.update(game)
 
-        await self._task_scheduler.unschedule(old_current_player_state_id)
+        task_id = try_to_disqualify_player_task_id_factory(
+            old_current_player_state_id,
+        )
+        await self._task_scheduler.unschedule(task_id)
 
         await self._publish_event(
             game=game,

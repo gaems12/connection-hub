@@ -8,7 +8,9 @@ from connection_hub.application.common import (
     LobbyGateway,
     GameGateway,
     ForceLeaveLobbyTask,
+    force_leave_lobby_task_id_factory,
     ForceDisconnectFromGameTask,
+    force_disconnect_from_game_task_id_factory,
     TaskScheduler,
     IdentityProvider,
 )
@@ -43,11 +45,15 @@ class AcknowledgePresenceProcessor:
             user_id=current_user_id,
         )
         if lobby:
+            task_id = force_leave_lobby_task_id_factory(
+                lobby_id=lobby.id,
+                user_id=current_user_id,
+            )
             execute_task_at = datetime.now(timezone.utc) + timedelta(
                 seconds=15,
             )
             task = ForceLeaveLobbyTask(
-                id=lobby.id,
+                id=task_id,
                 execute_at=execute_task_at,
                 lobby_id=lobby.id,
                 user_id=current_user_id,
@@ -60,11 +66,15 @@ class AcknowledgePresenceProcessor:
             player_id=current_user_id,
         )
         if game:
+            task_id = force_disconnect_from_game_task_id_factory(
+                game_id=game.id,
+                player_id=current_user_id,
+            )
             execute_task_at = datetime.now(timezone.utc) + timedelta(
                 seconds=15,
             )
             task = ForceDisconnectFromGameTask(
-                id=game.id,
+                id=task_id,
                 execute_at=execute_task_at,
                 game_id=game.id,
                 player_id=current_user_id,

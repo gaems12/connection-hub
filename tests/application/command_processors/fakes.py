@@ -125,7 +125,7 @@ class FakeEventPublisher(EventPublisher):
 class FakeTaskScheduler(TaskScheduler):
     __slots__ = ("_tasks",)
 
-    def __init__(self, tasks: dict[UUID, Task] | None = None):
+    def __init__(self, tasks: dict[str, Task] | None = None):
         self._tasks = tasks or {}
 
     @property
@@ -135,10 +135,10 @@ class FakeTaskScheduler(TaskScheduler):
     async def schedule(self, task: Task) -> None:
         self._tasks[task.id] = task
 
-    async def unschedule(self, task_id: UUID) -> None:
+    async def unschedule(self, task_id: str) -> None:
         self._tasks.pop(task_id, None)
 
-    async def unschedule_many(self, task_ids: Iterable[UUID]) -> None:
+    async def unschedule_many(self, task_ids: Iterable[str]) -> None:
         for task_id in task_ids:
             self._tasks.pop(task_id, None)
 

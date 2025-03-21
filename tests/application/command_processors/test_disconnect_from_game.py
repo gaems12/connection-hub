@@ -31,6 +31,7 @@ from connection_hub.application import (
 from .fakes import (
     ANY_PLAYER_STATE_ID,
     ANY_DATETIME,
+    ANY_STR,
     FakeGameGateway,
     FakeTaskScheduler,
     FakeEventPublisher,
@@ -109,7 +110,7 @@ async def test_disconnect_from_game_processor():
     assert expected_game == game
 
     expected_task = TryToDisqualifyPlayerTask(
-        id=ANY_PLAYER_STATE_ID,
+        id=ANY_STR,
         execute_at=ANY_DATETIME,
         game_id=_GAME_ID,
         player_id=_CURRENT_USER_ID,

@@ -75,7 +75,7 @@ async def test_reconnect_to_game_processor():
     game_gateway = FakeGameGateway({game.id: game})
 
     task = TryToDisqualifyPlayerTask(
-        id=_CURRENT_PLAYER_STATE_ID,
+        id=f"try_to_disqualify_player:{_CURRENT_PLAYER_STATE_ID.hex}",
         execute_at=datetime.now(timezone.utc) + timedelta(seconds=39),
         game_id=_GAME_ID,
         player_id=_CURRENT_USER_ID,

@@ -2,7 +2,6 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-from uuid import UUID
 from typing import Iterable
 
 from taskiq import ScheduledTask
@@ -41,10 +40,10 @@ class TaskiqTaskScheduler(TaskScheduler):
         elif isinstance(task, ForceDisconnectFromGameTask):
             await self._schedule_force_disconnect_from_game(task)
 
-    async def unschedule(self, task_id: UUID) -> None:
-        await self._schedule_source.delete_schedule(task_id.hex)
+    async def unschedule(self, task_id: str) -> None:
+        await self._schedule_source.delete_schedule(task_id)
 
-    async def unschedule_many(self, task_ids: Iterable[UUID]) -> None:
+    async def unschedule_many(self, task_ids: Iterable[str]) -> None:
         for task_id in task_ids:
             await self.unschedule(task_id)
 
@@ -63,7 +62,7 @@ class TaskiqTaskScheduler(TaskScheduler):
             labels={},
             args=[self._operation_id],
             kwargs={"command": command},
-            schedule_id=task.id.hex,
+            schedule_id=task.id,
             time=task.execute_at,
         )
         await self._schedule_source.add_schedule(schedule)
@@ -82,7 +81,7 @@ class TaskiqTaskScheduler(TaskScheduler):
             labels={},
             args=[self._operation_id],
             kwargs={"command": command},
-            schedule_id=task.id.hex,
+            schedule_id=task.id,
             time=task.execute_at,
         )
         await self._schedule_source.add_schedule(schedule)

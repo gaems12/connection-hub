@@ -65,7 +65,10 @@ _CREATED_AT: Final = datetime.now(timezone.utc)
             ),
             None,
             ForceLeaveLobbyTask(
-                id=_LOBBY_ID,
+                id=(
+                    "force_leave_lobby:"
+                    f"{_LOBBY_ID.hex}:{_CURRENT_USER_ID.hex}"
+                ),
                 execute_at=ANY_DATETIME,
                 lobby_id=_LOBBY_ID,
                 user_id=_CURRENT_USER_ID,
@@ -91,7 +94,10 @@ _CREATED_AT: Final = datetime.now(timezone.utc)
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
             ForceDisconnectFromGameTask(
-                id=_GAME_ID,
+                id=(
+                    "force_disconnect_from_game:"
+                    f"{_GAME_ID.hex}:{_CURRENT_USER_ID.hex}"
+                ),
                 execute_at=ANY_DATETIME,
                 game_id=_GAME_ID,
                 player_id=_CURRENT_USER_ID,
