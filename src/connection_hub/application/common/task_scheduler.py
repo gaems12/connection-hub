@@ -76,6 +76,11 @@ type Task = (
 
 class TaskScheduler(Protocol):
     async def schedule(self, task: Task) -> None:
+        """
+        Schedules a task. If a task with the provided id
+        is already scheduled, it will be uncheduled and
+        replaced with the provided task.
+        """
         raise NotImplementedError
 
     async def unschedule(self, task_id: str) -> None:
