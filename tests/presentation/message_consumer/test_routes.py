@@ -235,7 +235,10 @@ async def test_disconnect_from_game(app: FastStream, broker: NatsBroker):
         TestNatsBroker(broker, with_real=True) as test_broker,
     ):
         await test_broker.publish(
-            message={"current_user_id": uuid7().hex},
+            message={
+                "current_user_id": uuid7().hex,
+                "game_id": uuid7().hex,
+            },
             subject="api_gateway.game.player_disconnected",
             stream="games",
         )

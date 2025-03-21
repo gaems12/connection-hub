@@ -23,7 +23,9 @@ from connection_hub.domain import (
 from connection_hub.application import (
     TryToDisqualifyPlayerTask,
     ConnectFourGamePlayerDisconnectedEvent,
+    DisconnectFromGameCommand,
     DisconnectFromGameProcessor,
+    GameDoesNotExistError,
     CurrentUserNotInGameError,
 )
 from .fakes import (
@@ -41,6 +43,9 @@ _CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _OTHER_USER_ID: Final = UserId(uuid7())
 _OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
+
+_ANOTHER_USER_ID: Final = UserId(uuid7())
+_ANOTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _GAME_ID: Final = GameId(uuid7())
 _CREATED_AT: Final = datetime.now(timezone.utc)
@@ -71,7 +76,8 @@ async def test_disconnect_from_game_processor():
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()
 
-    processor = DisconnectFromGameProcessor(
+    command = DisconnectFromGameCommand(game_id=_GAME_ID)
+    command_processor = DisconnectFromGameProcessor(
         disconnect_from_game=DisconnectFromGame(),
         game_gateway=game_gateway,
         task_scheduler=task_scheduler,
@@ -81,7 +87,7 @@ async def test_disconnect_from_game_processor():
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
 
-    await processor.process()
+    await command_processor.process(command)
 
     expected_game = ConnectFourGame(
         id=_GAME_ID,
@@ -128,10 +134,32 @@ async def test_disconnect_from_game_processor():
 
 
 @pytest.mark.parametrize(
-    ["game", "expected_error"],
+    ["game", "command", "expected_error"],
     [
         [
             None,
+            DisconnectFromGameCommand(game_id=_GAME_ID),
+            GameDoesNotExistError,
+        ],
+        [
+            ConnectFourGame(
+                id=_GAME_ID,
+                players={
+                    _OTHER_USER_ID: PlayerState(
+                        id=_OTHER_PLAYER_STATE_ID,
+                        status=PlayerStatus.CONNECTED,
+                        time_left=timedelta(seconds=40),
+                    ),
+                    _ANOTHER_USER_ID: PlayerState(
+                        id=_ANOTHER_PLAYER_STATE_ID,
+                        status=PlayerStatus.CONNECTED,
+                        time_left=timedelta(seconds=40),
+                    ),
+                },
+                created_at=_CREATED_AT,
+                time_for_each_player=_TIME_FOR_EACH_PLAYER,
+            ),
+            DisconnectFromGameCommand(game_id=_GAME_ID),
             CurrentUserNotInGameError,
         ],
         [
@@ -152,12 +180,14 @@ async def test_disconnect_from_game_processor():
                 created_at=_CREATED_AT,
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
+            DisconnectFromGameCommand(game_id=_GAME_ID),
             CurrentUserIsDisconnectedFromGameError,
         ],
     ],
 )
 async def test_disconnect_from_game_processor_errors(
     game: Game | None,
+    command: DisconnectFromGameCommand,
     expected_error: Exception,
 ):
     if game:
@@ -169,7 +199,7 @@ async def test_disconnect_from_game_processor_errors(
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()
 
-    processor = DisconnectFromGameProcessor(
+    command_processor = DisconnectFromGameProcessor(
         disconnect_from_game=DisconnectFromGame(),
         game_gateway=game_gateway,
         task_scheduler=task_scheduler,
@@ -180,7 +210,7 @@ async def test_disconnect_from_game_processor_errors(
     )
 
     with pytest.raises(expected_error):
-        await processor.process()
+        await command_processor.process(command)
 
     assert not task_scheduler.tasks
     assert not event_publisher.events
