@@ -10,6 +10,7 @@ from taskiq_redis import RedisScheduleSource
 
 from connection_hub.application import (
     TryToDisqualifyPlayerCommand,
+    ForceLeaveLobbyCommand,
     ForceLeaveLobbyTask,
     ForceDisconnectFromGameTask,
     TryToDisqualifyPlayerTask,
@@ -70,7 +71,21 @@ class TaskiqTaskScheduler(TaskScheduler):
     async def _schedule_force_leave_lobby(
         self,
         task: ForceLeaveLobbyTask,
-    ) -> None: ...
+    ) -> None:
+        command = ForceLeaveLobbyCommand(
+            lobby_id=task.lobby_id,
+            user_id=task.user_id,
+        )
+
+        schedule = ScheduledTask(
+            task_name="force_leave_lobby",
+            labels={},
+            args=[self._operation_id],
+            kwargs={"command": command},
+            schedule_id=task.id.hex,
+            time=task.execute_at,
+        )
+        await self._schedule_source.add_schedule(schedule)
 
     async def _schedule_force_disconnect_from_game(
         self,
