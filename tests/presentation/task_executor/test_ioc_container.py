@@ -23,21 +23,16 @@ async def test_ioc_container(
         url="fake_url",
         api_key="fake_api_key",
     )
-    lobby_mapper_config = LobbyMapperConfig(
-        lobby_expires_in=timedelta(days=1),
-    )
-    game_mapper_config = GameMapperConfig(
-        game_expires_in=timedelta(days=1),
-    )
-    lock_manager_config = LockManagerConfig(
-        lock_expires_in=timedelta(seconds=3),
-    )
+    lobby_mapper_config = LobbyMapperConfig(timedelta(days=1))
+    game_mapper_config = GameMapperConfig(timedelta(days=1))
+    lock_manager_config = LockManagerConfig(timedelta(seconds=3))
 
-    ioc_container_factory(
-        centrifugo_config_factory=lambda: centrifugo_config,
-        redis_config_factory=lambda: redis_config,
-        lobby_mapper_config_factory=lambda: lobby_mapper_config,
-        game_mapper_config_factory=lambda: game_mapper_config,
-        lock_manager_config_factory=lambda: lock_manager_config,
-        nats_config_factory=lambda: nats_config,
-    )
+    context = {
+        CentrifugoConfig: centrifugo_config,
+        RedisConfig: redis_config,
+        LobbyMapperConfig: lobby_mapper_config,
+        GameMapperConfig: game_mapper_config,
+        LockManagerConfig: lock_manager_config,
+        NATSConfig: nats_config,
+    }
+    ioc_container_factory(context)
