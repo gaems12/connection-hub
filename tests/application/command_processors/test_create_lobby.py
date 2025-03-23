@@ -26,6 +26,7 @@ from connection_hub.domain import (
 )
 from connection_hub.application import (
     LobbyCreatedEvent,
+    ForceLeaveLobbyTask,
     CreateLobbyCommand,
     CreateLobbyProcessor,
     CurrentUserInLobbyError,
@@ -36,10 +37,12 @@ from connection_hub.application import (
 )
 from .fakes import (
     ANY_LOBBY_ID,
+    ANY_DATETIME,
     ANY_STR,
     FakeLobbyGateway,
     FakeGameGateway,
     FakeEventPublisher,
+    FakeTaskScheduler,
     FakeCentrifugoClient,
     FakeIdentityProvider,
 )
@@ -64,6 +67,7 @@ _OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 async def test_create_lobby_processor():
     lobby_gateway = FakeLobbyGateway()
     event_publisher = FakeEventPublisher()
+    task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient()
 
     command = CreateLobbyCommand(
@@ -76,6 +80,7 @@ async def test_create_lobby_processor():
         lobby_gateway=lobby_gateway,
         game_gateway=FakeGameGateway({}),
         event_publisher=event_publisher,
+        task_scheduler=task_scheduler,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
@@ -101,6 +106,14 @@ async def test_create_lobby_processor():
         rule_set=_CONNECT_FOUR_RULE_SET,
     )
     assert expected_event in event_publisher.events
+
+    expected_task = ForceLeaveLobbyTask(
+        id=ANY_STR,
+        execute_at=ANY_DATETIME,
+        lobby_id=ANY_LOBBY_ID,
+        user_id=_CURRENT_USER_ID,
+    )
+    assert expected_task in task_scheduler.tasks
 
     expected_first_centrifugo_publication = {
         "type": "lobby_created",
@@ -271,6 +284,7 @@ async def test_create_lobby_processor_error(
         game_gateway = FakeGameGateway()
 
     event_publisher = FakeEventPublisher()
+    task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient()
 
     command_processor = CreateLobbyProcessor(
@@ -278,6 +292,7 @@ async def test_create_lobby_processor_error(
         lobby_gateway=lobby_gateway,
         game_gateway=game_gateway,
         event_publisher=event_publisher,
+        task_scheduler=task_scheduler,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
@@ -287,4 +302,5 @@ async def test_create_lobby_processor_error(
         await command_processor.process(command)
 
     assert not event_publisher.events
+    assert not task_scheduler.tasks
     assert not centrifugo_client.publications

@@ -3,7 +3,7 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Final
 
 from connection_hub.domain import (
@@ -20,6 +20,9 @@ from connection_hub.application.common import (
     LobbyCreatedEvent,
     EventPublisher,
     CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
+    ForceLeaveLobbyTask,
+    force_leave_lobby_task_id_factory,
+    TaskScheduler,
     CentrifugoPublishCommand,
     CentrifugoClient,
     centrifugo_user_channel_factory,
@@ -56,6 +59,7 @@ class CreateLobbyProcessor:
         "_lobby_gateway",
         "_game_gateway",
         "_event_publisher",
+        "_task_scheduler",
         "_centrifugo_client",
         "_transaction_manager",
         "_identity_provider",
@@ -67,6 +71,7 @@ class CreateLobbyProcessor:
         lobby_gateway: LobbyGateway,
         game_gateway: GameGateway,
         event_publisher: EventPublisher,
+        task_scheduler: TaskScheduler,
         centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
@@ -75,6 +80,7 @@ class CreateLobbyProcessor:
         self._lobby_gateway = lobby_gateway
         self._game_gateway = game_gateway
         self._event_publisher = event_publisher
+        self._task_scheduler = task_scheduler
         self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
@@ -107,6 +113,21 @@ class CreateLobbyProcessor:
             password=command.password,
         )
         await self._lobby_gateway.save(new_lobby)
+
+        task_id = force_leave_lobby_task_id_factory(
+            lobby_id=new_lobby.id,
+            user_id=current_user_id,
+        )
+        execute_task_at = datetime.now(timezone.utc) + timedelta(
+            seconds=15,
+        )
+        task = ForceLeaveLobbyTask(
+            id=task_id,
+            execute_at=execute_task_at,
+            lobby_id=new_lobby.id,
+            user_id=current_user_id,
+        )
+        await self._task_scheduler.schedule(task)
 
         event = LobbyCreatedEvent(
             lobby_id=new_lobby.id,
