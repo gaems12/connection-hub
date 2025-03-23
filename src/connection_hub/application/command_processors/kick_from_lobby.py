@@ -3,12 +3,16 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 
 from connection_hub.domain import LobbyId, UserId, KickFromLobby
 from connection_hub.application.common import (
     LobbyGateway,
     UserKickedFromLobbyEvent,
     EventPublisher,
+    RemoveFromLobbyTask,
+    remove_from_lobby_task_id_factory,
+    TaskScheduler,
     CentrifugoPublishCommand,
     CentrifugoUnsubscribeCommand,
     centrifugo_lobby_channel_factory,
@@ -30,6 +34,7 @@ class KickFromLobbyProcessor:
         "_kick_from_lobby",
         "_lobby_gateway",
         "_event_publisher",
+        "_task_scheduler",
         "_centrifugo_client",
         "_transation_manager",
         "_identity_provider",
@@ -40,6 +45,7 @@ class KickFromLobbyProcessor:
         kick_from_lobby: KickFromLobby,
         lobby_gateway: LobbyGateway,
         event_publisher: EventPublisher,
+        task_scheduler: TaskScheduler,
         centrifugo_client: CentrifugoClient,
         tranaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
@@ -47,6 +53,7 @@ class KickFromLobbyProcessor:
         self._kick_from_lobby = kick_from_lobby
         self._lobby_gateway = lobby_gateway
         self._event_publisher = event_publisher
+        self._task_scheduler = task_scheduler
         self._centrifugo_client = centrifugo_client
         self._transation_manager = tranaction_manager
         self._identity_provider = identity_provider
@@ -70,6 +77,21 @@ class KickFromLobbyProcessor:
             current_user_id=current_user_id,
         )
         await self._lobby_gateway.update(lobby)
+
+        task_id = remove_from_lobby_task_id_factory(
+            lobby_id=lobby.id,
+            user_id=current_user_id,
+        )
+        execute_task_at = datetime.now(timezone.utc) + timedelta(
+            seconds=15,
+        )
+        task = RemoveFromLobbyTask(
+            id=task_id,
+            execute_at=execute_task_at,
+            lobby_id=lobby.id,
+            user_id=current_user_id,
+        )
+        await self._task_scheduler.schedule(task)
 
         event = UserKickedFromLobbyEvent(
             lobby_id=lobby.id,
