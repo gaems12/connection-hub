@@ -26,7 +26,7 @@ from connection_hub.application import (
     DisconnectFromGameCommand,
     DisconnectFromGameProcessor,
     GameDoesNotExistError,
-    CurrentUserNotInGameError,
+    UserNotInGameError,
 )
 from .fakes import (
     ANY_PLAYER_STATE_ID,
@@ -36,8 +36,8 @@ from .fakes import (
     FakeTaskScheduler,
     FakeEventPublisher,
     FakeCentrifugoClient,
-    FakeIdentityProvider,
 )
+
 
 _CURRENT_USER_ID: Final = UserId(uuid7())
 _CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
@@ -77,7 +77,10 @@ async def test_disconnect_from_game_processor():
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()
 
-    command = DisconnectFromGameCommand(game_id=_GAME_ID)
+    command = DisconnectFromGameCommand(
+        game_id=_GAME_ID,
+        user_id=_CURRENT_USER_ID,
+    )
     command_processor = DisconnectFromGameProcessor(
         disconnect_from_game=DisconnectFromGame(),
         game_gateway=game_gateway,
@@ -85,7 +88,6 @@ async def test_disconnect_from_game_processor():
         event_publisher=event_publisher,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
-        identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
 
     await command_processor.process(command)
@@ -139,7 +141,10 @@ async def test_disconnect_from_game_processor():
     [
         [
             None,
-            DisconnectFromGameCommand(game_id=_GAME_ID),
+            DisconnectFromGameCommand(
+                game_id=_GAME_ID,
+                user_id=_CURRENT_USER_ID,
+            ),
             GameDoesNotExistError,
         ],
         [
@@ -160,8 +165,11 @@ async def test_disconnect_from_game_processor():
                 created_at=_CREATED_AT,
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
-            DisconnectFromGameCommand(game_id=_GAME_ID),
-            CurrentUserNotInGameError,
+            DisconnectFromGameCommand(
+                game_id=_GAME_ID,
+                user_id=_CURRENT_USER_ID,
+            ),
+            UserNotInGameError,
         ],
         [
             ConnectFourGame(
@@ -181,7 +189,10 @@ async def test_disconnect_from_game_processor():
                 created_at=_CREATED_AT,
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
-            DisconnectFromGameCommand(game_id=_GAME_ID),
+            DisconnectFromGameCommand(
+                game_id=_GAME_ID,
+                user_id=_CURRENT_USER_ID,
+            ),
             UserIsDisconnectedFromGameError,
         ],
     ],
@@ -207,7 +218,6 @@ async def test_disconnect_from_game_processor_errors(
         event_publisher=event_publisher,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
-        identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
 
     with pytest.raises(expected_error):

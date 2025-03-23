@@ -10,7 +10,6 @@ __all__ = (
     "create_game",
     "end_game",
     "acknowledge_presence",
-    "disconnect_from_game",
     "reconnect_to_game",
     "create_broker",
     "ioc_container_factory",
@@ -24,7 +23,6 @@ from .routes import (
     create_game,
     end_game,
     acknowledge_presence,
-    disconnect_from_game,
     reconnect_to_game,
 )
 from .broker import create_broker

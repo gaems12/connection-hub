@@ -18,7 +18,6 @@ from connection_hub.domain import (
     RemoveFromLobby,
     KickFromLobby,
     CreateGame,
-    DisconnectFromGame,
     ReconnectToGame,
 )
 from connection_hub.application import (
@@ -35,7 +34,6 @@ from connection_hub.application import (
     KickFromLobbyProcessor,
     CreateGameProcessor,
     AcknowledgePresenceProcessor,
-    DisconnectFromGameProcessor,
     ReconnectToGameProcessor,
     EndGameProcessor,
 )
@@ -156,7 +154,6 @@ def ioc_container_factory(
     provider.provide(RemoveFromLobby, scope=Scope.APP)
     provider.provide(KickFromLobby, scope=Scope.APP)
     provider.provide(CreateGame, scope=Scope.APP)
-    provider.provide(DisconnectFromGame, scope=Scope.APP)
     provider.provide(ReconnectToGame, scope=Scope.APP)
 
     provider.provide(CreateLobbyProcessor, scope=Scope.REQUEST)
@@ -165,7 +162,6 @@ def ioc_container_factory(
     provider.provide(KickFromLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(CreateGameProcessor, scope=Scope.REQUEST)
     provider.provide(AcknowledgePresenceProcessor, scope=Scope.REQUEST)
-    provider.provide(DisconnectFromGameProcessor, scope=Scope.REQUEST)
     provider.provide(ReconnectToGameProcessor, scope=Scope.REQUEST)
     provider.provide(EndGameProcessor, scope=Scope.REQUEST)
 

@@ -17,7 +17,6 @@ from connection_hub.application import (
     LeaveLobbyProcessor,
     KickFromLobbyProcessor,
     CreateGameProcessor,
-    DisconnectFromGameProcessor,
     AcknowledgePresenceProcessor,
     ReconnectToGameProcessor,
     TryToDisqualifyPlayerProcessor,
@@ -32,7 +31,6 @@ from connection_hub.presentation.message_consumer import (
     create_game,
     end_game,
     acknowledge_presence,
-    disconnect_from_game,
     reconnect_to_game,
     create_broker,
 )
@@ -77,11 +75,6 @@ def ioc_container() -> AsyncContainer:
         lambda: AsyncMock(),
         scope=Scope.REQUEST,
         provides=AcknowledgePresenceProcessor,
-    )
-    provider.provide(
-        lambda: AsyncMock(),
-        scope=Scope.REQUEST,
-        provides=DisconnectFromGameProcessor,
     )
     provider.provide(
         lambda: AsyncMock(),
@@ -227,22 +220,6 @@ async def test_acknowledge_presence(app: FastStream, broker: NatsBroker):
             stream="games",
         )
         await acknowledge_presence.wait_call(1)
-
-
-async def test_disconnect_from_game(app: FastStream, broker: NatsBroker):
-    async with (
-        TestApp(app),
-        TestNatsBroker(broker, with_real=True) as test_broker,
-    ):
-        await test_broker.publish(
-            message={
-                "current_user_id": uuid7().hex,
-                "game_id": uuid7().hex,
-            },
-            subject="api_gateway.game.player_disconnected",
-            stream="games",
-        )
-        await disconnect_from_game.wait_call(1)
 
 
 async def test_reconnect_to_game(app: FastStream, broker: NatsBroker):

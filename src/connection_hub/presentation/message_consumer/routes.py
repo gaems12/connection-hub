@@ -21,8 +21,6 @@ from connection_hub.application import (
     EndGameCommand,
     EndGameProcessor,
     AcknowledgePresenceProcessor,
-    DisconnectFromGameCommand,
-    DisconnectFromGameProcessor,
     ReconnectToGameCommand,
     ReconnectToGameProcessor,
 )
@@ -136,21 +134,6 @@ async def acknowledge_presence(
     processor: FromDishka[AcknowledgePresenceProcessor],
 ) -> None:
     await processor.process()
-
-
-@router.subscriber(
-    subject="api_gateway.game.player_disconnected",
-    durable="connection_hub_game_player_disconnected",
-    stream=_STREAM,
-    pull_sub=PullSub(timeout=0.2),
-)
-@inject
-async def disconnect_from_game(
-    *,
-    command: DisconnectFromGameCommand,
-    command_processor: FromDishka[DisconnectFromGameProcessor],
-) -> None:
-    await command_processor.process(command)
 
 
 @router.subscriber(
