@@ -52,7 +52,7 @@ def setup_logging() -> None:
 
     json_formatter = JsonFormatter(
         fmt=(
-            "%(levelname)s %(message)s %(module)s %(filename)s "
+            "%(name)s %(levelname)s %(message)s %(module)s %(filename)s "
             "%(funcName)s %(timestamp)s"
         ),
         timestamp=True,
