@@ -20,6 +20,8 @@ from connection_hub.application.common import (
     CentrifugoClient,
     centrifugo_lobby_channel_factory,
     TransactionManager,
+    LobbyDoesNotExistError,
+    UserNotInLobbyError,
 )
 
 
@@ -57,8 +59,11 @@ class RemoveFromLobbyProcessor:
             id=command.lobby_id,
             acquire=True,
         )
-        if not lobby or command.user_id not in lobby.users:
-            return
+        if not lobby:
+            raise LobbyDoesNotExistError()
+
+        if command.user_id not in lobby.users:
+            raise UserNotInLobbyError()
 
         no_users_left, new_admin_id = self._remove_from_lobby(
             lobby=lobby,
