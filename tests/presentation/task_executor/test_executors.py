@@ -58,18 +58,17 @@ async def app(ioc_container: AsyncContainer) -> InMemoryBroker:
 
 
 async def test_remove_from_lobby(app: InMemoryBroker) -> None:
+    command = RemoveFromLobbyCommand(
+        lobby_id=LobbyId(uuid7()),
+        user_id=UserId(uuid7()),
+    )
     taskiq_message = TaskiqMessage(
         task_id=uuid7().hex,
         task_name="remove_from_lobby",
         labels={},
         labels_types=None,
         args=[OperationId(uuid7())],
-        kwargs={
-            "command": RemoveFromLobbyCommand(
-                lobby_id=LobbyId(uuid7()),
-                user_id=UserId(uuid7()),
-            ),
-        },
+        kwargs={"command": command},
     )
 
     proxy_formatter = ProxyFormatter(app)
@@ -79,18 +78,17 @@ async def test_remove_from_lobby(app: InMemoryBroker) -> None:
 
 
 async def test_disconnect_from_game(app: InMemoryBroker) -> None:
+    command = DisconnectFromGameCommand(
+        game_id=GameId(uuid7()),
+        user_id=UserId(uuid7()),
+    )
     taskiq_message = TaskiqMessage(
         task_id=uuid7().hex,
         task_name="disconnect_from_game",
         labels={},
         labels_types=None,
         args=[OperationId(uuid7())],
-        kwargs={
-            "command": DisconnectFromGameCommand(
-                game_id=GameId(uuid7()),
-                user_id=UserId(uuid7()),
-            ),
-        },
+        kwargs={"command": command},
     )
 
     proxy_formatter = ProxyFormatter(app)
@@ -100,19 +98,18 @@ async def test_disconnect_from_game(app: InMemoryBroker) -> None:
 
 
 async def test_try_to_disqualify_player(app: InMemoryBroker) -> None:
+    command = TryToDisqualifyPlayerCommand(
+        game_id=GameId(uuid7()),
+        player_id=UserId(uuid7()),
+        player_state_id=PlayerStateId(uuid7()),
+    )
     taskiq_message = TaskiqMessage(
         task_id=uuid7().hex,
         task_name="try_to_disqualify_player",
         labels={},
         labels_types=None,
         args=[OperationId(uuid7())],
-        kwargs={
-            "command": TryToDisqualifyPlayerCommand(
-                game_id=GameId(uuid7()),
-                player_id=UserId(uuid7()),
-                player_state_id=PlayerStateId(uuid7()),
-            ),
-        },
+        kwargs={"command": command},
     )
 
     proxy_formatter = ProxyFormatter(app)
