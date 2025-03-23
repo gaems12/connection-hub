@@ -3,6 +3,7 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 
 from connection_hub.domain import LobbyId, UserId, Lobby, JoinLobby
 from connection_hub.application.common import (
@@ -10,6 +11,9 @@ from connection_hub.application.common import (
     GameGateway,
     UserJoinedLobbyEvent,
     EventPublisher,
+    RemoveFromLobbyTask,
+    remove_from_lobby_task_id_factory,
+    TaskScheduler,
     CentrifugoPublishCommand,
     CentrifugoClient,
     centrifugo_user_channel_factory,
@@ -34,6 +38,7 @@ class JoinLobbyProcessor:
         "_lobby_gateway",
         "_game_gateway",
         "_event_publisher",
+        "_task_scheduler",
         "_centrifugo_client",
         "_transaction_manager",
         "_identity_provider",
@@ -45,6 +50,7 @@ class JoinLobbyProcessor:
         lobby_gateway: LobbyGateway,
         game_gateway: GameGateway,
         event_publisher: EventPublisher,
+        task_scheduler: TaskScheduler,
         centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
         identity_provider: IdentityProvider,
@@ -53,6 +59,7 @@ class JoinLobbyProcessor:
         self._lobby_gateway = lobby_gateway
         self._game_gateway = game_gateway
         self._event_publisher = event_publisher
+        self._task_scheduler = task_scheduler
         self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
         self._identity_provider = identity_provider
@@ -85,6 +92,21 @@ class JoinLobbyProcessor:
             password=command.password,
         )
         await self._lobby_gateway.update(lobby_to_join)
+
+        task_id = remove_from_lobby_task_id_factory(
+            lobby_id=lobby_to_join.id,
+            user_id=current_user_id,
+        )
+        execute_task_at = datetime.now(timezone.utc) + timedelta(
+            seconds=15,
+        )
+        task = RemoveFromLobbyTask(
+            id=task_id,
+            execute_at=execute_task_at,
+            lobby_id=lobby_to_join.id,
+            user_id=current_user_id,
+        )
+        await self._task_scheduler.schedule(task)
 
         event = UserJoinedLobbyEvent(
             lobby_id=command.lobby_id,
