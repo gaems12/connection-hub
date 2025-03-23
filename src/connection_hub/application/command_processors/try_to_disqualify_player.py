@@ -17,7 +17,7 @@ from connection_hub.application.common import (
     ConnectFourGamePlayerDisqualifiedEvent,
     EventPublisher,
     TaskScheduler,
-    force_disconnect_from_game_task_id_factory,
+    disconnect_from_game_task_id_factory,
     try_to_disqualify_player_task_id_factory,
     CentrifugoClient,
     centrifugo_game_channel_factory,
@@ -82,7 +82,7 @@ class TryToDisqualifyPlayerProcessor:
         if game_is_ended:
             task_ids = []
             for player_id, player_state in game.players.items():
-                task_id = force_disconnect_from_game_task_id_factory(
+                task_id = disconnect_from_game_task_id_factory(
                     game_id=game.id,
                     player_id=player_id,
                 )

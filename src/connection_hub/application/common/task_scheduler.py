@@ -4,10 +4,10 @@
 
 __all__ = (
     "remove_from_lobby_task_id_factory",
-    "force_disconnect_from_game_task_id_factory",
+    "disconnect_from_game_task_id_factory",
     "try_to_disqualify_player_task_id_factory",
     "RemoveFromLobbyTask",
-    "ForceDisconnectFromGameTask",
+    "DisconnectFromGameTask",
     "TryToDisqualifyPlayerTask",
     "Task",
     "TaskScheduler",
@@ -28,12 +28,12 @@ def remove_from_lobby_task_id_factory(
     return f"remove_from_lobby:{lobby_id.hex}:{user_id.hex}"
 
 
-def force_disconnect_from_game_task_id_factory(
+def disconnect_from_game_task_id_factory(
     *,
     game_id: GameId,
     player_id: UserId,
 ) -> str:
-    return f"force_disconnect_from_game:{game_id.hex}:{player_id.hex}"
+    return f"disconnect_from_game:{game_id.hex}:{player_id.hex}"
 
 
 def try_to_disqualify_player_task_id_factory(
@@ -55,7 +55,7 @@ class RemoveFromLobbyTask(BaseTask):
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class ForceDisconnectFromGameTask(BaseTask):
+class DisconnectFromGameTask(BaseTask):
     game_id: GameId
     player_id: UserId
 
@@ -68,9 +68,7 @@ class TryToDisqualifyPlayerTask(BaseTask):
 
 
 type Task = (
-    RemoveFromLobbyTask
-    | ForceDisconnectFromGameTask
-    | TryToDisqualifyPlayerTask
+    RemoveFromLobbyTask | DisconnectFromGameTask | TryToDisqualifyPlayerTask
 )
 
 

@@ -8,7 +8,7 @@ from connection_hub.domain import GameId
 from connection_hub.application.common import (
     GameGateway,
     TaskScheduler,
-    force_disconnect_from_game_task_id_factory,
+    disconnect_from_game_task_id_factory,
     try_to_disqualify_player_task_id_factory,
     TransactionManager,
     GameDoesNotExistError,
@@ -49,7 +49,7 @@ class EndGameProcessor:
 
         task_ids = []
         for player_id, player_state in game.players.items():
-            task_id = force_disconnect_from_game_task_id_factory(
+            task_id = disconnect_from_game_task_id_factory(
                 game_id=game.id,
                 player_id=player_id,
             )

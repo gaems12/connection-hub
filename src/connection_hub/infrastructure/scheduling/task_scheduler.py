@@ -11,7 +11,7 @@ from connection_hub.application import (
     TryToDisqualifyPlayerCommand,
     RemoveFromLobbyCommand,
     RemoveFromLobbyTask,
-    ForceDisconnectFromGameTask,
+    DisconnectFromGameTask,
     TryToDisqualifyPlayerTask,
     Task,
     TaskScheduler,
@@ -37,8 +37,8 @@ class TaskiqTaskScheduler(TaskScheduler):
         elif isinstance(task, RemoveFromLobbyTask):
             await self._schedule_remove_from_lobby(task)
 
-        elif isinstance(task, ForceDisconnectFromGameTask):
-            await self._schedule_force_disconnect_from_game(task)
+        elif isinstance(task, DisconnectFromGameTask):
+            await self._schedule_disconnect_from_game(task)
 
     async def unschedule(self, task_id: str) -> None:
         await self._schedule_source.delete_schedule(task_id)
@@ -86,7 +86,7 @@ class TaskiqTaskScheduler(TaskScheduler):
         )
         await self._schedule_source.add_schedule(schedule)
 
-    async def _schedule_force_disconnect_from_game(
+    async def _schedule_disconnect_from_game(
         self,
-        task: ForceDisconnectFromGameTask,
+        task: DisconnectFromGameTask,
     ) -> None: ...

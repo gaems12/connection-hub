@@ -9,8 +9,8 @@ from connection_hub.application.common import (
     GameGateway,
     RemoveFromLobbyTask,
     remove_from_lobby_task_id_factory,
-    ForceDisconnectFromGameTask,
-    force_disconnect_from_game_task_id_factory,
+    DisconnectFromGameTask,
+    disconnect_from_game_task_id_factory,
     TaskScheduler,
     IdentityProvider,
 )
@@ -37,7 +37,7 @@ class AcknowledgePresenceProcessor:
         self._identity_provider = identity_provider
 
     async def process(self) -> None:
-        task: RemoveFromLobbyTask | ForceDisconnectFromGameTask
+        task: RemoveFromLobbyTask | DisconnectFromGameTask
 
         current_user_id = await self._identity_provider.user_id()
 
@@ -66,14 +66,14 @@ class AcknowledgePresenceProcessor:
             player_id=current_user_id,
         )
         if game:
-            task_id = force_disconnect_from_game_task_id_factory(
+            task_id = disconnect_from_game_task_id_factory(
                 game_id=game.id,
                 player_id=current_user_id,
             )
             execute_task_at = datetime.now(timezone.utc) + timedelta(
                 seconds=15,
             )
-            task = ForceDisconnectFromGameTask(
+            task = DisconnectFromGameTask(
                 id=task_id,
                 execute_at=execute_task_at,
                 game_id=game.id,
