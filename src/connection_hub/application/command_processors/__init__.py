@@ -9,8 +9,8 @@ __all__ = (
     "JoinLobbyProcessor",
     "LeaveLobbyCommand",
     "LeaveLobbyProcessor",
-    "ForceLeaveLobbyCommand",
-    "ForceLeaveLobbyProcessor",
+    "RemoveFromLobbyCommand",
+    "RemoveFromLobbyProcessor",
     "KickFromLobbyCommand",
     "KickFromLobbyProcessor",
     "CreateGameCommand",
@@ -29,7 +29,7 @@ __all__ = (
 from .create_lobby import CreateLobbyCommand, CreateLobbyProcessor
 from .join_lobby import JoinLobbyCommand, JoinLobbyProcessor
 from .leave_lobby import LeaveLobbyCommand, LeaveLobbyProcessor
-from .force_leave_lobby import ForceLeaveLobbyCommand, ForceLeaveLobbyProcessor
+from .remove_from_lobby import RemoveFromLobbyCommand, RemoveFromLobbyProcessor
 from .kick_from_lobby import KickFromLobbyCommand, KickFromLobbyProcessor
 from .create_game import CreateGameCommand, CreateGameProcessor
 from .acknowledge_presence import AcknowledgePresenceProcessor

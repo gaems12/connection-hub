@@ -3,10 +3,10 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 __all__ = (
-    "force_leave_lobby_task_id_factory",
+    "remove_from_lobby_task_id_factory",
     "force_disconnect_from_game_task_id_factory",
     "try_to_disqualify_player_task_id_factory",
-    "ForceLeaveLobbyTask",
+    "RemoveFromLobbyTask",
     "ForceDisconnectFromGameTask",
     "TryToDisqualifyPlayerTask",
     "Task",
@@ -20,12 +20,12 @@ from typing import Iterable, Protocol
 from connection_hub.domain import LobbyId, GameId, UserId, PlayerStateId
 
 
-def force_leave_lobby_task_id_factory(
+def remove_from_lobby_task_id_factory(
     *,
     lobby_id: LobbyId,
     user_id: UserId,
 ) -> str:
-    return f"force_leave_lobby:{lobby_id.hex}:{user_id.hex}"
+    return f"remove_from_lobby:{lobby_id.hex}:{user_id.hex}"
 
 
 def force_disconnect_from_game_task_id_factory(
@@ -49,7 +49,7 @@ class BaseTask:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class ForceLeaveLobbyTask(BaseTask):
+class RemoveFromLobbyTask(BaseTask):
     lobby_id: LobbyId
     user_id: UserId
 
@@ -68,7 +68,7 @@ class TryToDisqualifyPlayerTask(BaseTask):
 
 
 type Task = (
-    ForceLeaveLobbyTask
+    RemoveFromLobbyTask
     | ForceDisconnectFromGameTask
     | TryToDisqualifyPlayerTask
 )

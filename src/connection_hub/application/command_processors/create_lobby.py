@@ -20,8 +20,8 @@ from connection_hub.application.common import (
     LobbyCreatedEvent,
     EventPublisher,
     CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
-    ForceLeaveLobbyTask,
-    force_leave_lobby_task_id_factory,
+    RemoveFromLobbyTask,
+    remove_from_lobby_task_id_factory,
     TaskScheduler,
     CentrifugoPublishCommand,
     CentrifugoClient,
@@ -114,14 +114,14 @@ class CreateLobbyProcessor:
         )
         await self._lobby_gateway.save(new_lobby)
 
-        task_id = force_leave_lobby_task_id_factory(
+        task_id = remove_from_lobby_task_id_factory(
             lobby_id=new_lobby.id,
             user_id=current_user_id,
         )
         execute_task_at = datetime.now(timezone.utc) + timedelta(
             seconds=15,
         )
-        task = ForceLeaveLobbyTask(
+        task = RemoveFromLobbyTask(
             id=task_id,
             execute_at=execute_task_at,
             lobby_id=new_lobby.id,

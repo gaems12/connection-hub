@@ -13,7 +13,7 @@ from dishka import (
 from dishka.integrations.taskiq import TaskiqProvider
 
 from connection_hub.domain import (
-    LeaveLobby,
+    RemoveFromLobby,
     TryToDisqualifyPlayer,
 )
 from connection_hub.application import (
@@ -23,7 +23,7 @@ from connection_hub.application import (
     TaskScheduler,
     CentrifugoClient,
     TransactionManager,
-    ForceLeaveLobbyProcessor,
+    RemoveFromLobbyProcessor,
     TryToDisqualifyPlayerProcessor,
 )
 from connection_hub.infrastructure import (
@@ -132,10 +132,10 @@ def ioc_container_factory(
         provides=TaskScheduler,
     )
 
-    provider.provide(LeaveLobby, scope=Scope.APP)
+    provider.provide(RemoveFromLobby, scope=Scope.APP)
     provider.provide(TryToDisqualifyPlayer, scope=Scope.APP)
 
-    provider.provide(ForceLeaveLobbyProcessor, scope=Scope.REQUEST)
+    provider.provide(RemoveFromLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(TryToDisqualifyPlayerProcessor, scope=Scope.REQUEST)
 
     return make_async_container(provider, TaskiqProvider(), context=context)

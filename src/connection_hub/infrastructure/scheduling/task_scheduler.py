@@ -9,8 +9,8 @@ from taskiq_redis import RedisScheduleSource
 
 from connection_hub.application import (
     TryToDisqualifyPlayerCommand,
-    ForceLeaveLobbyCommand,
-    ForceLeaveLobbyTask,
+    RemoveFromLobbyCommand,
+    RemoveFromLobbyTask,
     ForceDisconnectFromGameTask,
     TryToDisqualifyPlayerTask,
     Task,
@@ -34,8 +34,8 @@ class TaskiqTaskScheduler(TaskScheduler):
         if isinstance(task, TryToDisqualifyPlayerTask):
             await self._schedule_try_to_disqualify_player(task)
 
-        elif isinstance(task, ForceLeaveLobbyTask):
-            await self._schedule_force_leave_lobby(task)
+        elif isinstance(task, RemoveFromLobbyTask):
+            await self._schedule_remove_from_lobby(task)
 
         elif isinstance(task, ForceDisconnectFromGameTask):
             await self._schedule_force_disconnect_from_game(task)
@@ -67,17 +67,17 @@ class TaskiqTaskScheduler(TaskScheduler):
         )
         await self._schedule_source.add_schedule(schedule)
 
-    async def _schedule_force_leave_lobby(
+    async def _schedule_remove_from_lobby(
         self,
-        task: ForceLeaveLobbyTask,
+        task: RemoveFromLobbyTask,
     ) -> None:
-        command = ForceLeaveLobbyCommand(
+        command = RemoveFromLobbyCommand(
             lobby_id=task.lobby_id,
             user_id=task.user_id,
         )
 
         schedule = ScheduledTask(
-            task_name="force_leave_lobby",
+            task_name="remove_from_lobby",
             labels={},
             args=[self._operation_id],
             kwargs={"command": command},

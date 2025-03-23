@@ -7,12 +7,12 @@ from dataclasses import dataclass
 from connection_hub.domain import (
     LobbyId,
     UserId,
-    LeaveLobby,
+    RemoveFromLobby,
     Lobby,
 )
 from connection_hub.application.common import (
     LobbyGateway,
-    UserLeftLobbyEvent,
+    UserRemovedFromLobbyEvent,
     EventPublisher,
     CentrifugoUnsubscribeCommand,
     CentrifugoPublishCommand,
@@ -24,14 +24,14 @@ from connection_hub.application.common import (
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
-class ForceLeaveLobbyCommand:
+class RemoveFromLobbyCommand:
     lobby_id: LobbyId
     user_id: UserId
 
 
-class ForceLeaveLobbyProcessor:
+class RemoveFromLobbyProcessor:
     __slots__ = (
-        "_leave_lobby",
+        "_remove_from_lobby",
         "_lobby_gateway",
         "_event_publisher",
         "_centrifugo_client",
@@ -40,19 +40,19 @@ class ForceLeaveLobbyProcessor:
 
     def __init__(
         self,
-        leave_lobby: LeaveLobby,
+        remove_from_lobby: RemoveFromLobby,
         lobby_gateway: LobbyGateway,
         event_publisher: EventPublisher,
         centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
     ):
-        self._leave_lobby = leave_lobby
+        self._remove_from_lobby = remove_from_lobby
         self._lobby_gateway = lobby_gateway
         self._event_publisher = event_publisher
         self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
 
-    async def process(self, command: ForceLeaveLobbyCommand) -> None:
+    async def process(self, command: RemoveFromLobbyCommand) -> None:
         lobby = await self._lobby_gateway.by_id(
             id=command.lobby_id,
             acquire=True,
@@ -60,7 +60,7 @@ class ForceLeaveLobbyProcessor:
         if not lobby or command.user_id not in lobby.users:
             return
 
-        no_users_left, new_admin_id = self._leave_lobby(
+        no_users_left, new_admin_id = self._remove_from_lobby(
             lobby=lobby,
             user_id=command.user_id,
         )
@@ -69,7 +69,7 @@ class ForceLeaveLobbyProcessor:
         else:
             await self._lobby_gateway.update(lobby)
 
-        event = UserLeftLobbyEvent(
+        event = UserRemovedFromLobbyEvent(
             lobby_id=lobby.id,
             user_id=command.user_id,
             new_admin_id=new_admin_id,
@@ -103,7 +103,7 @@ class ForceLeaveLobbyProcessor:
         ]
         if not lobby_is_deleted:
             centrifugo_publication = {
-                "type": "user_left",
+                "type": "user_removed",
                 "user_id": user_id.hex,
                 "new_admin_id": new_admin_id.hex if new_admin_id else None,
             }

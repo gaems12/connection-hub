@@ -13,12 +13,12 @@ from connection_hub.domain import (
     LobbyId,
     UserId,
     ConnectFourLobby,
-    LeaveLobby,
+    RemoveFromLobby,
 )
 from connection_hub.application import (
-    UserLeftLobbyEvent,
-    ForceLeaveLobbyCommand,
-    ForceLeaveLobbyProcessor,
+    UserRemovedFromLobbyEvent,
+    RemoveFromLobbyCommand,
+    RemoveFromLobbyProcessor,
 )
 from .fakes import (
     FakeLobbyGateway,
@@ -55,12 +55,12 @@ async def test_force_leave_lobby():
         subscriptons={_FIRST_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"]},
     )
 
-    command = ForceLeaveLobbyCommand(
+    command = RemoveFromLobbyCommand(
         lobby_id=_LOBBY_ID,
         user_id=_FIRST_USER_ID,
     )
-    command_processor = ForceLeaveLobbyProcessor(
-        leave_lobby=LeaveLobby(),
+    command_processor = RemoveFromLobbyProcessor(
+        remove_from_lobby=RemoveFromLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
         centrifugo_client=centrifugo_client,
@@ -79,7 +79,7 @@ async def test_force_leave_lobby():
     )
     assert expected_lobby == lobby
 
-    expected_event = UserLeftLobbyEvent(
+    expected_event = UserRemovedFromLobbyEvent(
         lobby_id=_LOBBY_ID,
         user_id=_FIRST_USER_ID,
         new_admin_id=_SECOND_USER_ID,
@@ -87,7 +87,7 @@ async def test_force_leave_lobby():
     assert expected_event in event_publisher.events
 
     expected_centrifugo_publication = {
-        "type": "user_left",
+        "type": "user_removed",
         "user_id": _FIRST_USER_ID.hex,
         "new_admin_id": _SECOND_USER_ID.hex,
     }

@@ -13,8 +13,8 @@ from uuid_extensions import uuid7
 
 from connection_hub.domain import LobbyId, GameId, UserId, PlayerStateId
 from connection_hub.application import (
-    ForceLeaveLobbyCommand,
-    ForceLeaveLobbyProcessor,
+    RemoveFromLobbyCommand,
+    RemoveFromLobbyProcessor,
     TryToDisqualifyPlayerCommand,
     TryToDisqualifyPlayerProcessor,
 )
@@ -29,7 +29,7 @@ def ioc_container() -> AsyncContainer:
     provider.provide(
         lambda: AsyncMock(),
         scope=Scope.REQUEST,
-        provides=ForceLeaveLobbyProcessor,
+        provides=RemoveFromLobbyProcessor,
     )
     provider.provide(
         lambda: AsyncMock(),
@@ -53,12 +53,12 @@ async def app(ioc_container: AsyncContainer) -> InMemoryBroker:
 async def test_force_leavelobby(app: InMemoryBroker) -> None:
     taskiq_message = TaskiqMessage(
         task_id=uuid7().hex,
-        task_name="force_leave_lobby",
+        task_name="remove_from_lobby",
         labels={},
         labels_types=None,
         args=[OperationId(uuid7())],
         kwargs={
-            "command": ForceLeaveLobbyCommand(
+            "command": RemoveFromLobbyCommand(
                 lobby_id=LobbyId(uuid7()),
                 user_id=UserId(uuid7()),
             ),

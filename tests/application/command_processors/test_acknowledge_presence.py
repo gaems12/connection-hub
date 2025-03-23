@@ -22,7 +22,7 @@ from connection_hub.domain import (
     Game,
 )
 from connection_hub.application import (
-    ForceLeaveLobbyTask,
+    RemoveFromLobbyTask,
     ForceDisconnectFromGameTask,
     Task,
     AcknowledgePresenceProcessor,
@@ -64,9 +64,9 @@ _CREATED_AT: Final = datetime.now(timezone.utc)
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
             None,
-            ForceLeaveLobbyTask(
+            RemoveFromLobbyTask(
                 id=(
-                    "force_leave_lobby:"
+                    "remove_from_lobby:"
                     f"{_LOBBY_ID.hex}:{_CURRENT_USER_ID.hex}"
                 ),
                 execute_at=ANY_DATETIME,

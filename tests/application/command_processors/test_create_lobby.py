@@ -26,7 +26,7 @@ from connection_hub.domain import (
 )
 from connection_hub.application import (
     LobbyCreatedEvent,
-    ForceLeaveLobbyTask,
+    RemoveFromLobbyTask,
     CreateLobbyCommand,
     CreateLobbyProcessor,
     CurrentUserInLobbyError,
@@ -107,7 +107,7 @@ async def test_create_lobby_processor():
     )
     assert expected_event in event_publisher.events
 
-    expected_task = ForceLeaveLobbyTask(
+    expected_task = RemoveFromLobbyTask(
         id=ANY_STR,
         execute_at=ANY_DATETIME,
         lobby_id=ANY_LOBBY_ID,
