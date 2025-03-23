@@ -81,6 +81,9 @@ class TaskScheduler(Protocol):
         """
         raise NotImplementedError
 
+    async def schedule_many(self, tasks: Iterable[Task]) -> None:
+        raise NotImplementedError
+
     async def unschedule(self, task_id: str) -> None:
         raise NotImplementedError
 

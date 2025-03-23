@@ -135,6 +135,10 @@ class FakeTaskScheduler(TaskScheduler):
     async def schedule(self, task: Task) -> None:
         self._tasks[task.id] = task
 
+    async def schedule_many(self, tasks: Iterable[Task]) -> None:
+        for task in tasks:
+            await self.schedule(task)
+
     async def unschedule(self, task_id: str) -> None:
         self._tasks.pop(task_id, None)
 

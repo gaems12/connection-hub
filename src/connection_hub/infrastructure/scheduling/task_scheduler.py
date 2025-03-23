@@ -41,6 +41,10 @@ class TaskiqTaskScheduler(TaskScheduler):
         elif isinstance(task, DisconnectFromGameTask):
             await self._schedule_disconnect_from_game(task)
 
+    async def schedule_many(self, tasks: Iterable[Task]) -> None:
+        for task in tasks:
+            await self.schedule(task)
+
     async def unschedule(self, task_id: str) -> None:
         await self._schedule_source.delete_schedule(task_id)
 
