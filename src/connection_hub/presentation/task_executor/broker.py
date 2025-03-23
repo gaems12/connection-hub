@@ -7,7 +7,11 @@ from typing import overload
 from taskiq import InMemoryBroker, SimpleRetryMiddleware
 from taskiq_nats import PullBasedJetStreamBroker
 
-from .executors import remove_from_lobby, try_to_disqualify_player
+from .executors import (
+    remove_from_lobby,
+    disconnect_from_game,
+    try_to_disqualify_player,
+)
 from .middlewares import OperationIdMiddleware, LoggingMiddleware
 
 
@@ -44,6 +48,12 @@ def create_broker(
     broker.register_task(
         remove_from_lobby,
         task_name="remove_from_lobby",
+        retry_on_error=True,
+        max_retries=5,
+    )
+    broker.register_task(
+        disconnect_from_game,
+        task_name="disconnect_from_game",
         retry_on_error=True,
         max_retries=5,
     )

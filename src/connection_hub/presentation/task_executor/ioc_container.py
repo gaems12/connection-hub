@@ -14,6 +14,7 @@ from dishka.integrations.taskiq import TaskiqProvider
 
 from connection_hub.domain import (
     RemoveFromLobby,
+    DisconnectFromGame,
     TryToDisqualifyPlayer,
 )
 from connection_hub.application import (
@@ -24,6 +25,7 @@ from connection_hub.application import (
     CentrifugoClient,
     TransactionManager,
     RemoveFromLobbyProcessor,
+    DisconnectFromGameProcessor,
     TryToDisqualifyPlayerProcessor,
 )
 from connection_hub.infrastructure import (
@@ -133,9 +135,11 @@ def ioc_container_factory(
     )
 
     provider.provide(RemoveFromLobby, scope=Scope.APP)
+    provider.provide(DisconnectFromGame, scope=Scope.APP)
     provider.provide(TryToDisqualifyPlayer, scope=Scope.APP)
 
     provider.provide(RemoveFromLobbyProcessor, scope=Scope.REQUEST)
+    provider.provide(DisconnectFromGameProcessor, scope=Scope.REQUEST)
     provider.provide(TryToDisqualifyPlayerProcessor, scope=Scope.REQUEST)
 
     return make_async_container(provider, TaskiqProvider(), context=context)

@@ -10,6 +10,7 @@ from taskiq_redis import RedisScheduleSource
 from connection_hub.application import (
     TryToDisqualifyPlayerCommand,
     RemoveFromLobbyCommand,
+    DisconnectFromGameCommand,
     RemoveFromLobbyTask,
     DisconnectFromGameTask,
     TryToDisqualifyPlayerTask,
@@ -56,7 +57,6 @@ class TaskiqTaskScheduler(TaskScheduler):
             player_id=task.player_id,
             player_state_id=task.player_state_id,
         )
-
         schedule = ScheduledTask(
             task_name="try_to_disqualify_player",
             labels={},
@@ -75,7 +75,6 @@ class TaskiqTaskScheduler(TaskScheduler):
             lobby_id=task.lobby_id,
             user_id=task.user_id,
         )
-
         schedule = ScheduledTask(
             task_name="remove_from_lobby",
             labels={},
@@ -89,4 +88,17 @@ class TaskiqTaskScheduler(TaskScheduler):
     async def _schedule_disconnect_from_game(
         self,
         task: DisconnectFromGameTask,
-    ) -> None: ...
+    ) -> None:
+        command = DisconnectFromGameCommand(
+            game_id=task.game_id,
+            user_id=task.player_id,
+        )
+        schedule = ScheduledTask(
+            task_name="disconnect_from_game",
+            labels={},
+            args=[self._operation_id],
+            kwargs={"command": command},
+            schedule_id=task.id,
+            time=task.execute_at,
+        )
+        await self._schedule_source.add_schedule(schedule)

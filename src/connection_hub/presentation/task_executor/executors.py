@@ -9,6 +9,8 @@ from connection_hub.application import (
     ApplicationError,
     RemoveFromLobbyCommand,
     RemoveFromLobbyProcessor,
+    DisconnectFromGameCommand,
+    DisconnectFromGameProcessor,
     TryToDisqualifyPlayerCommand,
     TryToDisqualifyPlayerProcessor,
 )
@@ -19,6 +21,18 @@ async def remove_from_lobby(
     *,
     command: RemoveFromLobbyCommand,
     command_processor: RemoveFromLobbyProcessor,
+) -> None:
+    try:
+        await command_processor.process(command)
+    except (DomainError, ApplicationError):
+        return
+
+
+@inject
+async def disconnect_from_game(
+    *,
+    command: DisconnectFromGameCommand,
+    command_processor: FromDishka[DisconnectFromGameProcessor],
 ) -> None:
     try:
         await command_processor.process(command)

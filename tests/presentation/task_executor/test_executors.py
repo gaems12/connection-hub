@@ -15,6 +15,8 @@ from connection_hub.domain import LobbyId, GameId, UserId, PlayerStateId
 from connection_hub.application import (
     RemoveFromLobbyCommand,
     RemoveFromLobbyProcessor,
+    DisconnectFromGameCommand,
+    DisconnectFromGameProcessor,
     TryToDisqualifyPlayerCommand,
     TryToDisqualifyPlayerProcessor,
 )
@@ -30,6 +32,11 @@ def ioc_container() -> AsyncContainer:
         lambda: AsyncMock(),
         scope=Scope.REQUEST,
         provides=RemoveFromLobbyProcessor,
+    )
+    provider.provide(
+        lambda: AsyncMock(),
+        scope=Scope.REQUEST,
+        provides=DisconnectFromGameProcessor,
     )
     provider.provide(
         lambda: AsyncMock(),
@@ -50,7 +57,7 @@ async def app(ioc_container: AsyncContainer) -> InMemoryBroker:
     return broker
 
 
-async def test_force_leavelobby(app: InMemoryBroker) -> None:
+async def test_remove_from_lobby(app: InMemoryBroker) -> None:
     taskiq_message = TaskiqMessage(
         task_id=uuid7().hex,
         task_name="remove_from_lobby",
@@ -60,6 +67,27 @@ async def test_force_leavelobby(app: InMemoryBroker) -> None:
         kwargs={
             "command": RemoveFromLobbyCommand(
                 lobby_id=LobbyId(uuid7()),
+                user_id=UserId(uuid7()),
+            ),
+        },
+    )
+
+    proxy_formatter = ProxyFormatter(app)
+    broker_message = proxy_formatter.dumps(taskiq_message)
+
+    await app.kick(broker_message)
+
+
+async def test_disconnect_from_game(app: InMemoryBroker) -> None:
+    taskiq_message = TaskiqMessage(
+        task_id=uuid7().hex,
+        task_name="disconnect_from_game",
+        labels={},
+        labels_types=None,
+        args=[OperationId(uuid7())],
+        kwargs={
+            "command": DisconnectFromGameCommand(
+                game_id=GameId(uuid7()),
                 user_id=UserId(uuid7()),
             ),
         },
