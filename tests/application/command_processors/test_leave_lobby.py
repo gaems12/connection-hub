@@ -27,6 +27,7 @@ from connection_hub.application import (
 from .fakes import (
     FakeLobbyGateway,
     FakeEventPublisher,
+    FakeTaskScheduler,
     FakeCentrifugoClient,
     FakeIdentityProvider,
 )
@@ -56,6 +57,7 @@ async def test_leave_lobby_processor():
 
     lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
     event_publisher = FakeEventPublisher()
+    task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient(
         subscriptons={_CURRENT_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"]},
     )
@@ -65,6 +67,7 @@ async def test_leave_lobby_processor():
         remove_from_lobby=RemoveFromLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
+        task_scheduler=task_scheduler,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
@@ -138,12 +141,14 @@ async def test_leave_lobby_processor_errors(
         lobby_gateway = FakeLobbyGateway()
 
     event_publisher = FakeEventPublisher()
+    task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient()
 
     command_processor = LeaveLobbyProcessor(
         remove_from_lobby=RemoveFromLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
+        task_scheduler=task_scheduler,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
@@ -153,4 +158,5 @@ async def test_leave_lobby_processor_errors(
         await command_processor.process(command)
 
     assert not event_publisher.events
+    assert not task_scheduler.tasks
     assert not centrifugo_client.publications
