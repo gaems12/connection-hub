@@ -16,8 +16,8 @@ from connection_hub.domain import (
     ConnectFourLobby,
     Lobby,
     KickFromLobby,
-    CurrentUserIsNotAdminError,
-    CurrentUserIsTryingKickHimselfError,
+    UserIsNotAdminError,
+    UserIsTryingKickHimselfError,
 )
 from connection_hub.application import (
     UserKickedFromLobbyEvent,
@@ -139,7 +139,7 @@ async def test_kick_from_lobby_processor():
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
             KickFromLobbyCommand(user_id=_OTHER_USER_ID),
-            CurrentUserIsNotAdminError,
+            UserIsNotAdminError,
         ],
         [
             ConnectFourLobby(
@@ -154,7 +154,7 @@ async def test_kick_from_lobby_processor():
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
             KickFromLobbyCommand(user_id=_CURRENT_USER_ID),
-            CurrentUserIsTryingKickHimselfError,
+            UserIsTryingKickHimselfError,
         ],
     ],
 )

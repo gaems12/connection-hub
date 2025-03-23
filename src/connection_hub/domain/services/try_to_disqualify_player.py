@@ -18,7 +18,7 @@ class TryToDisqualifyPlayer:
         self,
         *,
         game: Game,
-        player_id: UserId,
+        user_id: UserId,
         player_state_id: PlayerStateId,
     ) -> tuple[bool, bool]:
         """
@@ -26,11 +26,11 @@ class TryToDisqualifyPlayer:
         expected one. Returns flags indicating whether the
         disqualification was successful and whether game is ended.
         """
-        player_state = game.players[player_id]
+        player_state = game.players[user_id]
         if player_state.id != player_state_id:
             return False, False
 
-        game.players.pop(player_id)
+        game.players.pop(user_id)
         min_players = _GAME_TO_MIN_PLAYERS_MAP[type(game)]
         is_not_enough_players_to_continue = len(game.players) < min_players
 

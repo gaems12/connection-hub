@@ -18,7 +18,7 @@ from connection_hub.domain import (
     ConnectFourGame,
     Game,
     DisconnectFromGame,
-    CurrentUserIsDisconnectedFromGameError,
+    UserIsDisconnectedFromGameError,
 )
 from connection_hub.application import (
     TryToDisqualifyPlayerTask,
@@ -182,7 +182,7 @@ async def test_disconnect_from_game_processor():
                 time_for_each_player=_TIME_FOR_EACH_PLAYER,
             ),
             DisconnectFromGameCommand(game_id=_GAME_ID),
-            CurrentUserIsDisconnectedFromGameError,
+            UserIsDisconnectedFromGameError,
         ],
     ],
 )

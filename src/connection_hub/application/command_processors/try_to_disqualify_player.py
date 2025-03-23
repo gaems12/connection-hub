@@ -73,7 +73,7 @@ class TryToDisqualifyPlayerProcessor:
 
         player_is_disqualified, game_is_ended = self._try_to_disqualify_player(
             game=game,
-            player_id=command.player_id,
+            user_id=command.player_id,
             player_state_id=command.player_state_id,
         )
         if not player_is_disqualified:

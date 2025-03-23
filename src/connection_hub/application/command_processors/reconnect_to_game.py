@@ -78,7 +78,7 @@ class ReconnectToGameProcessor:
 
         self._reconnect_to_game(
             game=game,
-            current_user_id=current_user_id,
+            user_id=current_user_id,
         )
         await self._game_gateway.update(game)
 

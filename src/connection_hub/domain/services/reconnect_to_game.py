@@ -7,20 +7,15 @@ from uuid import uuid4
 from connection_hub.domain.identitifiers import UserId, PlayerStateId
 from connection_hub.domain.constants import PlayerStatus
 from connection_hub.domain.models import Game
-from connection_hub.domain.exceptions import CurrentUserIsConnectedToGameError
+from connection_hub.domain.exceptions import UserIsConnectedToGameError
 
 
 class ReconnectToGame:
-    def __call__(
-        self,
-        *,
-        game: Game,
-        current_user_id: UserId,
-    ) -> None:
-        current_player_state = game.players[current_user_id]
+    def __call__(self, *, game: Game, user_id: UserId) -> None:
+        player_state = game.players[user_id]
 
-        if current_player_state.status == PlayerStatus.CONNECTED:
-            raise CurrentUserIsConnectedToGameError()
+        if player_state.status == PlayerStatus.CONNECTED:
+            raise UserIsConnectedToGameError()
 
-        current_player_state.id = PlayerStateId(uuid4())
-        current_player_state.status = PlayerStatus.CONNECTED
+        player_state.id = PlayerStateId(uuid4())
+        player_state.status = PlayerStatus.CONNECTED
