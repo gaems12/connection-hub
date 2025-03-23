@@ -14,6 +14,8 @@ from connection_hub.application.common import (
     LobbyGateway,
     UserRemovedFromLobbyEvent,
     EventPublisher,
+    remove_from_lobby_task_id_factory,
+    TaskScheduler,
     CentrifugoUnsubscribeCommand,
     CentrifugoPublishCommand,
     CentrifugoCommand,
@@ -36,6 +38,7 @@ class RemoveFromLobbyProcessor:
         "_remove_from_lobby",
         "_lobby_gateway",
         "_event_publisher",
+        "_task_scheduler",
         "_centrifugo_client",
         "_transaction_manager",
     )
@@ -45,12 +48,14 @@ class RemoveFromLobbyProcessor:
         remove_from_lobby: RemoveFromLobby,
         lobby_gateway: LobbyGateway,
         event_publisher: EventPublisher,
+        task_scheduler: TaskScheduler,
         centrifugo_client: CentrifugoClient,
         transaction_manager: TransactionManager,
     ):
         self._remove_from_lobby = remove_from_lobby
         self._lobby_gateway = lobby_gateway
         self._event_publisher = event_publisher
+        self._task_scheduler = task_scheduler
         self._centrifugo_client = centrifugo_client
         self._transaction_manager = transaction_manager
 
@@ -73,6 +78,12 @@ class RemoveFromLobbyProcessor:
             await self._lobby_gateway.delete(lobby)
         else:
             await self._lobby_gateway.update(lobby)
+
+        task_id = remove_from_lobby_task_id_factory(
+            lobby_id=lobby.id,
+            user_id=command.user_id,
+        )
+        await self._task_scheduler.unschedule(task_id)
 
         event = UserRemovedFromLobbyEvent(
             lobby_id=lobby.id,

@@ -27,6 +27,7 @@ from connection_hub.application import (
 from .fakes import (
     FakeLobbyGateway,
     FakeEventPublisher,
+    FakeTaskScheduler,
     FakeCentrifugoClient,
 )
 
@@ -56,6 +57,7 @@ async def test_remove_from_lobby():
 
     lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
     event_publisher = FakeEventPublisher()
+    task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient(
         subscriptons={_FIRST_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"]},
     )
@@ -68,6 +70,7 @@ async def test_remove_from_lobby():
         remove_from_lobby=RemoveFromLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
+        task_scheduler=task_scheduler,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
     )
@@ -149,12 +152,14 @@ async def test_remove_from_lobby_errors(
         lobby_gateway = FakeLobbyGateway()
 
     event_publisher = FakeEventPublisher()
+    task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient()
 
     command_processor = RemoveFromLobbyProcessor(
         remove_from_lobby=RemoveFromLobby(),
         lobby_gateway=lobby_gateway,
         event_publisher=event_publisher,
+        task_scheduler=task_scheduler,
         centrifugo_client=centrifugo_client,
         transaction_manager=AsyncMock(),
     )
@@ -163,4 +168,5 @@ async def test_remove_from_lobby_errors(
         await command_processor.process(command)
 
     assert not event_publisher.events
+    assert not task_scheduler.tasks
     assert not centrifugo_client.publications
