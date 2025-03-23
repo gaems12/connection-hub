@@ -60,7 +60,7 @@ from connection_hub.infrastructure import (
 def ioc_container_factory(context: dict | None = None) -> AsyncContainer:
     provider = Provider()
 
-    context = {
+    context = context or {
         CentrifugoConfig: load_centrifugo_config(),
         RedisConfig: load_redis_config(),
         LobbyMapperConfig: load_lobby_mapper_config(),
