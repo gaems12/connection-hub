@@ -82,10 +82,24 @@ class TaskScheduler(Protocol):
         raise NotImplementedError
 
     async def schedule_many(self, tasks: Iterable[Task]) -> None:
+        """
+        Schedules multiple tasks. If any task with a provided
+        id is already scheduled, it will be unscheduled and
+        replaced with the corresponding task from the provided
+        collection.
+        """
         raise NotImplementedError
 
     async def unschedule(self, task_id: str) -> None:
+        """
+        Unschedules a task. If a task with a provided id
+        does not exist, it is ignored.
+        """
         raise NotImplementedError
 
     async def unschedule_many(self, task_ids: Iterable[str]) -> None:
+        """
+        Unschedules multiple tasks. If a task with a provided
+        id does not exist, it is ignored.
+        """
         raise NotImplementedError
