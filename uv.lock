@@ -182,7 +182,7 @@ requires-dist = [
     { name = "adaptix", specifier = "==3.0b9" },
     { name = "cosmic-ray", marker = "extra == 'dev'", specifier = "==8.4.*" },
     { name = "cyclopts", specifier = "==3.10.*" },
-    { name = "dishka", specifier = "==1.4.*" },
+    { name = "dishka", specifier = "==1.5.*" },
     { name = "faststream", extras = ["nats", "cli"], specifier = "==0.5.*" },
     { name = "httpx", specifier = "==0.28.*" },
     { name = "mypy", marker = "extra == 'dev'", specifier = "==1.15.*" },
@@ -280,11 +280,11 @@ wheels = [
 
 [[package]]
 name = "dishka"
-version = "1.4.2"
+version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/1e/a8/e78e0d08e9a2e7839d2742527600eb6f55313c6df07774a26848aa6a87b0/dishka-1.4.2.tar.gz", hash = "sha256:fe1e7b2d0df4306b39650cf4c05485aa79ce1fc31507d1f73300dec3c64b2397", size = 57511 }
+sdist = { url = "https://files.pythonhosted.org/packages/e2/25/218e2516746ea1c18dc0cee850023b77a4377cac69af64528e6e63541d60/dishka-1.5.0.tar.gz", hash = "sha256:1e47707f7b40c3a3ab3b736bd5b4ee958939d32ace6199809e4f75bb236c04a8", size = 63189 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8b/30/403cbe18d8dda6ce1d95ecd1039e5b01fd39011dd6bf31647e9b61bd5758/dishka-1.4.2-py3-none-any.whl", hash = "sha256:5a59c6bf5ac9f34b3e698093207ddb871c13a0721eeb3948eb29011aee61f69c", size = 79798 },
+    { url = "https://files.pythonhosted.org/packages/ca/56/34d046f01699c265ef9b4cbbd6256630c71023b7e5c30058e5ac430cacd1/dishka-1.5.0-py3-none-any.whl", hash = "sha256:cd8847ac675b4093fe42742d9cf42a49a38d8d1abca46fcc250cd2f2190a2f71", size = 87964 },
 ]
 
 [[package]]
