@@ -12,7 +12,7 @@ dependencies = [
     "uuid7==0.1.*",
     "python-json-logger==3.3.*",
     "redis==5.2.*",
-    "nats-py==2.9.*",
+    "nats-py==2.10.*",
     "httpx==0.28.*",
     "dishka==1.5.*",
     "adaptix==3.0.b9",
