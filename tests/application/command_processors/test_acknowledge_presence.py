@@ -110,16 +110,8 @@ async def test_acknowledge_presence(
     game: Game | None,
     expected_task: Task,
 ):
-    if lobby:
-        lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
-    else:
-        lobby_gateway = FakeLobbyGateway()
-
-    if game:
-        game_gateway = FakeGameGateway({game.id: game})
-    else:
-        game_gateway = FakeGameGateway()
-
+    lobby_gateway = FakeLobbyGateway([lobby] if lobby else None)
+    game_gateway = FakeGameGateway([game] if game else None)
     task_scheduler = FakeTaskScheduler()
 
     processor = AcknowledgePresenceProcessor(

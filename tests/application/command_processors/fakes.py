@@ -33,8 +33,8 @@ from connection_hub.application import (
 class FakeLobbyGateway(LobbyGateway):
     __slots__ = ("_lobbies",)
 
-    def __init__(self, lobbies: dict[LobbyId, Lobby] | None = None):
-        self._lobbies = lobbies or {}
+    def __init__(self, lobbies: list[Lobby] | None = None):
+        self._lobbies = {lobby.id: lobby for lobby in lobbies or []}
 
     @property
     def lobbies(self) -> list[Lobby]:
@@ -72,8 +72,8 @@ class FakeLobbyGateway(LobbyGateway):
 class FakeGameGateway(GameGateway):
     __slots__ = ("_games",)
 
-    def __init__(self, games: dict[GameId, Game] | None = None):
-        self._games = games or {}
+    def __init__(self, games: list[Game] | None = None):
+        self._games = {game.id: game for game in games or []}
 
     @property
     def games(self) -> list[Game]:
@@ -125,8 +125,8 @@ class FakeEventPublisher(EventPublisher):
 class FakeTaskScheduler(TaskScheduler):
     __slots__ = ("_tasks",)
 
-    def __init__(self, tasks: dict[str, Task] | None = None):
-        self._tasks = tasks or {}
+    def __init__(self, tasks: list[Task] | None = None):
+        self._tasks = {task.id: task for task in tasks or []}
 
     @property
     def tasks(self) -> list[Task]:

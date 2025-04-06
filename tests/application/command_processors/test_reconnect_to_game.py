@@ -72,7 +72,7 @@ async def test_reconnect_to_game_processor():
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
 
-    game_gateway = FakeGameGateway({game.id: game})
+    game_gateway = FakeGameGateway([game])
 
     task = TryToDisqualifyPlayerTask(
         id=f"try_to_disqualify_player:{_CURRENT_PLAYER_STATE_ID.hex}",
@@ -81,7 +81,7 @@ async def test_reconnect_to_game_processor():
         player_id=_CURRENT_USER_ID,
         player_state_id=_CURRENT_PLAYER_STATE_ID,
     )
-    task_scheduler = FakeTaskScheduler({task.id: task})
+    task_scheduler = FakeTaskScheduler([task])
 
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()
@@ -193,11 +193,7 @@ async def test_reconnect_to_game_processor_errors(
     command: ReconnectToGameCommand,
     expected_error: Exception,
 ):
-    if game:
-        game_gateway = FakeGameGateway({game.id: game})
-    else:
-        game_gateway = FakeGameGateway()
-
+    game_gateway = FakeGameGateway([game] if game else None)
     task_scheduler = FakeTaskScheduler()
     event_publisher = FakeEventPublisher()
     centrifugo_client = FakeCentrifugoClient()

@@ -73,7 +73,7 @@ async def test_join_lobby_processor():
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
 
-    lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
+    lobby_gateway = FakeLobbyGateway([lobby])
     event_publisher = FakeEventPublisher()
     task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient()
@@ -85,7 +85,7 @@ async def test_join_lobby_processor():
     command_processor = JoinLobbyProcessor(
         join_lobby=JoinLobby(),
         lobby_gateway=lobby_gateway,
-        game_gateway=FakeGameGateway({}),
+        game_gateway=FakeGameGateway(),
         event_publisher=event_publisher,
         task_scheduler=task_scheduler,
         centrifugo_client=centrifugo_client,
@@ -263,16 +263,8 @@ async def test_join_lobby_processor_errors(
     command: JoinLobbyCommand,
     expected_error: Exception,
 ):
-    if lobby:
-        lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
-    else:
-        lobby_gateway = FakeLobbyGateway()
-
-    if game:
-        game_gateway = FakeGameGateway({game.id: game})
-    else:
-        game_gateway = FakeGameGateway()
-
+    lobby_gateway = FakeLobbyGateway([lobby] if lobby else None)
+    game_gateway = FakeGameGateway([game] if game else None)
     event_publisher = FakeEventPublisher()
     task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient()

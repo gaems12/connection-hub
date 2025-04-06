@@ -55,7 +55,7 @@ async def test_leave_lobby_processor():
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
 
-    lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
+    lobby_gateway = FakeLobbyGateway([lobby])
     event_publisher = FakeEventPublisher()
     task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient(
@@ -135,11 +135,7 @@ async def test_leave_lobby_processor_errors(
     command: LeaveLobbyCommand,
     expected_error: Exception,
 ):
-    if lobby:
-        lobby_gateway = FakeLobbyGateway({lobby.id: lobby})
-    else:
-        lobby_gateway = FakeLobbyGateway()
-
+    lobby_gateway = FakeLobbyGateway([lobby] if lobby else None)
     event_publisher = FakeEventPublisher()
     task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient()

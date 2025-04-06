@@ -56,7 +56,7 @@ async def test_end_game_processor():
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
 
-    game_gateway = FakeGameGateway({game.id: game})
+    game_gateway = FakeGameGateway([game])
 
     task = TryToDisqualifyPlayerTask(
         id=f"try_to_disqualify_player:{_SECOND_PLAYER_STATE_ID.hex}",
@@ -65,7 +65,7 @@ async def test_end_game_processor():
         player_id=_SECOND_USER_ID,
         player_state_id=_SECOND_PLAYER_STATE_ID,
     )
-    task_scheduler = FakeTaskScheduler({task.id: task})
+    task_scheduler = FakeTaskScheduler([task])
 
     command = EndGameCommand(game_id=_GAME_ID)
     command_processor = EndGameProcessor(
