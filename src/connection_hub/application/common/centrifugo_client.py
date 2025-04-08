@@ -30,7 +30,6 @@ type Serializable = (
     | dict[str, Serializable]
 )
 
-
 CENTRIFUGO_LOBBY_BROWSER_CHANNEL: Final = "lobby_browser"
 
 

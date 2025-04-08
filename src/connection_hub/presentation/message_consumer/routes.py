@@ -28,7 +28,6 @@ from connection_hub.application import (
 
 _STREAM: Final = JStream(name="games", declare=False)
 
-
 router = NatsRouter()
 
 
