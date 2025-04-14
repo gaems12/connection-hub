@@ -90,17 +90,21 @@ class HTTPXCentrifugoClient(CentrifugoClient):
         for command in commands:
             if isinstance(command, CentrifugoPublishCommand):
                 command_as_dict = {
-                    "channel": command.channel,
-                    "data": command.data,
+                    "publish": {
+                        "channel": command.channel,
+                        "data": command.data,
+                    },
                 }
-                commands_as_dicts.append(command_as_dict)
+                commands_as_dicts.append(command_as_dict)  # type: ignore[arg-type]
 
             elif isinstance(command, CentrifugoUnsubscribeCommand):
                 command_as_dict = {
-                    "user": command.user,
-                    "channel": command.channel,
+                    "ubsubscribe": {
+                        "user": command.user,
+                        "channel": command.channel,
+                    },
                 }
-                commands_as_dicts.append(command_as_dict)
+                commands_as_dicts.append(command_as_dict)  # type: ignore[arg-type]
 
         return commands_as_dicts
 
