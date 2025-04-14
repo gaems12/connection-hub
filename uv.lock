@@ -4,11 +4,11 @@ requires-python = ">=3.13"
 
 [[package]]
 name = "adaptix"
-version = "3.0.0b9"
+version = "3.0.0b10"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/78/26/072201952b87f0ce7da5341ef03a7c86bc0cad0959f6a63c9412f11bac3e/adaptix-3.0.0b9.tar.gz", hash = "sha256:5a29b112f48586185b3d0fc5f31a5946df540b17f4c2c0f50d86eb9020b3a44f", size = 122670 }
+sdist = { url = "https://files.pythonhosted.org/packages/ae/95/2294d649a21dd13142dc3509b8c26a8fb0e3027134cbc4d71e1f8f2ba94a/adaptix-3.0.0b10.tar.gz", hash = "sha256:d15f1e02658d4c443ee2eb1bda6d38fa525d894a31d0208a3d007b5e05fbb3af", size = 132151 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d1/3d/8796369ff7bf9c0f7acd238b4be1c0478c76302258482b3bc242a32caf26/adaptix-3.0.0b9-py3-none-any.whl", hash = "sha256:95612533819f65064dc5ee15cb2ea46cea51ad5f587859e6bd7f064a69220f7f", size = 163820 },
+    { url = "https://files.pythonhosted.org/packages/48/b2/4c62633268f07fe2cd294e016dc68ea5edd510fd33ca17fa2d608c5c6063/adaptix-3.0.0b10-py3-none-any.whl", hash = "sha256:584bdfc87817e9897baccf601f78ee2a0d0efbc7eadf107ac759be390ffa787a", size = 177172 },
 ]
 
 [[package]]
@@ -179,7 +179,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "adaptix", specifier = "==3.0b9" },
+    { name = "adaptix", specifier = "==3.0.0b10" },
     { name = "cosmic-ray", marker = "extra == 'dev'", specifier = "==8.4.*" },
     { name = "cyclopts", specifier = "==3.12.*" },
     { name = "dishka", specifier = "==1.5.*" },
