@@ -3,7 +3,7 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from unittest.mock import AsyncMock
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Final
 
 import pytest
@@ -19,6 +19,7 @@ from connection_hub.domain import (
 )
 from connection_hub.application import (
     UserLeftLobbyEvent,
+    RemoveFromLobbyTask,
     LeaveLobbyCommand,
     LeaveLobbyProcessor,
     LobbyDoesNotExistError,
@@ -57,10 +58,17 @@ async def test_leave_lobby_processor():
 
     lobby_gateway = FakeLobbyGateway([lobby])
     event_publisher = FakeEventPublisher()
-    task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient(
         subscriptons={_CURRENT_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"]},
     )
+
+    task = RemoveFromLobbyTask(
+        id=f"remove_from_lobby:{_LOBBY_ID.hex}:{_CURRENT_USER_ID.hex}",
+        execute_at=datetime.now(timezone.utc) + timedelta(seconds=15),
+        lobby_id=_LOBBY_ID,
+        user_id=_CURRENT_USER_ID,
+    )
+    task_scheduler = FakeTaskScheduler([task])
 
     command = LeaveLobbyCommand(lobby_id=_LOBBY_ID)
     command_processor = LeaveLobbyProcessor(
@@ -91,6 +99,8 @@ async def test_leave_lobby_processor():
         new_admin_id=_OTHER_USER_ID,
     )
     assert expected_event in event_publisher.events
+
+    assert task not in task_scheduler.tasks
 
     expected_centrifugo_publication = {
         "type": "user_left",

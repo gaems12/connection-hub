@@ -3,7 +3,7 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from unittest.mock import AsyncMock
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Final
 
 import pytest
@@ -19,6 +19,7 @@ from connection_hub.domain import (
 )
 from connection_hub.application import (
     UserRemovedFromLobbyEvent,
+    RemoveFromLobbyTask,
     RemoveFromLobbyCommand,
     RemoveFromLobbyProcessor,
     LobbyDoesNotExistError,
@@ -55,9 +56,16 @@ async def test_remove_from_lobby():
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
 
+    task = RemoveFromLobbyTask(
+        id=f"remove_from_lobby:{_LOBBY_ID.hex}:{_FIRST_USER_ID.hex}",
+        execute_at=datetime.now(timezone.utc),
+        lobby_id=_LOBBY_ID,
+        user_id=_FIRST_USER_ID,
+    )
+    task_scheduler = FakeTaskScheduler([task])
+
     lobby_gateway = FakeLobbyGateway([lobby])
     event_publisher = FakeEventPublisher()
-    task_scheduler = FakeTaskScheduler()
     centrifugo_client = FakeCentrifugoClient(
         subscriptons={_FIRST_USER_ID.hex: [f"lobbies:{_LOBBY_ID.hex}"]},
     )
@@ -93,6 +101,8 @@ async def test_remove_from_lobby():
         new_admin_id=_SECOND_USER_ID,
     )
     assert expected_event in event_publisher.events
+
+    assert task not in task_scheduler.tasks
 
     expected_centrifugo_publication = {
         "type": "user_removed",

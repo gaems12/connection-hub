@@ -3,7 +3,7 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from unittest.mock import AsyncMock
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Final
 
 import pytest
@@ -23,6 +23,7 @@ from connection_hub.domain import (
 )
 from connection_hub.application import (
     ConnectFourGameCreatedEvent,
+    RemoveFromLobbyTask,
     DisconnectFromGameTask,
     CreateGameCommand,
     CreateGameProcessor,
@@ -64,10 +65,23 @@ async def test_create_game_processor():
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
 
+    first_task = RemoveFromLobbyTask(
+        id=f"remove_from_lobby:{_LOBBY_ID.hex}:{_CURRENT_USER_ID.hex}",
+        execute_at=datetime.now(timezone.utc) + timedelta(seconds=15),
+        lobby_id=_LOBBY_ID,
+        user_id=_CURRENT_USER_ID,
+    )
+    second_task = RemoveFromLobbyTask(
+        id=f"remove_from_lobby:{_LOBBY_ID.hex}:{_OTHER_USER_ID.hex}",
+        execute_at=datetime.now(timezone.utc) + timedelta(seconds=15),
+        lobby_id=_LOBBY_ID,
+        user_id=_OTHER_USER_ID,
+    )
+    task_scheduler = FakeTaskScheduler([first_task, second_task])
+
     lobby_gateway = FakeLobbyGateway([lobby])
     game_gateway = FakeGameGateway()
     event_publisher = FakeEventPublisher()
-    task_scheduler = FakeTaskScheduler()
 
     command = CreateGameCommand(lobby_id=_LOBBY_ID)
     command_processor = CreateGameProcessor(
@@ -101,6 +115,9 @@ async def test_create_game_processor():
     )
     assert expected_game in game_gateway.games
 
+    assert first_task not in task_scheduler.tasks
+    assert second_task not in task_scheduler.tasks
+
     first_expected_task = DisconnectFromGameTask(
         id=ANY_STR,
         execute_at=ANY_DATETIME,
@@ -109,13 +126,13 @@ async def test_create_game_processor():
     )
     assert first_expected_task in task_scheduler.tasks
 
-    first_expected_task = DisconnectFromGameTask(
+    second_expected_task = DisconnectFromGameTask(
         id=ANY_STR,
         execute_at=ANY_DATETIME,
         game_id=ANY_GAME_ID,
         player_id=_OTHER_USER_ID,
     )
-    assert first_expected_task in task_scheduler.tasks
+    assert second_expected_task in task_scheduler.tasks
 
     expected_event = ConnectFourGameCreatedEvent(
         game_id=ANY_GAME_ID,
