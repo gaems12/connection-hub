@@ -4,6 +4,7 @@
 
 import logging
 from uuid import UUID
+from typing import Final
 
 from taskiq import TaskiqMiddleware, TaskiqMessage
 
@@ -14,7 +15,7 @@ from connection_hub.infrastructure import (
 )
 
 
-_logger = logging.getLogger(__name__)
+_logger: Final = logging.getLogger(__name__)
 
 
 class OperationIdMiddleware(TaskiqMiddleware):

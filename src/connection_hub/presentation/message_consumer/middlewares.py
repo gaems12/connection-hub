@@ -4,7 +4,7 @@
 
 import logging
 from uuid import UUID
-from typing import Any
+from typing import Any, Final
 
 from faststream import BaseMiddleware
 from faststream.broker.message import StreamMessage
@@ -16,7 +16,7 @@ from connection_hub.infrastructure import (
 )
 
 
-_logger = logging.getLogger(__name__)
+_logger: Final = logging.getLogger(__name__)
 
 
 class OperationIdMiddleware(BaseMiddleware):

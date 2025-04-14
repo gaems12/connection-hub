@@ -21,7 +21,7 @@ from connection_hub.application import (
 from connection_hub.infrastructure.utils import get_env_var
 
 
-_logger = logging.getLogger(__name__)
+_logger: Final = logging.getLogger(__name__)
 
 _MAX_RETRIES: Final = 20
 _BASE_BACKOFF_DELAY: Final = 0.5
