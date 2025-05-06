@@ -66,8 +66,7 @@ _CREATED_AT: Final = datetime.now(timezone.utc)
             None,
             RemoveFromLobbyTask(
                 id=(
-                    "remove_from_lobby:"
-                    f"{_LOBBY_ID.hex}:{_CURRENT_USER_ID.hex}"
+                    f"remove_from_lobby:{_LOBBY_ID.hex}:{_CURRENT_USER_ID.hex}"
                 ),
                 execute_at=ANY_DATETIME,
                 lobby_id=_LOBBY_ID,

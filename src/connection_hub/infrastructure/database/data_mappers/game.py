@@ -163,7 +163,7 @@ class GameMapper(GameGateway):
         sorted_player_ids = sorted(player_ids)
         return (
             f"games:id:{game_id.hex}:player_ids:"
-            f"{":".join(map(lambda player_id: player_id.hex, sorted_player_ids))}"
+            f"{':'.join(map(lambda player_id: player_id.hex, sorted_player_ids))}"
         )
 
     def _pattern_to_find_game_by_id(self, game_id: GameId) -> str:

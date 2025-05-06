@@ -168,7 +168,7 @@ class LobbyMapper(LobbyGateway):
         sorted_user_ids = sorted(user_ids)
         return (
             f"lobbies:id:{lobby_id.hex}:user_ids:"
-            f"{":".join(map(lambda user_id: user_id.hex, sorted_user_ids))}"
+            f"{':'.join(map(lambda user_id: user_id.hex, sorted_user_ids))}"
         )
 
     def _pattern_to_find_lobby_by_id(self, lobby_id: LobbyId) -> str:

@@ -8,7 +8,9 @@ from connection_hub.infrastructure.utils import get_env_var
 
 
 def load_nats_config() -> "NATSConfig":
-    return NATSConfig(url=get_env_var("NATS_URL"))
+    return NATSConfig(
+        url=get_env_var("NATS_URL", default="nats://localhost:4222"),
+    )
 
 
 @dataclass(frozen=True, slots=True)

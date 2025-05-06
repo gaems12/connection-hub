@@ -10,7 +10,9 @@ from connection_hub.infrastructure.utils import get_env_var
 
 
 def load_redis_config() -> "RedisConfig":
-    return RedisConfig(url=get_env_var("REDIS_URL"))
+    return RedisConfig(
+        url=get_env_var("REDIS_URL", default="redis://localhost:6379"),
+    )
 
 
 @dataclass(frozen=True, slots=True)
