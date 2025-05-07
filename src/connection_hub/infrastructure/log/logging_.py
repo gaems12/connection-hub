@@ -34,7 +34,7 @@ def get_operation_id() -> OperationId:
 
 class _ContextVarLogExtraSetterFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
-        log_extra = _log_extra.get()
+        log_extra = _log_extra.get({})
 
         for key, value in log_extra.items():
             setattr(record, key, value)
