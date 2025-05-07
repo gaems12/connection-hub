@@ -74,7 +74,7 @@ async def test_lobby_mapper(
     await transaction_manager.commit()
 
     lobby_from_database = await lobby_mapper.by_id(
-        id=new_lobby.id,
+        lobby_id=new_lobby.id,
         acquire=True,
     )
     assert lobby_from_database == new_lobby
@@ -101,7 +101,7 @@ async def test_lobby_mapper(
     await transaction_manager.commit()
 
     lobby_from_database = await lobby_mapper.by_id(
-        id=_LOBBY_ID,
+        lobby_id=_LOBBY_ID,
         acquire=True,
     )
     assert lobby_from_database is None
