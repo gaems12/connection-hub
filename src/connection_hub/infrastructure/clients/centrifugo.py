@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 from dataclasses import dataclass
 from typing import Iterable, Final
 
-from httpx import AsyncClient
+from httpx import AsyncClient, Timeout
 from tenacity import (
     RetryCallState,
     retry,
@@ -31,6 +31,8 @@ _logger: Final = logging.getLogger(__name__)
 _MAX_RETRIES: Final = 20
 _BASE_BACKOFF_DELAY: Final = 0.5
 _MAX_BACKOFF_DELAY: Final = 10
+
+_REQUEST_TIMEOUT: Final = Timeout(30)
 
 
 class CentrifuoClientError(Exception): ...
@@ -149,6 +151,7 @@ class HTTPXCentrifugoClient(CentrifugoClient):
                 url=url,
                 json=json_,
                 headers={"X-API-Key": self._config.api_key},
+                timeout=_REQUEST_TIMEOUT,
             )
         except Exception as error:
             error_message = (
