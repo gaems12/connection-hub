@@ -49,6 +49,16 @@ class CentrifugoConfig:
     api_key: str
 
 
+def _log_before_retry(retry_state: RetryCallState) -> None:
+    _logger.debug(
+        {
+            "message": "Going to retry request to centrifugo.",
+            "retry_number": retry_state.attempt_number,
+            "retries_left": _MAX_RETRIES - retry_state.attempt_number,
+        },
+    )
+
+
 class HTTPXCentrifugoClient(CentrifugoClient):
     __slots__ = ("_httpx_client", "_config")
 
@@ -168,13 +178,3 @@ class HTTPXCentrifugoClient(CentrifugoClient):
         )
 
         raise CentrifuoClientError(error_message)
-
-
-def _log_before_retry(retry_state: RetryCallState) -> None:
-    _logger.debug(
-        {
-            "message": "Going to retry request to centrifugo.",
-            "retry_number": retry_state.attempt_number,
-            "retries_left": _MAX_RETRIES - retry_state.attempt_number,
-        },
-    )
