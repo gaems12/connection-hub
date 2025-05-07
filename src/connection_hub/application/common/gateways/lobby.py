@@ -10,12 +10,12 @@ from connection_hub.domain import LobbyId, UserId, Lobby
 class LobbyGateway(Protocol):
     async def by_id(
         self,
-        id: LobbyId,
+        lobby_id: LobbyId,
         *,
         acquire: bool = False,
     ) -> Lobby | None:
         """
-        Returns lobby by specified `id`.
+        Returns lobby by specified `lobby_id`.
 
         Parameters:
 

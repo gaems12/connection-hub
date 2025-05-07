@@ -61,11 +61,11 @@ class LobbyMapper(LobbyGateway):
 
     async def by_id(
         self,
-        id: LobbyId,
+        lobby_id: LobbyId,
         *,
         acquire: bool = False,
     ) -> Lobby | None:
-        pattern = self._pattern_to_find_lobby_by_id(id)
+        pattern = self._pattern_to_find_lobby_by_id(lobby_id)
         keys = await self._keys_by_pattern(pattern=pattern, limit=1)
         if not keys:
             return None

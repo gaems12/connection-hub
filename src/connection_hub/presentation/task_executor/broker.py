@@ -32,6 +32,8 @@ def create_broker(
     JetStream broker is created. Otherwise, an in-memory broker
     is used.
     """
+    broker: InMemoryBroker | PullBasedJetStreamBroker
+
     if nats_url:
         broker = PullBasedJetStreamBroker(
             [nats_url],

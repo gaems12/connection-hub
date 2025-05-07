@@ -62,7 +62,7 @@ class TryToDisqualifyPlayerProcessor:
 
     async def process(self, command: TryToDisqualifyPlayerCommand) -> None:
         game = await self._game_gateway.by_id(
-            id=command.game_id,
+            game_id=command.game_id,
             acquire=True,
         )
         if not game:

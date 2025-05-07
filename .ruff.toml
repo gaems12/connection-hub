@@ -4,6 +4,10 @@ include = ["src/**.py", "tests/**.py"]
 
 [lint]
 extend-select = [
+    "ANN",      # https://docs.astral.sh/ruff/rules/#flake8-annotations-ann
+    "ASYNC",    # https://docs.astral.sh/ruff/rules/#flake8-async-async
+    "B",        # https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
+    "A",        # https://docs.astral.sh/ruff/rules/#flake8-builtins-a
     "N",        # https://docs.astral.sh/ruff/settings/#pep8-naming
     "ISC",      # https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
     "G",        # https://docs.astral.sh/ruff/rules/#flake8-logging-format-g
@@ -19,6 +23,11 @@ select = [
     "PIE796",   # non-unique-enums
     "T201",     # print
     "SLF001",   # private-member-access
+]
+ignore = [
+    "ANN201",   # missing-return-type-undocumented-public-function
+    "ANN204",   # missing-return-type-special-method
+    "ASYNC110", # async-busy-wait
 ]
 
 [format]

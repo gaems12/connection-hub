@@ -64,7 +64,7 @@ class ReconnectToGameProcessor:
         current_user_id = await self._identity_provider.user_id()
 
         game = await self._game_gateway.by_id(
-            id=command.game_id,
+            game_id=command.game_id,
             acquire=True,
         )
         if not game:

@@ -61,7 +61,7 @@ class RemoveFromLobbyProcessor:
 
     async def process(self, command: RemoveFromLobbyCommand) -> None:
         lobby = await self._lobby_gateway.by_id(
-            id=command.lobby_id,
+            lobby_id=command.lobby_id,
             acquire=True,
         )
         if not lobby:

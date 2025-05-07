@@ -65,7 +65,7 @@ class CreateGameProcessor:
         current_user_id = await self._identity_provider.user_id()
 
         lobby = await self._lobby_gateway.by_id(
-            id=command.lobby_id,
+            lobby_id=command.lobby_id,
             acquire=True,
         )
         if not lobby:

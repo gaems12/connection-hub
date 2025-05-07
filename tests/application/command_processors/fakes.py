@@ -42,11 +42,11 @@ class FakeLobbyGateway(LobbyGateway):
 
     async def by_id(
         self,
-        id: LobbyId,
+        lobby_id: LobbyId,
         *,
         acquire: bool = False,
     ) -> Lobby | None:
-        return self._lobbies.get(id, None)
+        return self._lobbies.get(lobby_id, None)
 
     async def by_user_id(
         self,
@@ -81,11 +81,11 @@ class FakeGameGateway(GameGateway):
 
     async def by_id(
         self,
-        id: GameId,
+        game_id: GameId,
         *,
         acquire: bool = False,
     ) -> Game | None:
-        return self._games.get(id, None)
+        return self._games.get(game_id, None)
 
     async def by_player_id(
         self,

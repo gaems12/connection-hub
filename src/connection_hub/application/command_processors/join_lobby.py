@@ -80,7 +80,7 @@ class JoinLobbyProcessor:
             raise CurrentUserInGameError()
 
         lobby_to_join = await self._lobby_gateway.by_id(
-            id=command.lobby_id,
+            lobby_id=command.lobby_id,
             acquire=True,
         )
         if not lobby_to_join:

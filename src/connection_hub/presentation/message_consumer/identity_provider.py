@@ -22,4 +22,7 @@ class MessageBrokerIdentityProvider(IdentityProvider):
             raise Exception("StreamMessage cannot be converter to dict.")
 
         user_id = decoded_message.get("current_user_id")
-        return UserId(UUID(user_id))
+        if not user_id:
+            raise Exception("StreamMessage has no 'current_user_id'.")
+
+        return UserId(UUID(user_id))  # type: ignore[arg-type]

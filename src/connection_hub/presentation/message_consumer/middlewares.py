@@ -67,7 +67,7 @@ class OperationIdMiddleware(BaseMiddleware):
             return default_operation_id
 
         try:
-            return OperationId(UUID(raw_operation_id))
+            return OperationId(UUID(raw_operation_id))  # type: ignore[arg-type]
         except:
             default_operation_id = default_operation_id_factory()
 

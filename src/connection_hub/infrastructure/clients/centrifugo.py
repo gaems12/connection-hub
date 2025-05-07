@@ -128,7 +128,7 @@ class HTTPXCentrifugoClient(CentrifugoClient):
                 json=json_,
                 headers={"X-API-Key": self._config.api_key},
             )
-        except Exception:
+        except Exception as error:
             error_message = (
                 "Unexpected error occurred during request to centrifugo."
             )
@@ -142,7 +142,7 @@ class HTTPXCentrifugoClient(CentrifugoClient):
                 if retries_were_successful:
                     return
 
-            raise CentrifuoClientError(error_message)
+            raise CentrifuoClientError(error_message) from error
 
         if response.status_code == 200:
             _logger.debug(
