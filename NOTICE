@@ -17,5 +17,6 @@ This project uses the following third-party libraries:
 - cosmic-ray (License: MIT)
 - nats-py (License: Apache-2.0)
 - pytest-asyncio (License: Apache-2.0)
+- tenacity (License: Apache-2.0)
 - python-json-logger (License: BSD-2-Clause)
 - httpx (License: BSD-3-Clause)
