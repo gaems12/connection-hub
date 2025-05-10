@@ -15,7 +15,7 @@ dependencies = [
     "nats-py==2.10.*",
     "httpx==0.28.*",
     "dishka==1.5.*",
-    "adaptix==3.0.0b10",
+    "adaptix==3.0.0b11",
     "cyclopts==3.14.*",
     "taskiq==0.11.*",
     "faststream[nats,cli]==0.5.*",
