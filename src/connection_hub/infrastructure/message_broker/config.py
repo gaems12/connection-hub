@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("NATSConfig", "load_nats_config")
+
 from dataclasses import dataclass
 
 from connection_hub.infrastructure.utils import get_env_var

@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("PlayerState",)
+
 from dataclasses import dataclass
 from datetime import timedelta
 

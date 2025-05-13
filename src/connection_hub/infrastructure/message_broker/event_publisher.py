@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("NATSEventPublisher",)
+
 import json
 from typing import Final
 

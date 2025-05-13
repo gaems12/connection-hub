@@ -2,22 +2,5 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-__all__ = (
-    "LobbyMapperConfig",
-    "load_lobby_mapper_config",
-    "LobbyMapper",
-    "GameMapperConfig",
-    "load_game_mapper_config",
-    "GameMapper",
-)
-
-from .lobby import (
-    LobbyMapperConfig,
-    load_lobby_mapper_config,
-    LobbyMapper,
-)
-from .game import (
-    GameMapperConfig,
-    load_game_mapper_config,
-    GameMapper,
-)
+from .lobby import *
+from .game import *

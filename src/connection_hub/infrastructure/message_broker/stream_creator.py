@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("NATSStreamCreator",)
+
 from nats.js import JetStreamContext
 from nats.js.api import StreamConfig
 

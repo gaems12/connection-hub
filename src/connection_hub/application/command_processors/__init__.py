@@ -2,47 +2,14 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
-__all__ = (
-    "CreateLobbyCommand",
-    "CreateLobbyProcessor",
-    "JoinLobbyCommand",
-    "JoinLobbyProcessor",
-    "LeaveLobbyCommand",
-    "LeaveLobbyProcessor",
-    "RemoveFromLobbyCommand",
-    "RemoveFromLobbyProcessor",
-    "KickFromLobbyCommand",
-    "KickFromLobbyProcessor",
-    "CreateGameCommand",
-    "CreateGameProcessor",
-    "AcknowledgePresenceProcessor",
-    "DisconnectFromGameCommand",
-    "DisconnectFromGameProcessor",
-    "ReconnectToGameCommand",
-    "ReconnectToGameProcessor",
-    "TryToDisqualifyPlayerCommand",
-    "TryToDisqualifyPlayerProcessor",
-    "EndGameCommand",
-    "EndGameProcessor",
-)
-
-from .create_lobby import CreateLobbyCommand, CreateLobbyProcessor
-from .join_lobby import JoinLobbyCommand, JoinLobbyProcessor
-from .leave_lobby import LeaveLobbyCommand, LeaveLobbyProcessor
-from .remove_from_lobby import RemoveFromLobbyCommand, RemoveFromLobbyProcessor
-from .kick_from_lobby import KickFromLobbyCommand, KickFromLobbyProcessor
-from .create_game import CreateGameCommand, CreateGameProcessor
-from .acknowledge_presence import AcknowledgePresenceProcessor
-from .disconnect_from_game import (
-    DisconnectFromGameCommand,
-    DisconnectFromGameProcessor,
-)
-from .reconnect_to_game import (
-    ReconnectToGameCommand,
-    ReconnectToGameProcessor,
-)
-from .try_to_disqualify_player import (
-    TryToDisqualifyPlayerCommand,
-    TryToDisqualifyPlayerProcessor,
-)
-from .end_game import EndGameCommand, EndGameProcessor
+from .create_lobby import *
+from .join_lobby import *
+from .leave_lobby import *
+from .remove_from_lobby import *
+from .kick_from_lobby import *
+from .create_game import *
+from .acknowledge_presence import *
+from .disconnect_from_game import *
+from .reconnect_to_game import *
+from .try_to_disqualify_player import *
+from .end_game import *

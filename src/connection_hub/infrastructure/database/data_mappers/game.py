@@ -2,6 +2,12 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = (
+    "GameMapperConfig",
+    "load_game_mapper_config",
+    "GameMapper",
+)
+
 import json
 from dataclasses import dataclass
 from datetime import timedelta

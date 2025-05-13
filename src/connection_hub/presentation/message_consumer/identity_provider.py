@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("MessageBrokerIdentityProvider",)
+
 from uuid import UUID
 
 from faststream.broker.message import StreamMessage

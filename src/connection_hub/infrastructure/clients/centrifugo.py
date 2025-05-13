@@ -2,6 +2,12 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = (
+    "CentrifugoConfig",
+    "load_centrifugo_config",
+    "HTTPXCentrifugoClient",
+)
+
 import logging
 from urllib.parse import urljoin
 from dataclasses import dataclass

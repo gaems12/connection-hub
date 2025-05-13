@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("ioc_container_factory",)
+
 from dishka import (
     Provider,
     Scope,

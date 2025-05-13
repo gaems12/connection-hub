@@ -2,6 +2,12 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = (
+    "LobbyMapperConfig",
+    "load_lobby_mapper_config",
+    "LobbyMapper",
+)
+
 import json
 from enum import StrEnum
 from typing import Iterable
