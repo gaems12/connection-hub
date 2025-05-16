@@ -75,8 +75,8 @@ type Task = (
 class TaskScheduler(Protocol):
     async def schedule(self, task: Task) -> None:
         """
-        Schedules a task. If a task with the provided id
-        is already scheduled, it will be uncheduled and
+        Schedules a task. If a task with the provided task's
+        id is already scheduled, it will be uncheduled and
         replaced with the provided task.
         """
         raise NotImplementedError
@@ -84,8 +84,8 @@ class TaskScheduler(Protocol):
     async def schedule_many(self, tasks: Iterable[Task]) -> None:
         """
         Schedules multiple tasks. If any task with a provided
-        id is already scheduled, it will be unscheduled and
-        replaced with the corresponding task from the provided
+        task's id is already scheduled, it will be unscheduled
+        and replaced with the corresponding task from the provided
         collection.
         """
         raise NotImplementedError
