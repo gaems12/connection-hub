@@ -87,7 +87,6 @@ class HTTPXCentrifugoClient(CentrifugoClient):
         await self._send_request(
             url=urljoin(self._config.url, "publish"),
             json_={"channel": channel, "data": data},
-            retry_on_failure=True,
         )
 
     async def batch(
@@ -101,7 +100,6 @@ class HTTPXCentrifugoClient(CentrifugoClient):
         await self._send_request(
             url=urljoin(self._config.url, "batch"),
             json_={"commands": commands_as_dicts, "parallel": parallel},
-            retry_on_failure=True,
         )
 
     def _commands_to_dicts(
@@ -143,7 +141,6 @@ class HTTPXCentrifugoClient(CentrifugoClient):
         *,
         url: str,
         json_: Serializable,
-        retry_on_failure: bool,
     ) -> None:
         try:
             _logger.debug(
