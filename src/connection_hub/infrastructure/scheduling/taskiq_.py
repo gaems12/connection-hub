@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("taskiq_redis_schedule_source_factory",)
+
 from taskiq_redis import RedisScheduleSource
 
 from connection_hub.infrastructure.redis_config import RedisConfig

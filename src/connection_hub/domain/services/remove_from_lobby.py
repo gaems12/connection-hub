@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("RemoveFromLobby",)
+
 from connection_hub.domain.identitifiers import UserId
 from connection_hub.domain.constants import UserRole
 from connection_hub.domain.models import Lobby

@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("GameGateway",)
+
 from typing import Protocol
 
 from connection_hub.domain import UserId, GameId, Game

@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("DisconnectFromGame",)
+
 from uuid import uuid4
 
 from connection_hub.domain.identitifiers import UserId, PlayerStateId

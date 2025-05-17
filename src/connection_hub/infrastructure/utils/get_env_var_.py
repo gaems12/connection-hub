@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("get_env_var",)
+
 import os
 from typing import Any, Callable, overload
 

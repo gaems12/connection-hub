@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("LobbyGateway",)
+
 from typing import Protocol
 
 from connection_hub.domain import LobbyId, UserId, Lobby

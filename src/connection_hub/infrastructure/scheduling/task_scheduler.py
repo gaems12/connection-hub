@@ -2,6 +2,8 @@
 # All rights reserved.
 # Licensed under the Personal Use License (see LICENSE).
 
+__all__ = ("TaskiqTaskScheduler",)
+
 from typing import Iterable
 
 from taskiq import ScheduledTask
