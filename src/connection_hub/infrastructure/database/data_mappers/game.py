@@ -123,6 +123,12 @@ class GameMapper(GameGateway):
         )
 
     async def update(self, game: Game) -> None:
+        # Delete old game, because new game might have
+        # different user ids (user ids being part of the key).
+        # This adds an extra request to redis, which could be
+        # avoided by tracking changes to game and, as a
+        # consequence, deleting it only if user ids have
+        # changed. However, this is considered overkill for now.
         await self.delete(game)
 
         game_key = self._game_key_factory(

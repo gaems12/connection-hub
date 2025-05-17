@@ -124,10 +124,10 @@ class LobbyMapper(LobbyGateway):
 
     async def update(self, lobby: Lobby) -> None:
         # Delete old lobby, because new lobby might have
-        # different user_ids (user_ids being part of the key).
+        # different player ids (player ids being part of the key).
         # This adds an extra request to redis, which could be
         # avoided by tracking changes to lobby and, as a
-        # consequence, deleting it only if user_ids have
+        # consequence, deleting it only if player ids have
         # changed. However, this is considered overkill for now.
         await self.delete(lobby)
 
