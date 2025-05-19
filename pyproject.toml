@@ -14,7 +14,7 @@ dependencies = [
     "redis==5.3.*",
     "nats-py==2.10.*",
     "httpx==0.28.*",
-    "dishka==1.5.*",
+    "dishka==1.6.*",
     "adaptix==3.0.0b11",
     "cyclopts==3.16.*",
     "taskiq==0.11.*",
