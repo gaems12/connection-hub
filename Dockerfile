@@ -11,7 +11,7 @@ FROM base AS builder
 COPY ./src ./src
 COPY ./pyproject.toml ./pyproject.toml
 
-RUN pip install build &&
+RUN pip install build && \
     python3 -m build --wheel
 
 FROM base AS runner
