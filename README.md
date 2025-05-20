@@ -48,7 +48,7 @@ Ensure the following services are installed and running:
 
 ## 🚀 Installation
 
-### Using uv (Recommended)
+### Using uv
 
 1. Create and activate a virtual environment:
    ```bash
@@ -88,7 +88,7 @@ Ensure the following services are installed and running:
    pip install -e .
    ```
 
-### Using Docker (Recommended)
+### Using Docker
 
 1. Build Docker image:
 
@@ -102,18 +102,18 @@ Configure the following environment variables before running the application:
 
 <div align="center">
 
-| Variable                        | Required                             | Description                      |
-|---------------------------------|--------------------------------------|----------------------------------|
-| `LOGGING_LEVEL`                 | No (default: DEBUG)                  | Logging level                    |
-| `REDIS_URL`                     | No (default: redis://localhost:6379) | URL for the Redis instance.      |
-| `NATS_URL`                      | No (default: nats://localhost:4222)  | URL for the NATS server.         |
-| `CENTRIFUGO_URL`                | Yes                                  | URL for the Centrifugo server.   |
-| `CENTRIFUGO_API_KEY`            | Yes                                  | API key for Centrifugo.          |
-| `LOBBY_MAPPER_LOBBY_EXPIRES_IN` | No (default: 86400)                  | Lobby expiration time in seconds |
-| `GAME_MAPPER_GAME_EXPIRES_IN`   | No (default: 86400)                  | Game expiration time in seconds. |
-| `LOCK_EXPIRES_IN`               | No (default: 5)                      | Lock expiration time in seconds. |
-| `TEST_REDIS_URL`                | Yes (for tests)                      | URL for the test Redis instance. |
-| `TEST_NATS_URL`                 | Yes (for tests)                      | URL for the test NATS server.    |
+| Variable                        | Required        | Description                      | Default 
+|---------------------------------|-----------------|----------------------------------|-----------------------
+| `LOGGING_LEVEL`                 | No              | Logging level                    | DEBUG
+| `REDIS_URL`                     | No              | URL for the Redis instance.      | redis://localhost:6379
+| `NATS_URL`                      | No              | URL for the NATS server.         | nats://localhost:4222)
+| `CENTRIFUGO_URL`                | Yes             | URL for the Centrifugo server.   | -
+| `CENTRIFUGO_API_KEY`            | Yes             | API key for Centrifugo.          | -
+| `LOBBY_MAPPER_LOBBY_EXPIRES_IN` | No              | Lobby expiration time in seconds | 86400
+| `GAME_MAPPER_GAME_EXPIRES_IN`   | No              | Game expiration time in seconds. | 86400
+| `LOCK_EXPIRES_IN`               | No              | Lock expiration time in seconds. | 5
+| `TEST_REDIS_URL`                | Yes (for tests) | URL for the test Redis instance. | -
+| `TEST_NATS_URL`                 | Yes (for tests) | URL for the test NATS server.    | -
 
 </div>
 
