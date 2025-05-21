@@ -4,7 +4,9 @@
 
 __all__ = ("TaskiqTaskScheduler",)
 
+import logging
 from typing import Iterable
+from typing_extensions import Final
 
 from taskiq import ScheduledTask
 from taskiq_redis import RedisScheduleSource
@@ -20,6 +22,9 @@ from connection_hub.application import (
     TaskScheduler,
 )
 from connection_hub.infrastructure.operation_id import OperationId
+
+
+_logger: Final = logging.getLogger(__name__)
 
 
 class TaskiqTaskScheduler(TaskScheduler):
@@ -71,6 +76,14 @@ class TaskiqTaskScheduler(TaskScheduler):
             schedule_id=task.id,
             time=task.execute_at,
         )
+
+        _logger.debug(
+            {
+                "message": "Going to schedule a task.",
+                "task": schedule.model_dump(mode="json"),
+            },
+        )
+
         await self._schedule_source.add_schedule(schedule)
 
     async def _schedule_remove_from_lobby(
@@ -89,6 +102,14 @@ class TaskiqTaskScheduler(TaskScheduler):
             schedule_id=task.id,
             time=task.execute_at,
         )
+
+        _logger.debug(
+            {
+                "message": "Going to schedule a task.",
+                "task": schedule.model_dump(mode="json"),
+            },
+        )
+
         await self._schedule_source.add_schedule(schedule)
 
     async def _schedule_disconnect_from_game(
@@ -107,4 +128,12 @@ class TaskiqTaskScheduler(TaskScheduler):
             schedule_id=task.id,
             time=task.execute_at,
         )
+
+        _logger.debug(
+            {
+                "message": "Going to schedule a task.",
+                "task": schedule.model_dump(mode="json"),
+            },
+        )
+
         await self._schedule_source.add_schedule(schedule)
