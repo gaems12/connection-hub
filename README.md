@@ -102,7 +102,7 @@ Configure the following environment variables before running the application:
 
 <div align="center">
 
-| Variable                        | Required        | Description                      | Default 
+| Variable                        | Required        | Description                      | Default
 |---------------------------------|-----------------|----------------------------------|-----------------------
 | `LOGGING_LEVEL`                 | No              | Logging level                    | DEBUG
 | `REDIS_URL`                     | No              | URL for the Redis instance.      | redis://localhost:6379
