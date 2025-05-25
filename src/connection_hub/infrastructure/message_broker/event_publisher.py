@@ -71,7 +71,7 @@ class NATSEventPublisher:
 
         _logger.debug(
             {
-                "message": "Going to send data to nats.",
+                "message": "Going to send message to nats.",
                 "data": event_as_dict,
             },
         )
