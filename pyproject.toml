@@ -26,7 +26,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "mypy==1.15.*",
+    "mypy==1.16.*",
     "ruff==0.11.*",
     "pre-commit==4.2.*",
     "pytest==8.3.*",
