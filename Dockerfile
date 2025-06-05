@@ -1,4 +1,4 @@
-FROM python:3.13.3-alpine AS base
+FROM python:3.13.4-alpine AS base
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=off \
