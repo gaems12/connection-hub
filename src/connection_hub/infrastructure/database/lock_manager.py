@@ -62,7 +62,7 @@ class LockManager:
 
     async def acquire(self, lock_id: str) -> None:
         """
-        Acquires a lock with the specified ID.
+        Acquires a lock with the provided id.
 
         If the lock is already held by the current instance,
         it will return immediately. Otherwise, it waits until

@@ -90,14 +90,14 @@ class KickFromLobbyProcessor:
         )
         await self._event_publisher.publish(event)
 
-        await self._publish_data_to_centrifugo(
+        await self._make_requests_to_centrifugo(
             lobby_id=lobby.id,
             user_id=command.user_id,
         )
 
         await self._transation_manager.commit()
 
-    async def _publish_data_to_centrifugo(
+    async def _make_requests_to_centrifugo(
         self,
         *,
         lobby_id: LobbyId,

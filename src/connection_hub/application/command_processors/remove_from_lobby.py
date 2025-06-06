@@ -94,7 +94,7 @@ class RemoveFromLobbyProcessor:
         )
         await self._event_publisher.publish(event)
 
-        await self._publish_data_to_centrifugo(
+        await self._make_requests_to_centrifugo(
             lobby=lobby,
             lobby_is_deleted=no_users_left,
             new_admin_id=new_admin_id,
@@ -103,7 +103,7 @@ class RemoveFromLobbyProcessor:
 
         await self._transaction_manager.commit()
 
-    async def _publish_data_to_centrifugo(
+    async def _make_requests_to_centrifugo(
         self,
         *,
         lobby: Lobby,

@@ -79,7 +79,7 @@ class TaskiqTaskScheduler(TaskScheduler):
 
         _logger.debug(
             {
-                "message": "Going to schedule a task.",
+                "message": "About to schedule a task.",
                 "task": schedule.model_dump(mode="json"),
             },
         )
@@ -105,7 +105,7 @@ class TaskiqTaskScheduler(TaskScheduler):
 
         _logger.debug(
             {
-                "message": "Going to schedule a task.",
+                "message": "About to schedule a task.",
                 "task": schedule.model_dump(mode="json"),
             },
         )
@@ -131,7 +131,7 @@ class TaskiqTaskScheduler(TaskScheduler):
 
         _logger.debug(
             {
-                "message": "Going to schedule a task.",
+                "message": "About to schedule a task.",
                 "task": schedule.model_dump(mode="json"),
             },
         )
