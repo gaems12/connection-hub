@@ -127,7 +127,7 @@ async def test_create_lobby(app: FastStream, broker: NatsBroker):
         }
         await test_broker.publish(
             message=message,
-            subject="api_gateway.lobby.created",
+            subject="gaems12.api_gateway.lobby.created",
             stream="games",
         )
         await create_lobby.wait_call(1)
@@ -145,7 +145,7 @@ async def test_join_lobby(app: FastStream, broker: NatsBroker):
         }
         await test_broker.publish(
             message=message,
-            subject="api_gateway.lobby.user_joined",
+            subject="gaems12.api_gateway.lobby.user_joined",
             stream="games",
         )
         await join_lobby.wait_call(1)
@@ -161,7 +161,7 @@ async def test_leave_lobby(app: FastStream, broker: NatsBroker):
                 "current_user_id": uuid7().hex,
                 "lobby_id": uuid7().hex,
             },
-            subject="api_gateway.lobby.user_left",
+            subject="gaems12.api_gateway.lobby.user_left",
             stream="games",
         )
         await leave_lobby.wait_call(1)
@@ -178,7 +178,7 @@ async def test_kick_from_lobby(app: FastStream, broker: NatsBroker):
                 "lobby_id": uuid7().hex,
                 "user_id": uuid7().hex,
             },
-            subject="api_gateway.lobby.user_kicked",
+            subject="gaems12.api_gateway.lobby.user_kicked",
             stream="games",
         )
         await kick_from_lobby.wait_call(1)
@@ -194,7 +194,7 @@ async def test_create_game(app: FastStream, broker: NatsBroker):
                 "current_user_id": uuid7().hex,
                 "lobby_id": uuid7().hex,
             },
-            subject="api_gateway.game.created",
+            subject="gaems12.api_gateway.game.created",
             stream="games",
         )
         await create_game.wait_call(1)
@@ -210,7 +210,7 @@ async def test_start_game(app: FastStream, broker: NatsBroker):
                 "game_id": uuid7().hex,
                 "lobby_id": uuid7().hex,
             },
-            subject="connect_four.game.created",
+            subject="gaems12.connect_four.game.created",
             stream="games",
         )
         await start_game.wait_call(1)
@@ -226,7 +226,7 @@ async def test_end_game(app: FastStream, broker: NatsBroker):
                 "current_user_id": uuid7().hex,
                 "game_id": uuid7().hex,
             },
-            subject="connect_four.game.ended",
+            subject="gaems12.connect_four.game.ended",
             stream="games",
         )
         await end_game.wait_call(1)
@@ -239,7 +239,7 @@ async def test_acknowledge_presence(app: FastStream, broker: NatsBroker):
     ):
         await test_broker.publish(
             message={"current_user_id": uuid7().hex},
-            subject="api_gateway.presence.acknowledged",
+            subject="gaems12.api_gateway.presence.acknowledged",
             stream="games",
         )
         await acknowledge_presence.wait_call(1)
@@ -255,7 +255,7 @@ async def test_reconnect_to_game(app: FastStream, broker: NatsBroker):
                 "current_user_id": uuid7().hex,
                 "game_id": uuid7().hex,
             },
-            subject="api_gateway.game.player_reconnected",
+            subject="gaems12.api_gateway.game.player_reconnected",
             stream="games",
         )
         await reconnect_to_game.wait_call(1)

@@ -29,20 +29,22 @@ from connection_hub.infrastructure.operation_id import OperationId
 _STREAM: Final = "games"
 
 _EVENT_TO_SUBJECT_MAP: Final = {
-    LobbyCreatedEvent: "connection_hub.lobby.created",
-    UserJoinedLobbyEvent: "connection_hub.lobby.user_joined",
-    UserLeftLobbyEvent: "connection_hub.lobby.user_left",
-    UserRemovedFromLobbyEvent: "connection_hub.lobby.user_removed",
-    UserKickedFromLobbyEvent: "connection_hub.lobby.user_kicked",
-    ConnectFourGameCreatedEvent: "connection_hub.connect_four.game.created",
+    LobbyCreatedEvent: "gaems12.connection_hub.lobby.created",
+    UserJoinedLobbyEvent: "gaems12.connection_hub.lobby.user_joined",
+    UserLeftLobbyEvent: "gaems12.connection_hub.lobby.user_left",
+    UserRemovedFromLobbyEvent: "gaems12.connection_hub.lobby.user_removed",
+    UserKickedFromLobbyEvent: "gaems12.connection_hub.lobby.user_kicked",
+    ConnectFourGameCreatedEvent: (
+        "gaems12.connection_hub.connect_four.game.created"
+    ),
     ConnectFourGamePlayerDisconnectedEvent: (
-        "connection_hub.connect_four.game.player_disconnected"
+        "gaems12.connection_hub.connect_four.game.player_disconnected"
     ),
     ConnectFourGamePlayerReconnectedEvent: (
-        "connection_hub.connect_four.game.player_reconnected"
+        "gaems12.connection_hub.connect_four.game.player_reconnected"
     ),
     ConnectFourGamePlayerDisqualifiedEvent: (
-        "connection_hub.connect_four.game.player_disqualified"
+        "gaems12.connection_hub.connect_four.game.player_disqualified"
     ),
 }
 

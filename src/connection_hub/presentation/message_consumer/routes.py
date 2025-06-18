@@ -46,7 +46,7 @@ router: Final = NatsRouter()
 
 
 @router.subscriber(
-    subject="api_gateway.lobby.created",
+    subject="gaems12.api_gateway.lobby.created",
     durable="connection_hub_lobby_created",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
@@ -61,7 +61,7 @@ async def create_lobby(
 
 
 @router.subscriber(
-    subject="api_gateway.lobby.user_joined",
+    subject="gaems12.api_gateway.lobby.user_joined",
     durable="connection_hub_lobby_user_joined",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
@@ -76,7 +76,7 @@ async def join_lobby(
 
 
 @router.subscriber(
-    subject="api_gateway.lobby.user_left",
+    subject="gaems12.api_gateway.lobby.user_left",
     durable="connection_hub_lobby_user_left",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
@@ -91,7 +91,7 @@ async def leave_lobby(
 
 
 @router.subscriber(
-    subject="api_gateway.lobby.user_kicked",
+    subject="gaems12.api_gateway.lobby.user_kicked",
     durable="connection_hub_lobby_user_kicked",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
@@ -106,7 +106,7 @@ async def kick_from_lobby(
 
 
 @router.subscriber(
-    subject="api_gateway.game.created",
+    subject="gaems12.api_gateway.game.created",
     durable="connection_hub_game_created",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
@@ -121,7 +121,7 @@ async def create_game(
 
 
 @router.subscriber(
-    subject="connect_four.game.created",
+    subject="gaems12.connect_four.game.created",
     durable="connection_hub_game_started",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
@@ -136,8 +136,8 @@ async def start_game(
 
 
 @router.subscriber(
-    subject="connect_four.game.ended",
-    durable="connection_hub_connect_four_game_ended",
+    subject="gaems12.*.game.ended",
+    durable="connection_hub_game_ended",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
@@ -151,7 +151,7 @@ async def end_game(
 
 
 @router.subscriber(
-    subject="api_gateway.presence.acknowledged",
+    subject="gaems12.api_gateway.presence.acknowledged",
     durable="connection_hub_presence_acknowledged",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
@@ -165,7 +165,7 @@ async def acknowledge_presence(
 
 
 @router.subscriber(
-    subject="api_gateway.game.player_reconnected",
+    subject="gaems12.api_gateway.game.player_reconnected",
     durable="connection_hub_game_player_reconnected",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
