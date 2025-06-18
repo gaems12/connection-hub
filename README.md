@@ -13,8 +13,8 @@
    <a href="https://github.com/gaems12/connection-hub/actions/workflows/lint-and-test.yaml" target="_blank">
       <img src="https://img.shields.io/github/actions/workflow/status/gaems12/connection-hub/lint-and-test.yaml?label=test&logo=github" alt="Status of passing 'test' job">
    </a>
-   <a href="https://codecov.io/gh/gaems12/connection-hub" target="_blank"> 
-      <img src="https://codecov.io/gh/gaems12/connection-hub/graph/badge.svg?token=4N8N3D3NES"/> 
+   <a href="https://codecov.io/gh/gaems12/connection-hub" target="_blank">
+      <img src="https://codecov.io/gh/gaems12/connection-hub/graph/badge.svg?token=4N8N3D3NES"/>
    </a>
    <a href="https://github.com/gaems12/connect-four/actions/workflows/mutation-test.yaml" target="_blank">
       <img src="./assets/killed_mutants_badge.svg">
