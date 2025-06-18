@@ -8,6 +8,7 @@ __all__ = (
     "leave_lobby",
     "kick_from_lobby",
     "create_game",
+    "start_game",
     "end_game",
     "acknowledge_presence",
     "reconnect_to_game",
@@ -29,6 +30,8 @@ from connection_hub.application import (
     KickFromLobbyProcessor,
     CreateGameCommand,
     CreateGameProcessor,
+    StartGameCommand,
+    StartGameProcessor,
     EndGameCommand,
     EndGameProcessor,
     AcknowledgePresenceProcessor,
@@ -113,6 +116,21 @@ async def create_game(
     *,
     command: CreateGameCommand,
     command_processor: FromDishka[CreateGameProcessor],
+) -> None:
+    await command_processor.process(command)
+
+
+@router.subscriber(
+    subject="connect_four.game.created",
+    durable="connection_hub_game_started",
+    stream=_STREAM,
+    pull_sub=PullSub(timeout=0.2),
+)
+@inject
+async def start_game(
+    *,
+    command: StartGameCommand,
+    command_processor: FromDishka[StartGameProcessor],
 ) -> None:
     await command_processor.process(command)
 

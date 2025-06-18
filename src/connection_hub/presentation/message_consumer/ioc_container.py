@@ -29,13 +29,14 @@ from connection_hub.application import (
     TransactionManager,
     IdentityProvider,
     CreateLobbyProcessor,
+    StartGameProcessor,
+    EndGameProcessor,
     JoinLobbyProcessor,
     LeaveLobbyProcessor,
     KickFromLobbyProcessor,
     CreateGameProcessor,
     AcknowledgePresenceProcessor,
     ReconnectToGameProcessor,
-    EndGameProcessor,
 )
 from connection_hub.infrastructure import (
     httpx_client_factory,
@@ -140,9 +141,10 @@ def ioc_container_factory(context: dict | None = None) -> AsyncContainer:
     provider.provide(LeaveLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(KickFromLobbyProcessor, scope=Scope.REQUEST)
     provider.provide(CreateGameProcessor, scope=Scope.REQUEST)
+    provider.provide(StartGameProcessor, scope=Scope.REQUEST)
+    provider.provide(EndGameProcessor, scope=Scope.REQUEST)
     provider.provide(AcknowledgePresenceProcessor, scope=Scope.REQUEST)
     provider.provide(ReconnectToGameProcessor, scope=Scope.REQUEST)
-    provider.provide(EndGameProcessor, scope=Scope.REQUEST)
 
     return make_async_container(
         provider,

@@ -43,11 +43,10 @@ _OTHER_USER_ID: Final = UserId(uuid7())
 _OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _LOBBY_ID: Final = LobbyId(uuid7())
+_GAME_ID: Final = GameId(uuid7())
 _NAME: Final = "Connect Four for money!!"
 _PASSWORD: Final = "12345"
 _TIME_FOR_EACH_PLAYER: Final = timedelta(minutes=1)
-
-_GAME_ID: Final = GameId(uuid7())
 _CREATED_AT: Final = datetime.now(timezone.utc)
 
 

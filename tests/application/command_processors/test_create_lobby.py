@@ -49,19 +49,19 @@ from .fakes import (
 
 
 _CURRENT_USER_ID: Final = UserId(uuid7())
+_CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
+
 _OTHER_USER_ID: Final = UserId(uuid7())
+_OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 _LOBBY_ID: Final = LobbyId(uuid7())
+_GAME_ID: Final = GameId(uuid7())
 _NAME: Final = "Connect Four for money!!"
 _PASSWORD: Final = "12345"
 _TIME_FOR_EACH_PLAYER: Final = timedelta(minutes=3)
 _CONNECT_FOUR_RULE_SET: Final = ConnectFourRuleSet(
     time_for_each_player=_TIME_FOR_EACH_PLAYER,
 )
-
-_GAME_ID: Final = GameId(uuid7())
-_CURRENT_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
-_OTHER_PLAYER_STATE_ID: Final = PlayerStateId(uuid7())
 
 
 async def test_create_lobby_processor():

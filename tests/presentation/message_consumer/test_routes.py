@@ -17,10 +17,11 @@ from connection_hub.application import (
     LeaveLobbyProcessor,
     KickFromLobbyProcessor,
     CreateGameProcessor,
+    StartGameProcessor,
+    EndGameProcessor,
     AcknowledgePresenceProcessor,
     ReconnectToGameProcessor,
     TryToDisqualifyPlayerProcessor,
-    EndGameProcessor,
 )
 from connection_hub.infrastructure import NATSConfig
 from connection_hub.presentation.message_consumer import (
@@ -29,6 +30,7 @@ from connection_hub.presentation.message_consumer import (
     leave_lobby,
     kick_from_lobby,
     create_game,
+    start_game,
     end_game,
     acknowledge_presence,
     reconnect_to_game,
@@ -74,6 +76,16 @@ def ioc_container() -> AsyncContainer:
     provider.provide(
         lambda: AsyncMock(),
         scope=Scope.REQUEST,
+        provides=StartGameProcessor,
+    )
+    provider.provide(
+        lambda: AsyncMock(),
+        scope=Scope.REQUEST,
+        provides=EndGameProcessor,
+    )
+    provider.provide(
+        lambda: AsyncMock(),
+        scope=Scope.REQUEST,
         provides=AcknowledgePresenceProcessor,
     )
     provider.provide(
@@ -85,11 +97,6 @@ def ioc_container() -> AsyncContainer:
         lambda: AsyncMock(),
         scope=Scope.REQUEST,
         provides=TryToDisqualifyPlayerProcessor,
-    )
-    provider.provide(
-        lambda: AsyncMock(),
-        scope=Scope.REQUEST,
-        provides=EndGameProcessor,
     )
 
     return make_async_container(provider, FastStreamProvider())
@@ -191,6 +198,22 @@ async def test_create_game(app: FastStream, broker: NatsBroker):
             stream="games",
         )
         await create_game.wait_call(1)
+
+
+async def test_start_game(app: FastStream, broker: NatsBroker):
+    async with (
+        TestApp(app),
+        TestNatsBroker(broker, with_real=True) as test_broker,
+    ):
+        await test_broker.publish(
+            message={
+                "game_id": uuid7().hex,
+                "lobby_id": uuid7().hex,
+            },
+            subject="connect_four.game.created",
+            stream="games",
+        )
+        await start_game.wait_call(1)
 
 
 async def test_end_game(app: FastStream, broker: NatsBroker):

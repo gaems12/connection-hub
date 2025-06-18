@@ -3,7 +3,7 @@
 # Licensed under the Personal Use License (see LICENSE).
 
 from unittest.mock import AsyncMock
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 from typing import Final
 
 import pytest
@@ -23,8 +23,6 @@ from connection_hub.domain import (
 )
 from connection_hub.application import (
     ConnectFourGameCreatedEvent,
-    RemoveFromLobbyTask,
-    DisconnectFromGameTask,
     CreateGameCommand,
     CreateGameProcessor,
     LobbyDoesNotExistError,
@@ -34,11 +32,9 @@ from .fakes import (
     ANY_PLAYER_STATE_ID,
     ANY_GAME_ID,
     ANY_DATETIME,
-    ANY_STR,
     FakeLobbyGateway,
     FakeGameGateway,
     FakeEventPublisher,
-    FakeTaskScheduler,
     FakeIdentityProvider,
 )
 
@@ -65,20 +61,6 @@ async def test_create_game_processor():
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
 
-    first_task = RemoveFromLobbyTask(
-        id=f"remove_from_lobby:{_LOBBY_ID.hex}:{_CURRENT_USER_ID.hex}",
-        execute_at=datetime.now(timezone.utc) + timedelta(seconds=15),
-        lobby_id=_LOBBY_ID,
-        user_id=_CURRENT_USER_ID,
-    )
-    second_task = RemoveFromLobbyTask(
-        id=f"remove_from_lobby:{_LOBBY_ID.hex}:{_OTHER_USER_ID.hex}",
-        execute_at=datetime.now(timezone.utc) + timedelta(seconds=15),
-        lobby_id=_LOBBY_ID,
-        user_id=_OTHER_USER_ID,
-    )
-    task_scheduler = FakeTaskScheduler([first_task, second_task])
-
     lobby_gateway = FakeLobbyGateway([lobby])
     game_gateway = FakeGameGateway()
     event_publisher = FakeEventPublisher()
@@ -89,7 +71,6 @@ async def test_create_game_processor():
         lobby_gateway=lobby_gateway,
         game_gateway=game_gateway,
         event_publisher=event_publisher,
-        task_scheduler=task_scheduler,
         transaction_manager=AsyncMock(),
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
@@ -114,25 +95,6 @@ async def test_create_game_processor():
         time_for_each_player=_TIME_FOR_EACH_PLAYER,
     )
     assert expected_game in game_gateway.games
-
-    assert first_task not in task_scheduler.tasks
-    assert second_task not in task_scheduler.tasks
-
-    first_expected_task = DisconnectFromGameTask(
-        id=ANY_STR,
-        execute_at=ANY_DATETIME,
-        game_id=ANY_GAME_ID,
-        player_id=_CURRENT_USER_ID,
-    )
-    assert first_expected_task in task_scheduler.tasks
-
-    second_expected_task = DisconnectFromGameTask(
-        id=ANY_STR,
-        execute_at=ANY_DATETIME,
-        game_id=ANY_GAME_ID,
-        player_id=_OTHER_USER_ID,
-    )
-    assert second_expected_task in task_scheduler.tasks
 
     expected_event = ConnectFourGameCreatedEvent(
         game_id=ANY_GAME_ID,
@@ -190,14 +152,12 @@ async def test_create_game_processor_errors(
     lobby_gateway = FakeLobbyGateway([lobby] if lobby else None)
     game_gateway = FakeGameGateway()
     event_publisher = FakeEventPublisher()
-    task_scheduler = FakeTaskScheduler()
 
     command_processor = CreateGameProcessor(
         create_game=CreateGame(),
         lobby_gateway=lobby_gateway,
         game_gateway=game_gateway,
         event_publisher=event_publisher,
-        task_scheduler=task_scheduler,
         transaction_manager=AsyncMock(),
         identity_provider=FakeIdentityProvider(_CURRENT_USER_ID),
     )
@@ -206,4 +166,3 @@ async def test_create_game_processor_errors(
         await command_processor.process(command)
 
     assert not event_publisher.events
-    assert not task_scheduler.tasks

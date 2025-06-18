@@ -8,6 +8,7 @@ from .leave_lobby import *
 from .remove_from_lobby import *
 from .kick_from_lobby import *
 from .create_game import *
+from .start_game import *
 from .acknowledge_presence import *
 from .disconnect_from_game import *
 from .reconnect_to_game import *
