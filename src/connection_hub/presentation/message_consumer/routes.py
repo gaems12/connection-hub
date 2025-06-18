@@ -134,7 +134,7 @@ async def end_game(
 
 @router.subscriber(
     subject="api_gateway.presence.acknowledged",
-    durable="connection_hub_api_gateway_presence_acknowledged",
+    durable="connection_hub_presence_acknowledged",
     stream=_STREAM,
     pull_sub=PullSub(timeout=0.2),
 )
