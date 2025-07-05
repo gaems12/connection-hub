@@ -183,7 +183,7 @@ dev = [
 requires-dist = [
     { name = "adaptix", specifier = "==3.0.0b11" },
     { name = "cosmic-ray", marker = "extra == 'dev'", specifier = "==8.4.*" },
-    { name = "cyclopts", specifier = "==3.21.*" },
+    { name = "cyclopts", specifier = "==3.22.*" },
     { name = "dishka", specifier = "==1.6.*" },
     { name = "faststream", extras = ["nats", "cli"], specifier = "==0.5.*" },
     { name = "httpx", specifier = "==0.28.*" },
@@ -261,17 +261,17 @@ wheels = [
 
 [[package]]
 name = "cyclopts"
-version = "3.21.0"
+version = "3.22.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
-    { name = "docstring-parser", marker = "python_full_version < '4.0'" },
+    { name = "docstring-parser", marker = "python_full_version < '4'" },
     { name = "rich" },
     { name = "rich-rst" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1a/3b/55e618ab1e795bcb8919ac9d144991ad46593a41526f1cc67b32e955dfbd/cyclopts-3.21.0.tar.gz", hash = "sha256:9792a2e25aad3211feb8b7ac968566a7660dad4936cd03576a3698fe15dfddaf", size = 74434, upload-time = "2025-06-27T02:29:06.914Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2e/40/7b8bc0efea06aecba15f9f4384f7ae0b441903db5f407c7b0cba96f5adcc/cyclopts-3.22.0.tar.gz", hash = "sha256:e6ef9a13cf4abb1c36cefdf27b93a2355af0a51d60b576b61b12fa99269b6da8", size = 74458, upload-time = "2025-07-01T22:53:44.28Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cf/20/4cdf27bc838534027400bfc294eae076407ca3a25548afb6b3f76c563c0d/cyclopts-3.21.0-py3-none-any.whl", hash = "sha256:0be9cc8dee760da0c256391b81dff3c2c6ab8bafbac6f6170e544528b2419f97", size = 84490, upload-time = "2025-06-27T02:29:05.568Z" },
+    { url = "https://files.pythonhosted.org/packages/54/cc/3e18a961ca5fbb2e6665adc57ce869e07544e1a9c0c0f5a6d9be05e41c12/cyclopts-3.22.0-py3-none-any.whl", hash = "sha256:7041db60f2be8f56cf454f7330f239c4b739ea9c8905bf825a90931f348bd805", size = 84508, upload-time = "2025-07-01T22:53:43.357Z" },
 ]
 
 [[package]]
