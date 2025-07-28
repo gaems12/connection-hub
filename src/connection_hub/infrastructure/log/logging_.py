@@ -23,7 +23,7 @@ _log_extra: ContextVar[dict] = ContextVar("log_extra")
 
 def set_operation_id(operation_id: OperationId) -> None:
     """
-    Sets the operation ID in the exta context var.
+    Sets the operation id in the exta context var.
     """
     current_log_extra = _log_extra.get({})
     current_log_extra["operation_id"] = operation_id
@@ -32,7 +32,7 @@ def set_operation_id(operation_id: OperationId) -> None:
 
 def get_operation_id() -> OperationId:
     """
-    Returns the operation ID from the exta context var.
+    Returns the operation id from the exta context var.
     """
     current_log_extra = _log_extra.get({})
     return current_log_extra["operation_id"]

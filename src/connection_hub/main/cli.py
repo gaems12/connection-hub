@@ -32,6 +32,7 @@ def create_cli_app() -> App:
     app = App(
         name="Connection Hub",
         version=version("connection_hub"),
+        version_flags=["--version", "-v"],
         help_format="rich",
     )
 
@@ -93,5 +94,6 @@ def run_task_executor(
         modules=["connection_hub.presentation.task_executor"],
         tasks_pattern=("executors.py",),
         workers=workers,
+        configure_logging=False,
     )
     run_worker(worker_args)
