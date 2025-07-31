@@ -53,7 +53,18 @@ class TaskiqTaskScheduler(TaskScheduler):
             await self.schedule(task)
 
     async def unschedule(self, task_id: str) -> None:
-        await self._schedule_source.delete_schedule(task_id)
+        _logger.debug({
+            "message": "Going to unschedule a task.",
+            "task_id": task_id,
+        })
+
+        try:
+            await self._schedule_source.delete_schedule(task_id)
+        except Exception as error:
+            error_message = "Error occurred during unscheduling a task."
+            _logger.exception(error_message)
+
+            raise Exception(error_message) from error
 
     async def unschedule_many(self, task_ids: Iterable[str]) -> None:
         for task_id in task_ids:
