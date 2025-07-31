@@ -40,32 +40,28 @@ class OperationIdMiddleware(BaseMiddleware):
         if not isinstance(decoded_message, dict):
             default_operation_id = default_operation_id_factory()
 
-            _logger.warning(
-                {
-                    "message": (
-                        "Message received from message broker cannot be "
-                        "converted to dict. "
-                        "Default operation id will be used instead."
-                    ),
-                    "operation_id": default_operation_id,
-                },
-            )
+            _logger.warning({
+                "message": (
+                    "Message received from message broker cannot be "
+                    "converted to dict. "
+                    "Default operation id will be used instead."
+                ),
+                "operation_id": default_operation_id,
+            })
             return default_operation_id
 
         raw_operation_id = decoded_message.get("operation_id")
         if not raw_operation_id:
             default_operation_id = default_operation_id_factory()
 
-            _logger.warning(
-                {
-                    "message": (
-                        "Message receieved from message broker has no "
-                        "operation id. "
-                        "Default operation id will be used instead."
-                    ),
-                    "operation_id": default_operation_id,
-                },
-            )
+            _logger.warning({
+                "message": (
+                    "Message receieved from message broker has no "
+                    "operation id. "
+                    "Default operation id will be used instead."
+                ),
+                "operation_id": default_operation_id,
+            })
             return default_operation_id
 
         try:
@@ -94,12 +90,10 @@ class LoggingMiddleware(BaseMiddleware):
     ) -> StreamMessage[T]:
         decoded_message = await msg.decode()
 
-        _logger.debug(
-            {
-                "message": "Got message from message broker.",
-                "decoded_message": decoded_message,
-            },
-        )
+        _logger.debug({
+            "message": "Got message from message broker.",
+            "decoded_message": decoded_message,
+        })
 
         if not decoded_message or not isinstance(decoded_message, dict):
             error_message = (

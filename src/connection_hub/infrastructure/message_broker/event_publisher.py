@@ -71,15 +71,19 @@ class NATSEventPublisher:
         event_as_dict["operation_id"] = str(self._operation_id)
         payload = json.dumps(event_as_dict).encode()
 
-        _logger.debug(
-            {
-                "message": "About to send message to nats.",
-                "data": event_as_dict,
-            },
-        )
+        _logger.debug({
+            "message": "About to send a message to nats.",
+            "data": event_as_dict,
+        })
 
-        await self._jetstream.publish(
-            subject=subject,
-            payload=payload,
-            stream=_STREAM,
-        )
+        try:
+            await self._jetstream.publish(
+                subject=subject,
+                payload=payload,
+                stream=_STREAM,
+            )
+        except Exception as error:
+            error_message = "Error occurred during sending a message to nats."
+            _logger.exception(error_message)
+
+            raise Exception(error_message) from error

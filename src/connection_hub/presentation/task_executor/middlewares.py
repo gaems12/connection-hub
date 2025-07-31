@@ -29,15 +29,13 @@ class OperationIdMiddleware(TaskiqMiddleware):
         if not message.args:
             default_operation_id = default_operation_id_factory()
 
-            _logger.warning(
-                {
-                    "message": (
-                        "Takiq message has no operation id. "
-                        "Default operation id will be used instead."
-                    ),
-                    "operation_id": default_operation_id,
-                },
-            )
+            _logger.warning({
+                "message": (
+                    "Takiq message has no operation id. "
+                    "Default operation id will be used instead."
+                ),
+                "operation_id": default_operation_id,
+            })
             return default_operation_id
 
         raw_operation_id = message.args[0]
@@ -62,10 +60,8 @@ class OperationIdMiddleware(TaskiqMiddleware):
 
 class LoggingMiddleware(TaskiqMiddleware):
     def pre_execute(self, message: TaskiqMessage) -> TaskiqMessage:
-        _logger.debug(
-            {
-                "message": "Got taskiq message.",
-                "received_message": message.model_dump(mode="json"),
-            },
-        )
+        _logger.debug({
+            "message": "Got taskiq message.",
+            "received_message": message.model_dump(mode="json"),
+        })
         return message

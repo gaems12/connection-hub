@@ -1,30 +1,31 @@
 line-length = 79
+preview = true
 src = ["src"]
 include = ["src/**.py", "tests/**.py"]
 
 [lint]
 extend-select = [
-    "ANN",      # https://docs.astral.sh/ruff/rules/#flake8-annotations-ann
-    "ASYNC",    # https://docs.astral.sh/ruff/rules/#flake8-async-async
-    "B",        # https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
-    "A",        # https://docs.astral.sh/ruff/rules/#flake8-builtins-a
-    "C4",       # https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
-    "CPY",      # https://docs.astral.sh/ruff/rules/#flake8-copyright-cpy
-    "DTZ",      # https://docs.astral.sh/ruff/rules/#flake8-datetimez-dtz
-    "N",        # https://docs.astral.sh/ruff/settings/#pep8-naming
-    "ISC",      # https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
-    "G",        # https://docs.astral.sh/ruff/rules/#flake8-logging-format-g
-    "Q",        # https://docs.astral.sh/ruff/rules/#flake8-pytest-style-pt
+    "ANN",   # https://docs.astral.sh/ruff/rules/#flake8-annotations-ann
+    "ASYNC", # https://docs.astral.sh/ruff/rules/#flake8-async-async
+    "B",     # https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
+    "A",     # https://docs.astral.sh/ruff/rules/#flake8-builtins-a
+    "C4",    # https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
+    "CPY",   # https://docs.astral.sh/ruff/rules/#flake8-copyright-cpy
+    "DTZ",   # https://docs.astral.sh/ruff/rules/#flake8-datetimez-dtz
+    "N",     # https://docs.astral.sh/ruff/settings/#pep8-naming
+    "ISC",   # https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
+    "G",     # https://docs.astral.sh/ruff/rules/#flake8-logging-format-g
+    "Q",     # https://docs.astral.sh/ruff/rules/#flake8-pytest-style-pt
 ]
 select = [
-    "F401",     # unused-import
-    "F406",     # undefined-local-with-nested-import-star-usage
-    "COM812",   # missing-trailing-comma
-    "INP001",   # implicit-namespace-package
-    "PIE794",   # duplicate-class-field-definition
-    "PIE796",   # non-unique-enums
-    "T201",     # print
-    "SLF001",   # private-member-access
+    "F401",   # unused-import
+    "F406",   # undefined-local-with-nested-import-star-usage
+    "COM812", # missing-trailing-comma
+    "INP001", # implicit-namespace-package
+    "PIE794", # duplicate-class-field-definition
+    "PIE796", # non-unique-enums
+    "T201",   # print
+    "SLF001", # private-member-access
 ]
 ignore = [
     "ANN201",   # missing-return-type-undocumented-public-function

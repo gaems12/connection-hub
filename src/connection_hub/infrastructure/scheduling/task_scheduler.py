@@ -77,14 +77,7 @@ class TaskiqTaskScheduler(TaskScheduler):
             time=task.execute_at,
         )
 
-        _logger.debug(
-            {
-                "message": "About to schedule a task.",
-                "task": schedule.model_dump(mode="json"),
-            },
-        )
-
-        await self._schedule_source.add_schedule(schedule)
+        await self._add_schedule(schedule)
 
     async def _schedule_remove_from_lobby(
         self,
@@ -103,14 +96,7 @@ class TaskiqTaskScheduler(TaskScheduler):
             time=task.execute_at,
         )
 
-        _logger.debug(
-            {
-                "message": "About to schedule a task.",
-                "task": schedule.model_dump(mode="json"),
-            },
-        )
-
-        await self._schedule_source.add_schedule(schedule)
+        await self._add_schedule(schedule)
 
     async def _schedule_disconnect_from_game(
         self,
@@ -129,11 +115,18 @@ class TaskiqTaskScheduler(TaskScheduler):
             time=task.execute_at,
         )
 
-        _logger.debug(
-            {
-                "message": "About to schedule a task.",
-                "task": schedule.model_dump(mode="json"),
-            },
-        )
+        await self._add_schedule(schedule)
 
-        await self._schedule_source.add_schedule(schedule)
+    async def _add_schedule(self, schedule: ScheduledTask) -> None:
+        _logger.debug({
+            "message": "About to schedule a task.",
+            "task": schedule.model_dump(mode="json"),
+        })
+
+        try:
+            await self._schedule_source.add_schedule(schedule)
+        except Exception as error:
+            error_message = "Error occurred during scheduling a task."
+            _logger.exception(error_message)
+
+            raise Exception(error_message) from error
