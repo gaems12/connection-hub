@@ -54,7 +54,7 @@ class TaskiqTaskScheduler(TaskScheduler):
 
     async def unschedule(self, task_id: str) -> None:
         _logger.debug({
-            "message": "Going to unschedule a task.",
+            "message": "About to unschedule a task.",
             "task_id": task_id,
         })
 
