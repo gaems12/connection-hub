@@ -15,8 +15,9 @@ from connection_hub.application.common import (
     TaskScheduler,
     CentrifugoPublishCommand,
     CentrifugoUnsubscribeCommand,
-    centrifugo_lobby_channel_factory,
+    Serializable,
     CentrifugoClient,
+    centrifugo_lobby_channel_factory,
     TransactionManager,
     IdentityProvider,
     LobbyDoesNotExistError,
@@ -105,14 +106,14 @@ class KickFromLobbyProcessor:
     ) -> None:
         channel = centrifugo_lobby_channel_factory(lobby_id)
 
-        centrifugo_publication = {
+        centrifugo_publication: Serializable = {
             "type": "user_kicked",
             "lobby_id": lobby_id.hex,
             "user_id": user_id.hex,
         }
         first_centrifugo_command = CentrifugoPublishCommand(
             channel=channel,
-            data=centrifugo_publication,  # type: ignore[arg-type]
+            data=centrifugo_publication,
         )
         second_centrifugo_command = CentrifugoUnsubscribeCommand(
             user=user_id.hex,

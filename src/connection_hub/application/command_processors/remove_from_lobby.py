@@ -18,6 +18,7 @@ from connection_hub.application.common import (
     EventPublisher,
     remove_from_lobby_task_id_factory,
     TaskScheduler,
+    Serializable,
     CentrifugoUnsubscribeCommand,
     CentrifugoPublishCommand,
     CentrifugoCommand,
@@ -120,14 +121,14 @@ class RemoveFromLobbyProcessor:
             ),
         ]
         if not lobby_is_deleted:
-            centrifugo_publication = {
+            centrifugo_publication: Serializable = {
                 "type": "user_removed",
                 "user_id": user_id.hex,
                 "new_admin_id": new_admin_id.hex if new_admin_id else None,
             }
             centrifugo_command = CentrifugoPublishCommand(
                 channel=lobby_channel,
-                data=centrifugo_publication,  # type: ignore[arg-type]
+                data=centrifugo_publication,
             )
             centrifugo_commands.append(centrifugo_command)
 

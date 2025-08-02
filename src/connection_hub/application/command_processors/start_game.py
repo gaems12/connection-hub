@@ -15,6 +15,7 @@ from connection_hub.application.common import (
     disconnect_from_game_task_id_factory,
     DisconnectFromGameTask,
     TaskScheduler,
+    Serializable,
     CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
     CentrifugoClient,
     TransactionManager,
@@ -91,13 +92,13 @@ class StartGameProcessor:
         await self._task_scheduler.unschedule_many(ids_of_tasks_to_unchedule)
         await self._task_scheduler.schedule_many(tasks_to_schedule)
 
-        centrifugo_publication = {
+        centrifugo_publication: Serializable = {
             "type": "lobby_removed",
             "lobby_id": lobby.id.hex,
         }
         await self._centrifugo_client.publish(
             channel=CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
-            data=centrifugo_publication,  # type: ignore[arg-type]
+            data=centrifugo_publication,
         )
 
         await self._transaction_manager.commit()

@@ -19,6 +19,7 @@ from connection_hub.application.common import (
     EventPublisher,
     TaskScheduler,
     try_to_disqualify_player_task_id_factory,
+    Serializable,
     CentrifugoClient,
     centrifugo_game_channel_factory,
     TransactionManager,
@@ -94,13 +95,13 @@ class ReconnectToGameProcessor:
             current_player_id=current_user_id,
         )
 
-        centrifugo_publication = {
+        centrifugo_publication: Serializable = {
             "type": "player_reconnected",
             "player_id": current_user_id.hex,
         }
         await self._centrifugo_client.publish(
             channel=centrifugo_game_channel_factory(game.id),
-            data=centrifugo_publication,  # type: ignore[arg-type]
+            data=centrifugo_publication,
         )
 
         await self._transaction_manager.commit()

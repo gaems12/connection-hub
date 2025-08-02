@@ -16,6 +16,7 @@ from connection_hub.application.common import (
     RemoveFromLobbyTask,
     remove_from_lobby_task_id_factory,
     TaskScheduler,
+    Serializable,
     CentrifugoPublishCommand,
     CentrifugoClient,
     centrifugo_user_channel_factory,
@@ -129,26 +130,26 @@ class JoinLobbyProcessor:
         lobby: Lobby,
         current_user_id: UserId,
     ) -> None:
-        first_centrifugo_publication = {
+        first_centrifugo_publication: Serializable = {
             "type": "user_joined",
             "user_id": current_user_id.hex,
         }
         first_centrifugo_command = CentrifugoPublishCommand(
             channel=centrifugo_lobby_channel_factory(lobby.id),
-            data=first_centrifugo_publication,  # type: ignore[arg-type]
+            data=first_centrifugo_publication,
         )
 
-        raw_users = {
+        raw_users: Serializable = {
             user_id.hex: user_role
             for user_id, user_role in lobby.users.items()
         }
-        second_centrifugo_publication = {
+        second_centrifugo_publication: Serializable = {
             "type": "joined_to_lobby",
             "users": raw_users,
         }
         second_centrifugo_command = CentrifugoPublishCommand(
             channel=centrifugo_user_channel_factory(current_user_id),
-            data=second_centrifugo_publication,  # type: ignore[arg-type]
+            data=second_centrifugo_publication,
         )
 
         await self._centrifugo_client.batch(

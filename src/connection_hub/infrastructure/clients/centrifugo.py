@@ -113,7 +113,6 @@ class HTTPXCentrifugoClient(CentrifugoClient):
                         "data": command.data,
                     },
                 }
-                commands_as_dicts.append(command_as_dict)
 
             elif isinstance(command, CentrifugoUnsubscribeCommand):
                 command_as_dict = {
@@ -122,7 +121,8 @@ class HTTPXCentrifugoClient(CentrifugoClient):
                         "channel": command.channel,
                     },
                 }
-                commands_as_dicts.append(command_as_dict)
+
+            commands_as_dicts.append(command_as_dict)
 
         return commands_as_dicts
 

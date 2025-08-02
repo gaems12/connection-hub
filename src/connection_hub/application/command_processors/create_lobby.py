@@ -21,10 +21,11 @@ from connection_hub.application.common import (
     GameGateway,
     LobbyCreatedEvent,
     EventPublisher,
-    CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
     RemoveFromLobbyTask,
     remove_from_lobby_task_id_factory,
     TaskScheduler,
+    Serializable,
+    CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
     CentrifugoPublishCommand,
     CentrifugoClient,
     centrifugo_user_channel_factory,
@@ -175,14 +176,14 @@ class CreateLobbyProcessor:
         current_user_id: UserId,
     ) -> None:
         if isinstance(rule_set, ConnectFourRuleSet):
-            rule_set_as_dict = {
+            rule_set_as_dict: Serializable = {
                 "type": "connect_four",
                 "time_for_each_player": (
                     rule_set.time_for_each_player.total_seconds()
                 ),
             }
 
-        first_centrifugo_publication = {
+        first_centrifugo_publication: Serializable = {
             "type": "lobby_created",
             "lobby_id": lobby.id.hex,
             "name": lobby.name,
@@ -190,10 +191,10 @@ class CreateLobbyProcessor:
         }
         first_centrifugo_command = CentrifugoPublishCommand(
             channel=centrifugo_user_channel_factory(current_user_id),
-            data=first_centrifugo_publication,  # type: ignore[arg-type]
+            data=first_centrifugo_publication,
         )
 
-        second_centrifugo_publication = {
+        second_centrifugo_publication: Serializable = {
             "type": "lobby_created",
             "lobby_id": lobby.id.hex,
             "name": lobby.name,
@@ -202,7 +203,7 @@ class CreateLobbyProcessor:
         }
         second_centrifugo_command = CentrifugoPublishCommand(
             channel=CENTRIFUGO_LOBBY_BROWSER_CHANNEL,
-            data=second_centrifugo_publication,  # type: ignore[arg-type]
+            data=second_centrifugo_publication,
         )
 
         await self._centrifugo_client.batch(

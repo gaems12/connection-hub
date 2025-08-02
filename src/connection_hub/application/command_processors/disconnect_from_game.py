@@ -21,6 +21,7 @@ from connection_hub.application.common import (
     TryToDisqualifyPlayerTask,
     try_to_disqualify_player_task_id_factory,
     TaskScheduler,
+    Serializable,
     CentrifugoClient,
     centrifugo_game_channel_factory,
     TransactionManager,
@@ -100,13 +101,13 @@ class DisconnectFromGameProcessor:
             user_id=command.user_id,
         )
 
-        centrfugo_publication = {
+        centrfugo_publication: Serializable = {
             "type": "player_disconnected",
             "player_id": command.user_id.hex,
         }
         await self._centrifugo_client.publish(
             channel=centrifugo_game_channel_factory(game.id),
-            data=centrfugo_publication,  # type: ignore[arg-type]
+            data=centrfugo_publication,
         )
 
         await self._transaction_manager.commit()
