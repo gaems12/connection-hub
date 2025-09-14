@@ -184,7 +184,7 @@ requires-dist = [
     { name = "adaptix", specifier = "==3.0.0b11" },
     { name = "cosmic-ray", marker = "extra == 'dev'", specifier = "==8.4.*" },
     { name = "cyclopts", specifier = "==3.22.*" },
-    { name = "dishka", specifier = "==1.6.*" },
+    { name = "dishka", specifier = "==1.7.*" },
     { name = "faststream", extras = ["nats", "cli"], specifier = "==0.5.*" },
     { name = "httpx", specifier = "==0.28.*" },
     { name = "mypy", marker = "extra == 'dev'", specifier = "==1.17.*" },
@@ -307,11 +307,11 @@ wheels = [
 
 [[package]]
 name = "dishka"
-version = "1.6.0"
+version = "1.7.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/11/04/f3add05678a3ac1ab7736faae45b18b5365d84b1cd3cf3af64b09a1d6a5f/dishka-1.6.0.tar.gz", hash = "sha256:f1fa5ec7e980d4f618d0c425d1bb81d8e9414894d8ec6553b197d2298774e12f", size = 65971, upload-time = "2025-05-18T21:40:53.259Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/af/53/41679bbc5f738655c320b3f32eb957111a89abb4a0c5cd652a7cb4cb244b/dishka-1.7.1.tar.gz", hash = "sha256:a5a5eee9f2cd233c08ddaa11e95b8b0229dd9b712e2117ee39ce475c2d65f597", size = 67891, upload-time = "2025-09-13T16:37:13.296Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/76/6b/f9cd08543c4f55bf129a0ebce5c09e43528235dd6e7cb906761ca094979a/dishka-1.6.0-py3-none-any.whl", hash = "sha256:ab1aedee152ce7bb11cfd2673d7ce4001fe2b330d14e84535d7525a68430b2c2", size = 90789, upload-time = "2025-05-18T21:40:51.352Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/41/fae3b2ee895ea5b3f42a5572e17e19ab0085cb4d92f9ac8feecdaa8bd19f/dishka-1.7.1-py3-none-any.whl", hash = "sha256:42f756f685ebc71c126e82dd9e002b7f277d97c8c7868c1ee412d265a3c98b63", size = 94567, upload-time = "2025-09-13T16:37:11.671Z" },
 ]
 
 [[package]]
