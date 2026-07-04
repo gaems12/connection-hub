@@ -8,8 +8,7 @@ import logging
 from uuid import UUID
 from typing import Any, Final
 
-from faststream import BaseMiddleware
-from faststream.broker.message import StreamMessage
+from faststream import BaseMiddleware, StreamMessage
 
 from connection_hub.infrastructure import (
     OperationId,

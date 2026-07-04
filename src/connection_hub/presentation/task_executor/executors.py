@@ -16,7 +16,7 @@ from connection_hub.application import (
 )
 
 
-@inject
+@inject(patch_module=True)
 async def remove_from_lobby(
     *,
     command: RemoveFromLobbyCommand,
@@ -28,7 +28,7 @@ async def remove_from_lobby(
         return
 
 
-@inject
+@inject(patch_module=True)
 async def disconnect_from_game(
     *,
     command: DisconnectFromGameCommand,
@@ -40,7 +40,7 @@ async def disconnect_from_game(
         return
 
 
-@inject
+@inject(patch_module=True)
 async def try_to_disqualify_player(
     *,
     command: TryToDisqualifyPlayerCommand,
