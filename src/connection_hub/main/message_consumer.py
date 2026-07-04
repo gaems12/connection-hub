@@ -25,11 +25,7 @@ def create_message_consumer_app(
         nats_config = load_nats_config()
         broker = create_broker(nats_config.url)
 
-    app = FastStream(
-        broker=broker,
-        title="Connection Hub",
-        version=version("connection_hub"),
-    )
+    app = FastStream(broker)
     ioc_container = ioc_container or ioc_container_factory()
     setup_dishka(ioc_container, app)
 
