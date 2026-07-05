@@ -23,6 +23,13 @@ class OperationIdMiddleware(TaskiqMiddleware):
         operation_id = self._extract_operation_id(message)
         set_operation_id(operation_id)
 
+        # The operation id travels as a leading positional arg
+        # (see `TaskiqTaskScheduler`), but task executors only
+        # declare keyword-only parameters. It must be dropped
+        # here, otherwise taskiq tries to bind it positionally
+        # and every task fails error.
+        message.args = message.args[1:]
+
         return message
 
     def _extract_operation_id(self, message: TaskiqMessage) -> OperationId:

@@ -15,6 +15,7 @@ from connection_hub.application import (
     UserJoinedLobbyEvent,
     UserLeftLobbyEvent,
     UserKickedFromLobbyEvent,
+    ConnectFourGamePlayer,
     ConnectFourGameCreatedEvent,
     ConnectFourGamePlayerDisconnectedEvent,
     ConnectFourGamePlayerReconnectedEvent,
@@ -67,9 +68,14 @@ async def nats_jetstream(
         ConnectFourGameCreatedEvent(
             game_id=GameId(uuid7()),
             lobby_id=LobbyId(uuid7()),
-            first_player_id=UserId(uuid7()),
-            second_player_id=UserId(uuid7()),
-            time_for_each_player=timedelta(minutes=1),
+            first_player=ConnectFourGamePlayer(
+                id=UserId(uuid7()),
+                time=timedelta(minutes=1),
+            ),
+            second_player=ConnectFourGamePlayer(
+                id=UserId(uuid7()),
+                time=timedelta(minutes=1),
+            ),
             created_at=datetime.now(timezone.utc),
         ),
         ConnectFourGamePlayerDisconnectedEvent(

@@ -15,6 +15,7 @@ from connection_hub.domain import (
 from connection_hub.application.common import (
     LobbyGateway,
     GameGateway,
+    ConnectFourGamePlayer,
     ConnectFourGameCreatedEvent,
     EventPublisher,
     TransactionManager,
@@ -89,9 +90,16 @@ class CreateGameProcessor:
             event = ConnectFourGameCreatedEvent(
                 game_id=game.id,
                 lobby_id=lobby_id,
-                first_player_id=player_ids[0],
-                second_player_id=player_ids[1],
-                time_for_each_player=game.time_for_each_player,
+                first_player=ConnectFourGamePlayer(
+                    id=player_ids[0],
+                    time=game.time_for_each_player,
+                    communication_type="centrifugo",
+                ),
+                second_player=ConnectFourGamePlayer(
+                    id=player_ids[1],
+                    time=game.time_for_each_player,
+                    communication_type="centrifugo",
+                ),
                 created_at=game.created_at,
             )
 

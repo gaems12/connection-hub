@@ -8,6 +8,7 @@ __all__ = (
     "UserLeftLobbyEvent",
     "UserRemovedFromLobbyEvent",
     "UserKickedFromLobbyEvent",
+    "ConnectFourGamePlayer",
     "ConnectFourGameCreatedEvent",
     "ConnectFourGamePlayerDisconnectedEvent",
     "ConnectFourGamePlayerReconnectedEvent",
@@ -59,12 +60,18 @@ class UserKickedFromLobbyEvent:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class ConnectFourGamePlayer:
+    id: UserId
+    time: timedelta
+    communication_type: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class ConnectFourGameCreatedEvent:
     game_id: GameId
     lobby_id: LobbyId
-    first_player_id: UserId
-    second_player_id: UserId
-    time_for_each_player: timedelta
+    first_player: ConnectFourGamePlayer
+    second_player: ConnectFourGamePlayer
     created_at: datetime
 
 

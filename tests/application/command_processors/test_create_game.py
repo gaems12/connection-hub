@@ -22,6 +22,7 @@ from connection_hub.domain import (
     UserIsNotAdminError,
 )
 from connection_hub.application import (
+    ConnectFourGamePlayer,
     ConnectFourGameCreatedEvent,
     CreateGameCommand,
     CreateGameProcessor,
@@ -99,9 +100,14 @@ async def test_create_game_processor():
     expected_event = ConnectFourGameCreatedEvent(
         game_id=ANY_GAME_ID,
         lobby_id=_LOBBY_ID,
-        first_player_id=_CURRENT_USER_ID,
-        second_player_id=_OTHER_USER_ID,
-        time_for_each_player=_TIME_FOR_EACH_PLAYER,
+        first_player=ConnectFourGamePlayer(
+            id=_CURRENT_USER_ID,
+            time=_TIME_FOR_EACH_PLAYER,
+        ),
+        second_player=ConnectFourGamePlayer(
+            id=_OTHER_USER_ID,
+            time=_TIME_FOR_EACH_PLAYER,
+        ),
         created_at=ANY_DATETIME,
     )
     assert expected_event in event_publisher.events
