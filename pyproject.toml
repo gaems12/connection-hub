@@ -16,7 +16,7 @@ dependencies = [
     "httpx==0.28.*",
     "dishka==1.8.*",
     "adaptix==3.0.0b12",
-    "cyclopts==4.20.*",
+    "cyclopts==4.25.*",
     "taskiq==0.12.*",
     "faststream[nats,cli]==0.6.*",
     "taskiq-redis==1.2.*",
