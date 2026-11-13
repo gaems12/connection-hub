@@ -30,7 +30,7 @@ dev = [
     "ruff==0.15.*",
     "pre-commit==4.6.*",
     "pytest==9.0.*",
-    "pytest-asyncio==1.4.*",
+    "pytest-asyncio==1.5.*",
     "pytest-cov==7.0.*",
     "cosmic-ray==8.4.*",
 ]
